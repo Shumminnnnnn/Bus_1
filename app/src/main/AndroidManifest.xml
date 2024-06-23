@@ -21,10 +21,17 @@
             android:theme="@style/Theme.MyApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".NewsActivity"/>
+        <activity android:name=".RouteActivity"/>
+        <activity android:name=".RouteActivity2"/>
+        <activity android:name=".RouteActivity3"/>
+        <activity android:name=".RouteActivity4"/>
+        <activity android:name=".RouteActivity5"/>
+
     </application>
 
 </manifest>

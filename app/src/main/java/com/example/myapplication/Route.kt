@@ -18,8 +18,8 @@ object Route {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/StopOfRoute/City/Taoyuan/156?%24top=30&%24format=JSON"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" //your clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" //your clientSecret
+        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
+        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -81,18 +81,29 @@ object Route {
                 } else {
                     responseBody.string()
                 }
-            // Parse JSON and extract StopName
+            // Parse JSON and extract RouteName, StopName "Zh_tw", and Direction
             val gson = Gson()
             val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
             val stopNames = StringBuilder()
             for (jsonElement in jsonArray) {
                 val jsonObject = jsonElement.asJsonObject
+
+                // Extract RouteName "Zh_tw"
+                val routeNameZhTw = jsonObject.getAsJsonObject("RouteName").getAsJsonPrimitive("Zh_tw").asString
+                stopNames.append("路線名稱: ").append(routeNameZhTw).append("\n\n")
+
+                // Extract Direction and map it to "去程" or "返程"
+                val direction = jsonObject.getAsJsonPrimitive("Direction").asInt
+                val directionStr = if (direction == 0) "去程" else "返程"
+                stopNames.append("方向: ").append(directionStr).append("\n")
+
                 val stopsArray = jsonObject.getAsJsonArray("Stops")
                 for (stopElement in stopsArray) {
                     val stopObject = stopElement.asJsonObject
-                    val stopName = stopObject.getAsJsonObject("StopName").getAsJsonPrimitive("Zh_tw").asString
-                    stopNames.append(stopName).append("\n\n")
+                    val stopNameZhTw = stopObject.getAsJsonObject("StopName").getAsJsonPrimitive("Zh_tw").asString
+                    stopNames.append("站牌名稱: ").append(stopNameZhTw).append("\n")
                 }
+                stopNames.append("\n")
             }
             return stopNames.toString()
         }

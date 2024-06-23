@@ -3,8 +3,6 @@ package com.example.myapplication
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.google.gson.JsonArray
 import okhttp3.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -13,12 +11,12 @@ import kotlinx.coroutines.withContext
 import okio.GzipSource
 import okio.buffer
 
-object TDXApi {
+object Route_schedule {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/News/City/Taoyuan?%24top=30&%24format=JSON"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Schedule/City/Taoyuan/156?%24top=30&%24format=JSON"
+        val clientId = "11026349-b9820ce1-cd51-4721" // clientId
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -26,7 +24,7 @@ object TDXApi {
         val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
-        return withContext(Dispatchers.IO) {getJsonString(tdxUrl, accessToken)}
+        return withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
     }
 
     @Throws(IOException::class)
@@ -80,15 +78,54 @@ object TDXApi {
                 responseBody.string()
             }
 
-            val gson = Gson()
-            val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
-            val titles = StringBuilder()
-            for (jsonElement in jsonArray) {
-                val jsonObject = jsonElement.asJsonObject
-                val title = jsonObject.get("Title").asString
-                titles.append(title).append("\n\n")
+            // Parse the JSON string
+            val objectMapper = ObjectMapper()
+            val jsonArray = objectMapper.readTree(jsonString)
+
+            val result = StringBuilder()
+            for (route in jsonArray) {
+                val routeName = route["RouteName"]["Zh_tw"].asText()
+                result.append("路線名稱: ").append(routeName).append("\n\n")
+
+                val timetables = route["Timetables"]
+                val holidayTimetables = timetables.filter {
+                    it["ServiceDay"]["Sunday"].asInt() == 1 || it["ServiceDay"]["Saturday"].asInt() == 1
+                }.sortedBy { it["TripID"].asText().replace("-", "").toInt() }
+
+                val weekdayTimetables = timetables.filter {
+                    it["ServiceDay"]["Monday"].asInt() == 1 || it["ServiceDay"]["Tuesday"].asInt() == 1 ||
+                            it["ServiceDay"]["Wednesday"].asInt() == 1 || it["ServiceDay"]["Thursday"].asInt() == 1 ||
+                            it["ServiceDay"]["Friday"].asInt() == 1
+                }.sortedBy { it["TripID"].asText().replace("-", "").toInt() }
+
+                // Display holiday timetables
+                if (holidayTimetables.isNotEmpty()) {
+                    result.append("假日時刻表: \n")
+                    for (timetable in holidayTimetables) {
+                        val stopTimes = timetable["StopTimes"]
+                        for (stopTime in stopTimes) {
+                            val arrivalTime = stopTime["ArrivalTime"].asText()
+                            result.append(arrivalTime).append("\n")
+                        }
+                    }
+                    result.append("\n")
+                }
+
+                // Display weekday timetables
+                if (weekdayTimetables.isNotEmpty()) {
+                    result.append("平日時刻表: \n")
+                    for (timetable in weekdayTimetables) {
+                        val stopTimes = timetable["StopTimes"]
+                        for (stopTime in stopTimes) {
+                            val arrivalTime = stopTime["ArrivalTime"].asText()
+                            result.append(arrivalTime).append("\n")
+                        }
+                    }
+                    result.append("\n")
+                }
             }
-            return titles.toString()
+
+            return result.toString()
         }
     }
 }

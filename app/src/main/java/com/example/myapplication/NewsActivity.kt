@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -9,7 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : ComponentActivity() {
+class NewsActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val tdxResult = remember { mutableStateOf("Loading TDX data...") }
+                    val tdxResult = remember { mutableStateOf("Loading news data...") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
@@ -44,50 +44,33 @@ class MainActivity : ComponentActivity() {
                                 tdxResult.value = tdxResultJson
                             }
                         } catch (e: Exception) {
-                            Log.e("MainActivity", "Error fetching TDX data: ${e.message}", e)
+                            Log.e("NewsActivity", "Error fetching TDX data: ${e.message}", e)
                             withContext(Dispatchers.Main) {
                                 tdxResult.value = "Error fetching TDX data: ${e.message}"
                             }
                         }
                     }
 
-                    ScrollableContent(
-                        onButtonClick1 = {
-                            val intent = Intent(this@MainActivity, NewsActivity::class.java)
-                            startActivity(intent)
-                        },
-                        onButtonClick2 = {
-                            val intent = Intent(this@MainActivity, RouteActivity4::class.java)
-                            startActivity(intent)
-                        }
-                    )
+                    ScrollableContent3(tdxResult.value)
                 }
             }
         }
     }
-}
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Navigate back to MainActivity
+        finish()
+    }
+}
 @Composable
-fun ScrollableContent(
-    onButtonClick1: () -> Unit,
-    onButtonClick2: () -> Unit
-) {
+fun ScrollableContent3(tdxResult: String) {
     Column(
         modifier = Modifier
             .padding(8.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Button(
-            onClick = onButtonClick1,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "前往最新消息頁")
-        }
-
-        Button(
-            onClick = onButtonClick2,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "前往路線資訊頁")
-        }
+        Text(text = "最新消息:\n")
+        Text(text = tdxResult)
     }
 }

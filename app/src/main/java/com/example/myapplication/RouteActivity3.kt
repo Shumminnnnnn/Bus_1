@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : ComponentActivity() {
+class RouteActivity3 : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,33 +36,24 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val tdxResult = remember { mutableStateOf("Loading TDX data...") }
+                    val routeResult = remember { mutableStateOf("Loading route schedule data...") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val tdxResultJson = TDXApi.main()
+                            val routeResultJson = Route_schedule.main()
                             withContext(Dispatchers.Main) {
-                                tdxResult.value = tdxResultJson
+                                routeResult.value = routeResultJson
                             }
                         } catch (e: Exception) {
-                            Log.e("MainActivity", "Error fetching TDX data: ${e.message}", e)
+                            Log.e("RouteActivity3", "Error fetching route data: ${e.message}", e)
                             withContext(Dispatchers.Main) {
-                                tdxResult.value = "Error fetching TDX data: ${e.message}"
+                                routeResult.value = "Error fetching route data: ${e.message}"
                             }
                         }
                     }
 
-                    ScrollableContent(
-                        onButtonClick1 = {
-                            val intent = Intent(this@MainActivity, NewsActivity::class.java)
-                            startActivity(intent)
-                        },
-                        onButtonClick2 = {
-                            val intent = Intent(this@MainActivity, RouteActivity4::class.java)
-                            startActivity(intent)
-                        }
-                    )
+                    ScrollableContent4(routeResult.value)
                 }
             }
         }
@@ -68,26 +61,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent(
-    onButtonClick1: () -> Unit,
-    onButtonClick2: () -> Unit
-) {
+fun ScrollableContent4(routeResult: String) {
     Column(
         modifier = Modifier
             .padding(8.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Button(
-            onClick = onButtonClick1,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "前往最新消息頁")
-        }
-
-        Button(
-            onClick = onButtonClick2,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "前往路線資訊頁")
-        }
+        Text(text = routeResult, modifier = Modifier.padding(16.dp))
     }
 }
