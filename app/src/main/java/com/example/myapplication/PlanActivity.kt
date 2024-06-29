@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -25,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RouteActivity3 : ComponentActivity() {
+class PlanActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,37 +34,37 @@ class RouteActivity3 : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val routeResult = remember { mutableStateOf("Loading route schedule data...") }
+                    val tdxResult = remember { mutableStateOf("Loading news data...") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val routeResultJson = Route_schedule.main()
+                            val tdxResultJson = Route_plan.main()
                             withContext(Dispatchers.Main) {
-                                routeResult.value = routeResultJson
+                                tdxResult.value = tdxResultJson
                             }
                         } catch (e: Exception) {
-                            Log.e("RouteActivity3", "Error fetching route data: ${e.message}", e)
+                            Log.e("NewsActivity", "Error fetching TDX data: ${e.message}", e)
                             withContext(Dispatchers.Main) {
-                                routeResult.value = "Error fetching route data: ${e.message}"
+                                tdxResult.value = "Error fetching TDX data: ${e.message}"
                             }
                         }
                     }
 
-                    ScrollableContent4(routeResult.value)
+                    ScrollableContent8(tdxResult.value)
                 }
             }
         }
     }
 }
-
 @Composable
-fun ScrollableContent4(routeResult: String) {
+fun ScrollableContent8(tdxResult: String) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = routeResult, modifier = Modifier.padding(16.dp))
+        Text(text = "最新消息:\n")
+        Text(text = tdxResult)
     }
 }

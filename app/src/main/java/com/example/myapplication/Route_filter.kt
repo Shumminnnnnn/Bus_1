@@ -3,20 +3,21 @@ package com.example.myapplication
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import okhttp3.*
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okio.GzipSource
 import okio.buffer
-
+import java.io.IOException
+import java.util.concurrent.TimeUnit
+data class SubRouteData(val subRouteName: String, val headsign: String)
 object Route_filter {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/News/City/Taoyuan?%24top=30&%24format=JSON"
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/15?%24format=JSON"
+
         val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
         val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
 
@@ -26,9 +27,11 @@ object Route_filter {
         val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
-        return withContext(Dispatchers.IO) {getJsonString(tdxUrl, accessToken)}
-    }
+        val subRouteDataList = withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
 
+        // 格式化 subRouteDataList 為字符串
+        return formatSubRouteData(subRouteDataList)
+    }
     @Throws(IOException::class)
     private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
@@ -53,9 +56,8 @@ object Route_filter {
             return response.body?.string() ?: throw IOException("Empty response body")
         }
     }
-
     @Throws(IOException::class)
-    private fun getJsonString(url: String, accessToken: String): String {
+    private fun getJsonString(url: String, accessToken: String): List<SubRouteData> {
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -79,18 +81,28 @@ object Route_filter {
             } else {
                 responseBody.string()
             }
-            // Parse JSON and extract titles
-            val gson = Gson()
-            val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
-            val titles = StringBuilder()
-            for (jsonElement in jsonArray) {
-                val jsonObject = jsonElement.asJsonObject
-                val title = jsonObject.get("Title").asString
-                titles.append(title).append("\n\n")
+
+            val objectMapper = ObjectMapper()
+            val jsonNodes = objectMapper.readTree(jsonString)
+
+            val subRouteDataMap = mutableMapOf<String, Pair<String, String>>()
+
+            jsonNodes.forEach { routeNode ->
+                val subRoutesNode = routeNode.get("SubRoutes")
+                subRoutesNode.forEach { subRouteNode ->
+                    val subRouteID = subRouteNode.get("SubRouteID").asText()
+                    val subRouteName = subRouteNode.get("SubRouteName").get("Zh_tw").asText()
+                    val headsign = subRouteNode.get("Headsign").asText()
+                    subRouteDataMap[subRouteID] = Pair(subRouteName, headsign)
+                }
             }
-            return titles.toString()
 
-
+            return subRouteDataMap.values.map { SubRouteData(it.first, it.second) }
+        }
+    }
+    private fun formatSubRouteData(subRouteDataList: List<SubRouteData>): String {
+        return subRouteDataList.joinToString(separator = "\n") { subRouteData ->
+            "${subRouteData.subRouteName}\n${subRouteData.headsign}\n\n"
         }
     }
 }

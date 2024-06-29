@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -25,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RouteActivity3 : ComponentActivity() {
+class StopActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,19 +39,19 @@ class RouteActivity3 : ComponentActivity() {
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val routeResultJson = Route_schedule.main()
+                            val routeResultJson = ArroundStop.main()
                             withContext(Dispatchers.Main) {
                                 routeResult.value = routeResultJson
                             }
                         } catch (e: Exception) {
-                            Log.e("RouteActivity3", "Error fetching route data: ${e.message}", e)
+                            Log.e("StopActivity", "Error fetching route data: ${e.message}", e)
                             withContext(Dispatchers.Main) {
                                 routeResult.value = "Error fetching route data: ${e.message}"
                             }
                         }
                     }
 
-                    ScrollableContent4(routeResult.value)
+                    ScrollableContent7(routeResult.value)
                 }
             }
         }
@@ -60,7 +59,7 @@ class RouteActivity3 : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent4(routeResult: String) {
+fun ScrollableContent7(routeResult: String) {
     Column(
         modifier = Modifier
             .padding(8.dp)

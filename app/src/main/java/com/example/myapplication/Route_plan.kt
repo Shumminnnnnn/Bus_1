@@ -3,21 +3,24 @@ package com.example.myapplication
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import okhttp3.*
-import java.io.IOException
-import java.util.concurrent.TimeUnit
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okio.GzipSource
 import okio.buffer
-data class RouteData(val departureStopNameZh: String, val destinationStopNameZh: String, val routeMapImageUrl: String)
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
-object Route_depdes {
-    suspend fun main(): RouteData {
+object Route_plan {
+    suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/155?%24format=JSON"
-        val clientId = "s11026310-7c639d60-e149-4847" // clientId
-        val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6" // clientSecret
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/RouteFare/City/Taoyuan/155?%24top=30&%24format=JSON"
+        val clientId = "11026349-b9820ce1-cd51-4721" // clientId
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -27,6 +30,7 @@ object Route_depdes {
         val accessToken: String = tokenElem.get("access_token").asText()
         return withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
     }
+
     @Throws(IOException::class)
     private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
@@ -51,8 +55,9 @@ object Route_depdes {
             return response.body?.string() ?: throw IOException("Empty response body")
         }
     }
+
     @Throws(IOException::class)
-    private fun getJsonString(url: String, accessToken: String): RouteData {
+    private fun getJsonString(url: String, accessToken: String): String {
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -77,14 +82,34 @@ object Route_depdes {
                 responseBody.string()
             }
 
-            val objectMapper = ObjectMapper()
-            val jsonNodes = objectMapper.readTree(jsonString)
-            val departureStopNameZh = jsonNodes[0]["DepartureStopNameZh"].asText()
-            val destinationStopNameZh = jsonNodes[0]["DestinationStopNameZh"].asText()
-            val routeMapImageUrl = jsonNodes[0]["RouteMapImageUrl"].asText()
+            // Parse JSON and extract information
+            val gson = Gson()
+            val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
+            val result = StringBuilder()
+            val priceCountMap = mutableMapOf<Int, Int>()
 
-            return RouteData(departureStopNameZh, destinationStopNameZh, routeMapImageUrl)
+            // Count occurrences of each price
+            for (jsonElement in jsonArray) {
+                val jsonObject = jsonElement.asJsonObject
+                val odFares = jsonObject.getAsJsonArray("ODFares")
+                for (odFare in odFares) {
+                    val fares = odFare.asJsonObject.getAsJsonArray("Fares")
+                    for (fare in fares) {
+                        val price = fare.asJsonObject.get("Price").asInt
+                        priceCountMap[price] = priceCountMap.getOrDefault(price, 0) + 1
+                    }
+                }
+            }
+
+            // Find price with the maximum occurrence
+            val maxPrice = priceCountMap.maxByOrNull { it.value }?.key
+
+            // Display prices
+            if (maxPrice != null) {
+                result.append("全程一段票($maxPrice 元)\n")
+            }
+
+            return result.toString()
         }
     }
 }
-

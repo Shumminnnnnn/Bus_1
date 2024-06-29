@@ -70,7 +70,7 @@ object Route_arrivetime {
                         // 加上8小時配合台灣時區
                         val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Taipei"))
                         calendar.time = date
-                        calendar.add(Calendar.HOUR, 8)
+                        // calendar.add(Calendar.HOUR, 8)
                         val adjustedDate = calendar.time
 
                         targetFormat.format(adjustedDate)
@@ -87,7 +87,7 @@ object Route_arrivetime {
                             else -> "$stopName (${estimateTime / 60} 分鐘)"
                         }
                     }
-                    1 -> nextBusTimeFormatted?.let { "$stopName ($it)" } ?: "$stopName (已過站)"
+                    1 -> nextBusTimeFormatted?.let { "$stopName ($it)" } ?: "$stopName (無資料)"
                     else -> "$stopName (末班駛離)"  // else代表stopStatus的值為3
                 }
 

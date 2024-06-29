@@ -78,7 +78,7 @@ object Route_schedule {
                 responseBody.string()
             }
 
-            // Parse the JSON string
+
             val objectMapper = ObjectMapper()
             val jsonArray = objectMapper.readTree(jsonString)
 

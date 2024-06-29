@@ -31,6 +31,9 @@
         <activity android:name=".RouteActivity3"/>
         <activity android:name=".RouteActivity4"/>
         <activity android:name=".RouteActivity5"/>
+        <activity android:name=".StopActivity"/>
+        <activity android:name=".RouteFilter"/>
+        <activity android:name=".PlanActivity"/>
 
     </application>
 
