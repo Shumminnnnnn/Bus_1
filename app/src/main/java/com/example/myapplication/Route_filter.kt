@@ -14,10 +14,9 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 data class SubRouteData(val subRouteName: String, val headsign: String)
 object Route_filter {
-    suspend fun main(): String {
+    suspend fun main(routeNumber: String): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/15?%24format=JSON"
-
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/$routeNumber?%24format=JSON"
         val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
         val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
 
