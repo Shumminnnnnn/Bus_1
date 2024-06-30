@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=%2024.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=2024-06-30T17%3A00%3A00&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
+        val tdxUrl = "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=%2024.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=2024-06-30T19%3A00%3A00&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
         val clientId = "s11026310-7c639d60-e149-4847"
         val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6"
 
@@ -99,14 +99,14 @@ object Route_plan {
 
         val sb = StringBuilder()
         for (route in routes) {
-            val startTime = route.get("start_time").asText().split("T").getOrNull(1) ?: "N/A"
-            val endTime = route.get("end_time").asText().split("T").getOrNull(1) ?: "N/A"
+            val startTime = route.get("start_time").asText().split("T").getOrNull(1)?.substring(0, 5) ?: "N/A"
+            val endTime = route.get("end_time").asText().split("T").getOrNull(1)?.substring(0, 5) ?: "N/A"
             val travelTime = route.get("travel_time").asInt() / 60
             val totalPrice = route.get("total_price").asText()
 
             sb.append("$startTime - $endTime ")
-                .append("($travelTime 分鐘)                 ")
-                .append("總車資: $totalPrice\n\n")
+                .append("($travelTime 分鐘)                       ")
+                .append("車資: $totalPrice\n\n")
 
             val sections = route.path("sections")
             for (section in sections) {
@@ -133,7 +133,7 @@ object Route_plan {
                         sb.append("($duration 分鐘)\n")
                         val departurePlace = section.path("departure").path("place")
                         val arrivalPlace = section.path("arrival").path("place")
-                        sb.append("起點站 > 終點站:")
+                        sb.append("起點站 > 終點站: ")
                         if (departurePlace.get("type").asText() == "station") {
                             sb.append("${departurePlace.get("name").asText()} > ")
                         }

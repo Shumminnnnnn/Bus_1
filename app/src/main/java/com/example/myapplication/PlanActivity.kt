@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,11 +60,18 @@ class PlanActivity : ComponentActivity() {
 
 @Composable
 fun ScrollableContent(tdxResult: String) {
+    val routes = tdxResult.split("\n\n\n")
+
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = tdxResult)
+        routes.forEachIndexed { index, route ->
+            Text(text = route)
+            if (index < routes.size - 1) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+        }
     }
 }
