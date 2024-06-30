@@ -34,7 +34,7 @@
         <activity android:name=".StopActivity"/>
         <activity android:name=".RouteFilter"/>
         <activity android:name=".PlanActivity"/>
-
+        <activity android:name=".StopFilter"/>
     </application>
 
 </manifest>

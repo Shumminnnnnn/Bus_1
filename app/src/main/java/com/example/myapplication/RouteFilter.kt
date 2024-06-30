@@ -64,7 +64,7 @@ class RouteFilter : ComponentActivity() {
                             OutlinedTextField(
                                 value = inputText,
                                 onValueChange = {},
-                                label = { Text("今天搭哪輛公車呢?") },
+                                label = { Text("今天想去哪裡呢?") },
                                 enabled = false,
                                 readOnly = true,
                                 modifier = Modifier
