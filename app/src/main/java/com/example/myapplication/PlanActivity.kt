@@ -34,9 +34,8 @@ class PlanActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val tdxResult = remember { mutableStateOf("Loading news data...") }
+                    val tdxResult = remember { mutableStateOf("Loading route data...") }
 
-                    // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val tdxResultJson = Route_plan.main()
@@ -44,27 +43,27 @@ class PlanActivity : ComponentActivity() {
                                 tdxResult.value = tdxResultJson
                             }
                         } catch (e: Exception) {
-                            Log.e("NewsActivity", "Error fetching TDX data: ${e.message}", e)
+                            Log.e("PlanActivity", "Error fetching TDX data: ${e.message}", e)
                             withContext(Dispatchers.Main) {
                                 tdxResult.value = "Error fetching TDX data: ${e.message}"
                             }
                         }
                     }
 
-                    ScrollableContent8(tdxResult.value)
+                    ScrollableContent(tdxResult.value)
                 }
             }
         }
     }
 }
+
 @Composable
-fun ScrollableContent8(tdxResult: String) {
+fun ScrollableContent(tdxResult: String) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = "最新消息:\n")
         Text(text = tdxResult)
     }
 }

@@ -44,7 +44,7 @@ class RouteActivity4 : ComponentActivity() {
 
             // Set up periodic data refresh
             while (isActive) {
-                delay(20000) // Wait for 30 seconds
+                delay(20000) // Wait for 20 seconds
                 fetchDataAndUpdate(routeInfo)
             }
         }

@@ -3,8 +3,6 @@ package com.example.myapplication
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -18,9 +16,9 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/RouteFare/City/Taoyuan/155?%24top=30&%24format=JSON"
-        val clientId = "11026349-b9820ce1-cd51-4721" // clientId
-        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
+        val tdxUrl = "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=%2024.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=2024-06-30T17%3A00%3A00&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
+        val clientId = "s11026310-7c639d60-e149-4847"
+        val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6"
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -72,7 +70,6 @@ object Route_plan {
             val responseBody = response.body ?: throw IOException("Empty response body")
 
             val jsonString = if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
-                // Decompress gzip data
                 responseBody.source().use { source ->
                     GzipSource(source).buffer().use { gzipBuffer ->
                         gzipBuffer.readUtf8()
@@ -82,34 +79,72 @@ object Route_plan {
                 responseBody.string()
             }
 
-            // Parse JSON and extract information
-            val gson = Gson()
-            val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
-            val result = StringBuilder()
-            val priceCountMap = mutableMapOf<Int, Int>()
+            return parseJson(jsonString)
+        }
+    }
 
-            // Count occurrences of each price
-            for (jsonElement in jsonArray) {
-                val jsonObject = jsonElement.asJsonObject
-                val odFares = jsonObject.getAsJsonArray("ODFares")
-                for (odFare in odFares) {
-                    val fares = odFare.asJsonObject.getAsJsonArray("Fares")
-                    for (fare in fares) {
-                        val price = fare.asJsonObject.get("Price").asInt
-                        priceCountMap[price] = priceCountMap.getOrDefault(price, 0) + 1
+    private fun parseJson(jsonString: String): String {
+        val objectMapper = ObjectMapper()
+        val rootNode = objectMapper.readTree(jsonString)
+
+        val result = rootNode.get("result").asText()
+        if (result != "success") {
+            return "Error: ${rootNode.get("message").asText()}"
+        }
+
+        val routes = rootNode.path("data").path("routes")
+        if (routes.isEmpty) {
+            return "No route planning results."
+        }
+
+        val sb = StringBuilder()
+        for (route in routes) {
+            val startTime = route.get("start_time").asText().split("T").getOrNull(1) ?: "N/A"
+            val endTime = route.get("end_time").asText().split("T").getOrNull(1) ?: "N/A"
+            val travelTime = route.get("travel_time").asInt() / 60
+            val totalPrice = route.get("total_price").asText()
+
+            sb.append("$startTime - $endTime ")
+                .append("($travelTime 分鐘)                 ")
+                .append("總車資: $totalPrice\n\n")
+
+            val sections = route.path("sections")
+            for (section in sections) {
+                when (section.get("type").asText()) {
+                    "pedestrian" -> {
+                        sb.append("步行到 ")
+                        val arrivalPlace = section.path("arrival").path("place")
+                        if (arrivalPlace.get("type").asText() == "station") {
+                            sb.append("${arrivalPlace.get("name").asText()} ")
+                        } else {
+                            val location = arrivalPlace.path("location")
+                            sb.append("lat:${location.get("lat").asDouble()}, lng: ${location.get("lng").asDouble()} ")
+                        }
+                        val duration = section.path("travelSummary").get("duration").asInt() / 60
+                        sb.append("($duration 分鐘)\n\n")
+                    }
+                    "transit" -> {
+                        sb.append("搭乘 ")
+                        val transport = section.path("transport")
+                        if (transport.get("mode").asText() == "Bus") {
+                            sb.append("${transport.get("name").asText()} ")
+                        }
+                        val duration = section.path("travelSummary").get("duration").asInt() / 60
+                        sb.append("($duration 分鐘)\n")
+                        val departurePlace = section.path("departure").path("place")
+                        val arrivalPlace = section.path("arrival").path("place")
+                        sb.append("起點站 > 終點站:")
+                        if (departurePlace.get("type").asText() == "station") {
+                            sb.append("${departurePlace.get("name").asText()} > ")
+                        }
+                        if (arrivalPlace.get("type").asText() == "station") {
+                            sb.append("${arrivalPlace.get("name").asText()}\n\n")
+                        }
                     }
                 }
             }
-
-            // Find price with the maximum occurrence
-            val maxPrice = priceCountMap.maxByOrNull { it.value }?.key
-
-            // Display prices
-            if (maxPrice != null) {
-                result.append("全程一段票($maxPrice 元)\n")
-            }
-
-            return result.toString()
+            sb.append("\n")
         }
+        return sb.toString()
     }
 }

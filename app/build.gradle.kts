@@ -61,7 +61,8 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.0")
+    implementation ("androidx.compose.foundation:foundation:1.6.8")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 

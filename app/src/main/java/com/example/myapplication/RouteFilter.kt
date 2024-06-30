@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -70,12 +71,33 @@ class RouteFilter : ComponentActivity() {
                                     .fillMaxWidth()
                                     .padding(8.dp)
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(text = routeResult.value, modifier = Modifier.padding(16.dp))
-                            Spacer(modifier = Modifier.height(16.dp)) // Add extra space to accommodate the keyboard
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Parse the result and display each item in a bordered box with centered text
+                            routeResult.value.split("\n\n").forEach { routeItem ->
+                                if (routeItem.isNotEmpty()) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(80.dp)
+                                            .border(1.dp, Color.Gray)
+                                            .padding(8.dp),
+                                        contentAlignment = Alignment.CenterStart
+                                    ) {
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                        ) {
+                                            routeItem.split("\n").forEach { line ->
+                                                Text(text = line)
+                                            }
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(200.dp)) // 路線資料底部和鍵盤的間隔，避免資料被鍵盤部分遮擋
                         }
 
-                        // Custom keyboard positioned at the bottom
                         CustomKeyboard(
                             onKeyPress = { key ->
                                 when (key) {
@@ -91,9 +113,9 @@ class RouteFilter : ComponentActivity() {
                             },
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .zIndex(1f) // Ensure the keyboard is above other content
-                                .background(Color(0xFF6650a4)) // Set the background color for the keyboard (purple)
-                                .height(200.dp) // Adjust the height of the keyboard
+                                .zIndex(1f) // 確保鍵盤在其他內容上
+                                .background(Color(0xFF6650a4)) // 鍵盤背景顏色
+                                .height(200.dp)
                         )
                     }
                 }
@@ -120,15 +142,15 @@ fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) 
                             onKeyPress(key)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White, // Background color
-                            contentColor = Color.Black // Text color
+                            containerColor = Color.White, // 鍵盤按鈕顏色
+                            contentColor = Color.Black // 鍵盤按鈕內文字顏色
                         ),
                         modifier = Modifier
-                            .padding(2.dp) // Adjust the padding to make buttons smaller
+                            .padding(2.dp)
                             .weight(1f)
-                            .height(40.dp) // Adjust the height of the buttons
+                            .height(40.dp)
                     ) {
-                        Text(text = key, fontSize = 14.sp) // Adjust the font size of the button text
+                        Text(text = key, fontSize = 14.sp)
                     }
                 }
             }
