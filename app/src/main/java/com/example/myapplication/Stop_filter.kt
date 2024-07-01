@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.GzipSource
 import okio.buffer
+import kotlin.math.*
 
 object Stop_filter {
     suspend fun main(url: String): String {
@@ -94,12 +95,24 @@ object Stop_filter {
             val markname = node.get("Markname")?.asText() ?: ""
             val geometry = node.get("Geometry")?.asText() ?: ""
             val coordinates = geometry.removePrefix("POINT (").removeSuffix(")").split(" ")
-            val longitude = coordinates.getOrNull(0) ?: ""
-            val latitude = coordinates.getOrNull(1) ?: ""
+            val longitude = coordinates.getOrNull(0)?.toDoubleOrNull() ?: continue
+            val latitude = coordinates.getOrNull(1)?.toDoubleOrNull() ?: continue
 
-            stringBuilder.append("$markname\n\n")
+            // Format longitude and latitude to five decimal places
+            val formattedLongitude = "%.5f".format(longitude)
+            val formattedLatitude = "%.5f".format(latitude)
+
+            // Define the range for longitude and latitude
+            val lonInRange = formattedLongitude.toDouble() in 121.04444..121.24815
+            val latInRange = formattedLatitude.toDouble() in 24.79667..25.01806
+
+            // Check if both longitude and latitude are within the specified ranges
+            if (lonInRange && latInRange) {
+                stringBuilder.append("$markname\n\n")
+            }
         }
 
         return stringBuilder.toString().trim()
     }
+
 }

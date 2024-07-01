@@ -17,8 +17,8 @@ object ArroundStop {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Station/City/Taoyuan?%24filter=StationPosition%2FPositionLat%20ge%2025.0094%20and%20StationPosition%2FPositionLat%20le%2025.0184%20and%20StationPosition%2FPositionLon%20ge%20121.22313%20and%20%20StationPosition%2FPositionLon%20le%20121.23213&%24format=JSON"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // your clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // your clientSecret
+        val clientId = "11026349-b9820ce1-cd51-4721" // your clientId
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // your clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

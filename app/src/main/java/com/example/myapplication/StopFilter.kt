@@ -91,28 +91,27 @@ class StopFilter : ComponentActivity() {
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
-                                // 如果结果不为空则显示
-                                stopResult.value?.let { result ->
-                                    result.split("\n\n").forEachIndexed { index, stopItem ->
-                                        if (stopItem.isNotEmpty()) {
-                                            Text(
-                                                text = stopItem,
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(8.dp),
-                                                fontSize = 16.sp
+                            // 如果结果不为空则显示
+                            stopResult.value?.let { result ->
+                                result.split("\n\n").forEachIndexed { index, stopItem ->
+                                    if (stopItem.isNotEmpty()) {
+                                        Text(
+                                            text = stopItem,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(8.dp),
+                                            fontSize = 16.sp
+                                        )
+                                        if (index < result.split("\n\n").size - 1) {
+                                            Divider(
+                                                color = Color.Gray,
+                                                thickness = 1.dp,
+                                                modifier = Modifier.padding(vertical = 8.dp)
                                             )
-                                            if (index < result.split("\n\n").size - 1) {
-                                                Divider(
-                                                    color = Color.Gray,
-                                                    thickness = 1.dp,
-                                                    modifier = Modifier.padding(vertical = 8.dp)
-                                                )
-                                            }
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(200.dp)) // 回传内容底部和键盘之间的距离，避免被遮挡
                                 }
+                                Spacer(modifier = Modifier.height(200.dp)) // 回传内容底部和键盘之间的距离，避免被遮挡
                             }
                         }
                     }
@@ -120,4 +119,4 @@ class StopFilter : ComponentActivity() {
             }
         }
     }
-
+}
