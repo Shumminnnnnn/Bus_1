@@ -12,7 +12,7 @@ import okio.GzipSource
 import okio.buffer
 import kotlin.math.*
 
-object Stop_filter {
+object Plan_filter {
     suspend fun main(url: String): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId

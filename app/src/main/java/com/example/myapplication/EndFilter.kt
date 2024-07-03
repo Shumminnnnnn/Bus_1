@@ -43,7 +43,7 @@ class EndFilter : ComponentActivity() {
                             try {
                                 val encodedStopNumber = URLEncoder.encode(stopNumber, StandardCharsets.UTF_8.toString())
                                 val url = "https://tdx.transportdata.tw/api/advanced/V3/Map/GeoCode/Coordinate/Markname/$encodedStopNumber?%24format=JSON"
-                                val stopResultJson = Stop_filter.main(url) // Pass dynamic URL
+                                val stopResultJson = Plan_filter.main(url) // Pass dynamic URL
                                 withContext(Dispatchers.Main) {
                                     isLoading = false
                                     if (stopResultJson.isNotBlank()) {

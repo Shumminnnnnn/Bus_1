@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -43,7 +44,7 @@ class BiginFilter : ComponentActivity() {
                             try {
                                 val encodedStopNumber = URLEncoder.encode(stopNumber, StandardCharsets.UTF_8.toString())
                                 val url = "https://tdx.transportdata.tw/api/advanced/V3/Map/GeoCode/Coordinate/Markname/$encodedStopNumber?%24format=JSON"
-                                val stopResultJson = Stop_filter.main(url) // Pass dynamic URL
+                                val stopResultJson = Plan_filter.main(url) // Pass dynamic URL
                                 withContext(Dispatchers.Main) {
                                     isLoading = false
                                     if (stopResultJson.isNotBlank()) {
@@ -89,6 +90,13 @@ class BiginFilter : ComponentActivity() {
                                 singleLine = true // Ensures that input field remains on one line
                             )
                             Spacer(modifier = Modifier.height(8.dp))
+
+//                            Button(onClick = {
+//                                val intent = Intent(this@BiginFilter, PlanFilter::class.java)
+//                                startActivity(intent)
+//                            }) {
+//                                Text("返回")
+//                            }
 
                             // 如果结果不为空则显示
                             stopResult.value?.let { result ->
