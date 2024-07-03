@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-class StopFilter : ComponentActivity() {
+class BiginFilter : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +82,7 @@ class StopFilter : ComponentActivity() {
                                         stopResult.value = lastStopResult.value // 如果搜尋欄位內容清空，仍保留上一次的回傳內容
                                     }
                                 },
-                                label = { Text("想搜尋哪個地點呢?") },
+                                label = { Text("請輸入起點") },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp),

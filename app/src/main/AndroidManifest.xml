@@ -35,6 +35,10 @@
         <activity android:name=".RouteFilter"/>
         <activity android:name=".PlanActivity"/>
         <activity android:name=".StopFilter"/>
+        <activity android:name=".PlanFilter"/>
+        <activity android:name=".BiginFilter"/>
+        <activity android:name=".EndFilter"/>
+
     </application>
 
 </manifest>
