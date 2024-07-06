@@ -70,7 +70,6 @@ fun ScrollableContent3(tdxResult: String) {
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = "最新消息:\n")
         Text(text = tdxResult)
     }
 }

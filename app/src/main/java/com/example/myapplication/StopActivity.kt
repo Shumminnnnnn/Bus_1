@@ -1,11 +1,13 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +36,7 @@ class StopActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val routeResult = remember { mutableStateOf("Loading route schedule data...") }
+                    val currentLocation = remember { mutableStateOf("所在位置:") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
@@ -50,7 +53,15 @@ class StopActivity : ComponentActivity() {
                         }
                     }
 
-                    ScrollableContent7(routeResult.value)
+                    ScrollableContent7(
+                        routeResult = routeResult.value,
+                        currentLocation = currentLocation.value,
+                        onLocationClick = {
+                            // Handle location click to navigate to StopFilter
+                            val intent = Intent(this@StopActivity, StopFilter::class.java)
+                            startActivity(intent)
+                        }
+                    )
                 }
             }
         }
@@ -58,12 +69,31 @@ class StopActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent7(routeResult: String) {
+fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationClick: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        // Add clickable box at the top with left-aligned text
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .border(1.dp, Color.Gray)
+                .clickable(onClick = onLocationClick)
+                .padding(8.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                text = currentLocation,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.align(Alignment.CenterStart) // Align text to the left
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         if (routeResult == "Loading route schedule data...") {
             Text(text = routeResult, modifier = Modifier.padding(16.dp))
         } else {
