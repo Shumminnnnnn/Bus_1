@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -81,7 +82,12 @@ class RouteFilter : ComponentActivity() {
                                             .fillMaxWidth()
                                             .height(80.dp)
                                             .border(1.dp, Color.Gray)
-                                            .padding(8.dp),
+                                            .padding(8.dp)
+                                            .clickable {
+                                                // Handle the click event here
+                                                // For example, you can call a function or navigate to another screen
+                                                Log.d("RouteFilter", "Clicked on: $routeItem")
+                                            },
                                         contentAlignment = Alignment.CenterStart
                                     ) {
                                         Column(

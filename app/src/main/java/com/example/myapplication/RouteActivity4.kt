@@ -72,7 +72,8 @@ class RouteActivity4 : ComponentActivity() {
 
             )
         }
-    }override fun onBackPressed() {
+    }
+    override fun onBackPressed() {
         super.onBackPressed()
         // 導向主畫面
         finish()

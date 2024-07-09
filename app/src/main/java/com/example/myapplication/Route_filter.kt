@@ -12,7 +12,9 @@ import okio.GzipSource
 import okio.buffer
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+
 data class SubRouteData(val subRouteName: String, val headsign: String)
+
 object Route_filter {
     suspend fun main(routeNumber: String): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
@@ -26,11 +28,17 @@ object Route_filter {
         val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
-        val subRouteDataList = withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
+        val jsonString = withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
 
-        // 格式化 subRouteDataList 為字符串
-        return formatSubRouteData(subRouteDataList)
+        // Check if the result contains a special message for empty routes
+        return if (jsonString.contains("沒有此路線，請重新輸入")) {
+            jsonString
+        } else {
+            // Format the subRouteDataList as a string
+            formatSubRouteData(parseSubRouteData(jsonString))
+        }
     }
+
     @Throws(IOException::class)
     private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
@@ -55,8 +63,9 @@ object Route_filter {
             return response.body?.string() ?: throw IOException("Empty response body")
         }
     }
+
     @Throws(IOException::class)
-    private fun getJsonString(url: String, accessToken: String): List<SubRouteData> {
+    private fun getJsonString(url: String, accessToken: String): String {
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -84,21 +93,35 @@ object Route_filter {
             val objectMapper = ObjectMapper()
             val jsonNodes = objectMapper.readTree(jsonString)
 
-            val subRouteDataMap = mutableMapOf<String, Pair<String, String>>()
+            val subRoutesNode = jsonNodes.get(0)?.get("SubRoutes")
 
-            jsonNodes.forEach { routeNode ->
-                val subRoutesNode = routeNode.get("SubRoutes")
-                subRoutesNode.forEach { subRouteNode ->
-                    val subRouteID = subRouteNode.get("SubRouteID").asText()
-                    val subRouteName = subRouteNode.get("SubRouteName").get("Zh_tw").asText()
-                    val headsign = subRouteNode.get("Headsign").asText()
-                    subRouteDataMap[subRouteID] = Pair(subRouteName, headsign)
-                }
+            return if (subRoutesNode == null || subRoutesNode.isEmpty) {
+                // Return a special message if SubRoutes is empty
+                "沒有此路線，請重新輸入"
+            } else {
+                jsonString
             }
-
-            return subRouteDataMap.values.map { SubRouteData(it.first, it.second) }
         }
     }
+
+    private fun parseSubRouteData(jsonString: String): List<SubRouteData> {
+        val objectMapper = ObjectMapper()
+        val jsonNodes = objectMapper.readTree(jsonString)
+        val subRouteDataMap = mutableMapOf<String, Pair<String, String>>()
+
+        jsonNodes.forEach { routeNode ->
+            val subRoutesNode = routeNode.get("SubRoutes")
+            subRoutesNode.forEach { subRouteNode ->
+                val subRouteID = subRouteNode.get("SubRouteID").asText()
+                val subRouteName = subRouteNode.get("SubRouteName").get("Zh_tw").asText()
+                val headsign = subRouteNode.get("Headsign").asText()
+                subRouteDataMap[subRouteID] = Pair(subRouteName, headsign)
+            }
+        }
+
+        return subRouteDataMap.values.map { SubRouteData(it.first, it.second) }
+    }
+
     private fun formatSubRouteData(subRouteDataList: List<SubRouteData>): String {
         return subRouteDataList.joinToString(separator = "\n") { subRouteData ->
             "${subRouteData.subRouteName}\n${subRouteData.headsign}\n"
