@@ -76,8 +76,9 @@ class RouteFilter : ComponentActivity() {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             // Parse the result and display each item in a bordered box with centered text
-                            routeResult.value.split("\n").forEach { routeItem ->
-                                if (routeItem.isNotEmpty()) {
+                            routeResult.value.split("\n").chunked(2).forEach { routeItem ->
+                                if (routeItem.size == 2) {
+                                    val (subRouteName, headsign) = routeItem
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -87,17 +88,24 @@ class RouteFilter : ComponentActivity() {
                                             .clickable {
                                                 // Navigate to RouteActivity4 with subRouteName as extra
                                                 val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
-                                                intent.putExtra("subRouteName", routeItem)
+                                                intent.putExtra("subRouteName", subRouteName)
                                                 startActivity(intent)
-                                                Log.d("RouteFilter", "Navigating to RouteActivity4 with: $routeItem")
+                                                Log.d("RouteFilter", "Navigating to RouteActivity4 with: $subRouteName")
                                             },
                                         contentAlignment = Alignment.CenterStart
                                     ) {
-                                        Text(
-                                            text = routeItem,
-                                            fontSize = 16.sp,
-                                            color = Color.Black
-                                        )
+                                        Column {
+                                            Text(
+                                                text = subRouteName,
+                                                fontSize = 16.sp,
+                                                color = Color.Black
+                                            )
+                                            Text(
+                                                text = headsign,
+                                                fontSize = 14.sp,
+                                                color = Color.Gray
+                                            )
+                                        }
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
@@ -130,8 +138,6 @@ class RouteFilter : ComponentActivity() {
         }
     }
 }
-
-
 
 @Composable
 fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) {

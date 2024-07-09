@@ -124,7 +124,7 @@ object Route_filter {
 
     private fun formatSubRouteData(subRouteDataList: List<SubRouteData>): String {
         return subRouteDataList.joinToString(separator = "\n") { subRouteData ->
-            subRouteData.subRouteName
+            "${subRouteData.subRouteName}\n${subRouteData.headsign}"
         }
     }
 }
