@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,18 +36,16 @@ class StopActivity : ComponentActivity() {
                     val routeResult = remember { mutableStateOf("Loading route schedule data...") }
                     val currentLocation = remember { mutableStateOf("所在位置:") }
 
-                    // Launch Coroutines
-                    CoroutineScope(Dispatchers.IO).launch {
+                    val latitude = intent.getDoubleExtra("latitude", 0.0)
+                    val longitude = intent.getDoubleExtra("longitude", 0.0)
+
+                    LaunchedEffect(latitude, longitude) {
                         try {
-                            val routeResultJson = ArroundStop.main()
-                            withContext(Dispatchers.Main) {
-                                routeResult.value = routeResultJson
-                            }
+                            val routeResultJson = ArroundStop.fetchStopData(latitude, longitude)
+                            routeResult.value = routeResultJson
                         } catch (e: Exception) {
                             Log.e("StopActivity", "Error fetching route data: ${e.message}", e)
-                            withContext(Dispatchers.Main) {
-                                routeResult.value = "Error fetching route data: ${e.message}"
-                            }
+                            routeResult.value = "Error fetching route data: ${e.message}"
                         }
                     }
 
@@ -57,7 +53,6 @@ class StopActivity : ComponentActivity() {
                         routeResult = routeResult.value,
                         currentLocation = currentLocation.value,
                         onLocationClick = {
-                            // Handle location click to navigate to StopFilter
                             val intent = Intent(this@StopActivity, StopFilter::class.java)
                             startActivity(intent)
                         }
@@ -68,6 +63,7 @@ class StopActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationClick: () -> Unit) {
     Column(
@@ -75,7 +71,6 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Add clickable box at the top with left-aligned text
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,7 +83,7 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
             Text(
                 text = currentLocation,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.CenterStart) // Align text to the left
+                modifier = Modifier.align(Alignment.CenterStart)
             )
         }
 
@@ -97,7 +92,6 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
         if (routeResult == "Loading route schedule data...") {
             Text(text = routeResult, modifier = Modifier.padding(16.dp))
         } else {
-            // Parse the result and display each item in a bordered box with centered text
             routeResult.split("\n\n").forEach { routeItem ->
                 if (routeItem.isNotEmpty()) {
                     Box(
@@ -122,3 +116,4 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
         }
     }
 }
+

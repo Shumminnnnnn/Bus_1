@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.util.Log
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -14,24 +15,36 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 data class StopData(val stopName: String, val routeNames: List<String>)
-object ArroundStop {
-    suspend fun main(): String {
-        val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        //緯度0.0018度等於200公尺，經度0.0019等於200公尺
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Station/City/Taoyuan?%24filter=StationPosition%2FPositionLat%20ge%2025.0094%20and%20StationPosition%2FPositionLat%20le%2025.0184%20and%20StationPosition%2FPositionLon%20ge%20121.22313%20and%20%20StationPosition%2FPositionLon%20le%20121.23213&%24format=JSON"
-        val clientId = "11026349-b9820ce1-cd51-4721" // your clientId
-        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // your clientSecret
 
-        val objectMapper = ObjectMapper()
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+object ArroundStop {
+
+    suspend fun fetchStopData(latitude: Double, longitude: Double): String {
+        val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
+        val tdxUrl = createUrlWithCoordinates(latitude, longitude)
+        val clientId = "11026349-b9820ce1-cd51-4721"
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c"
+
+        val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
+        Log.d("ArroundStop", "Access Token: $accessToken") // Debug log
         val stopDataList = withContext(Dispatchers.IO) { getStopString(tdxUrl, accessToken) }
+        Log.d("ArroundStop", "Stop Data List: $stopDataList") // Debug log
 
-        // 將 stopDataList 格式化為字符串
         return formatStopData(stopDataList)
+    }
+
+    fun createUrlWithCoordinates(latitude: Double, longitude: Double): String {
+        val latRange = 0.0018
+        val lonRange = 0.0019
+        val minLat = latitude - latRange
+        val maxLat = latitude + latRange
+        val minLon = longitude - lonRange
+        val maxLon = longitude + lonRange
+
+        return "https://tdx.transportdata.tw/api/basic/v2/Bus/Station/City/Taoyuan?%24filter=StationPosition%2FPositionLat%20ge%20$minLat%20and%20StationPosition%2FPositionLat%20le%20$maxLat%20and%20StationPosition%2FPositionLon%20ge%20$minLon%20and%20%20StationPosition%2FPositionLon%20le%20$maxLon&%24format=JSON"
     }
 
     @Throws(IOException::class)
@@ -75,7 +88,6 @@ object ArroundStop {
             val responseBody = response.body ?: throw IOException("Empty response body")
 
             val jsonString = if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
-                // Decompress gzip data
                 responseBody.source().use { source ->
                     GzipSource(source).buffer().use { gzipBuffer ->
                         gzipBuffer.readUtf8()
@@ -85,7 +97,6 @@ object ArroundStop {
                 responseBody.string()
             }
 
-            // 解析 JSON 並返回所需的數據
             val objectMapper = ObjectMapper()
             val jsonNodes = objectMapper.readTree(jsonString)
 
@@ -94,7 +105,6 @@ object ArroundStop {
             jsonNodes.forEach { stationNode ->
                 val stopsNode = stationNode.get("Stops")
                 if (stopsNode.isEmpty) {
-                    // 如果 Stops 為空，添加特殊條目
                     stopDataMap["附近200公尺內無站牌!"] = mutableSetOf()
                 } else {
                     stopsNode.forEach { stopNode ->

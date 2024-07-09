@@ -10,10 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.GzipSource
 import okio.buffer
-import kotlin.math.*
+
+data class StopInfo(val markname: String, val formattedLongitude: String, val formattedLatitude: String)
 
 object Stop_filter {
-    suspend fun main(url: String): String {
+    suspend fun main(url: String): List<StopInfo> {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
         val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
@@ -82,13 +83,13 @@ object Stop_filter {
         }
     }
 
-    private fun parseJson(jsonString: String): String {
+    private fun parseJson(jsonString: String): List<StopInfo> {
         val objectMapper = ObjectMapper()
         val rootNode = objectMapper.readTree(jsonString)
-        val stringBuilder = StringBuilder()
+        val stopInfoList = mutableListOf<StopInfo>()
 
         if (rootNode.isEmpty) {
-            return "查無此地點資料，請重新輸入地點"
+            return emptyList()
         }
 
         for (node in rootNode) {
@@ -108,10 +109,11 @@ object Stop_filter {
 
             // Check if both longitude and latitude are within the specified ranges
             if (lonInRange && latInRange) {
-                stringBuilder.append("$markname\n\n")
+                stopInfoList.add(StopInfo(markname, formattedLongitude, formattedLatitude))
             }
         }
 
-        return stringBuilder.toString().trim()
+        return stopInfoList
     }
 }
+
