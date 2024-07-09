@@ -69,9 +69,9 @@ fun ScrollableContent4(routeResult: String) {
             .verticalScroll(rememberScrollState())
     ) {
         parts.forEachIndexed { index, part ->
-            Text(text = part, modifier = Modifier.padding(16.dp))
+            Text(text = part, modifier = Modifier.padding(8.dp))
             if (index < parts.size - 1) {
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                Divider(modifier = Modifier.padding(vertical = 5.dp))
             }
         }
     }

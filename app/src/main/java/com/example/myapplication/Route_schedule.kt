@@ -100,7 +100,7 @@ object Route_schedule {
                     result.append("<<DIVIDER>>")
                 }
 
-                result.append("方向: ").append(directionLabel).append("\n")
+                result.append("方向: ").append(directionLabel).append("\n\n")
 
                 val holidayTimetables = timetables.filter {
                     it["ServiceDay"]["Sunday"].asInt() == 1 || it["ServiceDay"]["Saturday"].asInt() == 1
