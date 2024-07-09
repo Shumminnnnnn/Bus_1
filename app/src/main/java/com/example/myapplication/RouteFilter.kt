@@ -86,7 +86,8 @@ class RouteFilter : ComponentActivity() {
                                             .border(1.dp, Color.Gray)
                                             .padding(8.dp)
                                             .clickable {
-                                                // Navigate to RouteActivity4 with subRouteName as extra
+                                                // Set the subRouteName in Route_depdes and navigate to RouteActivity4
+                                                Route_depdes.subRouteName = subRouteName
                                                 val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
                                                 intent.putExtra("subRouteName", subRouteName)
                                                 startActivity(intent)

@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -61,11 +61,18 @@ class RouteActivity3 : ComponentActivity() {
 
 @Composable
 fun ScrollableContent4(routeResult: String) {
+    val parts = routeResult.split("<<DIVIDER>>") // Split the result into parts at the divider markers
+
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text(text = routeResult, modifier = Modifier.padding(16.dp))
+        parts.forEachIndexed { index, part ->
+            Text(text = part, modifier = Modifier.padding(16.dp))
+            if (index < parts.size - 1) {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+        }
     }
 }

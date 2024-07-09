@@ -29,7 +29,7 @@ object Route_arrivetime {
         val accessToken: String = tokenElem.get("access_token").asText()
 
         // Call with correct parameters
-        val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken) }
+        val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken,subRouteName) }
         val arrivalTimeInfoDirection0 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 0) }
         val arrivalTimeInfoDirection1 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 1) }
 
@@ -101,8 +101,8 @@ object Route_arrivetime {
         }
     }
 
-    private suspend fun getRouteDepDesInfo(accessToken: String): String {
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/155?%24format=JSON"
+    private suspend fun getRouteDepDesInfo(accessToken: String, subRouteName: String): String {
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/$subRouteName?%24format=JSON"
         return getJsonString(tdxUrl, accessToken) { jsonString ->
             val objectMapper = ObjectMapper()
             val jsonNodes = objectMapper.readTree(jsonString)

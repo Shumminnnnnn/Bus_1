@@ -14,7 +14,7 @@ import okio.buffer
 object Route_schedule {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Schedule/City/Taoyuan/156?%24top=30&%24format=JSON"
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Schedule/City/Taoyuan/${Route_depdes.subRouteName}?%24top=30&%24format=JSON"
         val clientId = "11026349-b9820ce1-cd51-4721" // clientId
         val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 
@@ -78,16 +78,30 @@ object Route_schedule {
                 responseBody.string()
             }
 
-
             val objectMapper = ObjectMapper()
             val jsonArray = objectMapper.readTree(jsonString)
 
             val result = StringBuilder()
+            var routeNameAppended = false
+
             for (route in jsonArray) {
                 val routeName = route["RouteName"]["Zh_tw"].asText()
-                result.append("路線名稱: ").append(routeName).append("\n\n")
+                if (!routeNameAppended) {
+                    result.append("路線名稱: ").append(routeName).append("\n\n")
+                    routeNameAppended = true
+                }
 
                 val timetables = route["Timetables"]
+                val direction = route["Direction"].asInt()
+                val directionLabel = if (direction == 0) "去程" else "返程"
+
+                // Append divider for return direction
+                if (direction == 1) {
+                    result.append("<<DIVIDER>>")
+                }
+
+                result.append("方向: ").append(directionLabel).append("\n")
+
                 val holidayTimetables = timetables.filter {
                     it["ServiceDay"]["Sunday"].asInt() == 1 || it["ServiceDay"]["Saturday"].asInt() == 1
                 }.sortedBy { it["TripID"].asText().replace("-", "").toInt() }
@@ -124,7 +138,6 @@ object Route_schedule {
                     result.append("\n")
                 }
             }
-
             return result.toString()
         }
     }

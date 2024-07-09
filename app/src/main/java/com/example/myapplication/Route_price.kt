@@ -16,7 +16,7 @@ import okio.buffer
 object Route_price {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/RouteFare/City/Taoyuan/155?%24top=30&%24format=JSON"
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/RouteFare/City/Taoyuan/${Route_depdes.subRouteName}?%24top=30&%24format=JSON"
         val clientId = "11026349-b9820ce1-cd51-4721" // clientId
         val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 

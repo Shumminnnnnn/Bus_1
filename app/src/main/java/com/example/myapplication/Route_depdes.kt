@@ -10,12 +10,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.GzipSource
 import okio.buffer
+
 data class RouteData(val departureStopNameZh: String, val destinationStopNameZh: String, val routeMapImageUrl: String)
 
 object Route_depdes {
+    var subRouteName: String = ""
+
     suspend fun main(): RouteData {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/155?%24format=JSON"
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/$subRouteName?%24format=JSON"
         val clientId = "s11026310-7c639d60-e149-4847" // clientId
         val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6" // clientSecret
 
@@ -27,6 +30,7 @@ object Route_depdes {
         val accessToken: String = tokenElem.get("access_token").asText()
         return withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
     }
+
     @Throws(IOException::class)
     private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
@@ -51,6 +55,7 @@ object Route_depdes {
             return response.body?.string() ?: throw IOException("Empty response body")
         }
     }
+
     @Throws(IOException::class)
     private fun getJsonString(url: String, accessToken: String): RouteData {
         val client = OkHttpClient()
