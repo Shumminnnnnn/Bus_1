@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -84,9 +85,10 @@ class RouteFilter : ComponentActivity() {
                                             .border(1.dp, Color.Gray)
                                             .padding(8.dp)
                                             .clickable {
-                                                // Handle the click event here
-                                                // For example, you can call a function or navigate to another screen
-                                                Log.d("RouteFilter", "Clicked on: $routeItem")
+                                                // Navigate to RouteActivity4
+                                                val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
+                                                startActivity(intent)
+                                                Log.d("RouteFilter", "Navigating to RouteActivity4 with: $routeItem")
                                             },
                                         contentAlignment = Alignment.CenterStart
                                     ) {
@@ -129,6 +131,7 @@ class RouteFilter : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) {
