@@ -76,7 +76,7 @@ class StopFilter : ComponentActivity() {
                             stopResults.value?.let { resultList ->
                                 resultList.forEach { stopInfo ->
                                     Text(
-                                        text = "名稱: ${stopInfo.markname}\n經度: ${stopInfo.formattedLongitude}\n緯度: ${stopInfo.formattedLatitude}",
+                                        text = "${stopInfo.markname}\n",
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
