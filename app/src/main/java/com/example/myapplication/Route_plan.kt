@@ -11,22 +11,56 @@ import okhttp3.Request
 import okio.GzipSource
 import okio.buffer
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object Route_plan {
+    private var formattedDate: String = ""
+    private var staticTime: String = ""
+
+    init {
+        // Get current time and format it once at initialization
+        val currentTime = Calendar.getInstance().time
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        formattedDate = dateFormatter.format(currentTime)
+
+        // Compute static time as HH:mm:ss plus 1 minute
+        val calendar = Calendar.getInstance()
+        calendar.time = currentTime
+        calendar.add(Calendar.MINUTE, 1) // Add 1 minute
+
+        val timeFormatterWithMinute = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        staticTime = timeFormatterWithMinute.format(calendar.time)
+    }
+
     suspend fun main(): String {
-        val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val tdxUrl = "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=%2024.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=2024-07-03T18%3A00%3A00&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
-        val clientId = "s11026310-7c639d60-e149-4847"
-        val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6"
+        return try {
+            val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
+            val clientId = "s11026310-7c639d60-e149-4847"
+            val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6"
 
-        val objectMapper = ObjectMapper()
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            val objectMapper = ObjectMapper()
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-        val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
-        val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
-        val accessToken: String = tokenElem.get("access_token").asText()
-        return withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
+            val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
+            val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
+            val accessToken: String = tokenElem.get("access_token").asText()
+
+            // Construct TDX URL with static formatted time
+            val tdxUrl = constructTdxUrl()
+
+            withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
+        } catch (e: Exception) {
+            "Error: ${e.message}"
+        }
+    }
+
+    private fun constructTdxUrl(): String {
+        // Format time as HH:mm:ss and URL encode it
+        val timeFormatted = staticTime.replace(":", "%3A")
+        return "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=24.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=${formattedDate}T${timeFormatted}&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
     }
 
     @Throws(IOException::class)
