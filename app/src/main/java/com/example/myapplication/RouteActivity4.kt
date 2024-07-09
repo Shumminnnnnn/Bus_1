@@ -23,15 +23,20 @@ import kotlinx.coroutines.*
 class RouteActivity4 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Retrieve subRouteName from Intent extras if needed
+        val subRouteName = intent.getStringExtra("subRouteName") ?: "DefaultSubRouteName"
+
         setContent {
             MyApplicationTheme {
-                RouteActivityContent()
+                RouteActivityContent(subRouteName)
             }
         }
     }
 
+
     @Composable
-    fun RouteActivityContent() {
+    fun RouteActivityContent(subRouteName: String) {
         val routeInfo = remember { mutableStateOf<RouteInfo?>(null) }
         val currentDirection = remember { mutableStateOf(0) }
 
@@ -40,12 +45,12 @@ class RouteActivity4 : ComponentActivity() {
         // Effect to launch coroutine for fetching data every 30 seconds
         LaunchedEffect(true) {
             // Initially fetch data
-            fetchDataAndUpdate(routeInfo)
+            fetchDataAndUpdate(routeInfo, subRouteName)
 
             // Set up periodic data refresh
             while (isActive) {
                 delay(20000) // Wait for 20 seconds
-                fetchDataAndUpdate(routeInfo)
+                fetchDataAndUpdate(routeInfo, subRouteName)
             }
         }
 
@@ -69,24 +74,27 @@ class RouteActivity4 : ComponentActivity() {
                     val intent = Intent(this@RouteActivity4, RouteActivity3::class.java)
                     startActivity(intent)
                 }
-
             )
         }
     }
+
+
     override fun onBackPressed() {
         super.onBackPressed()
-        // 導向主畫面
+        // Navigate to the main screen
         finish()
     }
-    private suspend fun fetchDataAndUpdate(routeInfo: MutableState<RouteInfo?>) {
+
+    private suspend fun fetchDataAndUpdate(routeInfo: MutableState<RouteInfo?>, subRouteName: String) {
         try {
-            val routeResult = Route_arrivetime.main()
+            val routeResult = Route_arrivetime.main(subRouteName)
             routeInfo.value = routeResult
         } catch (e: Exception) {
             Log.e("RouteActivity4", "Error fetching route data: ${e.message}", e)
         }
     }
 }
+
 @Composable
 fun ScrollableContent5(
     routeInfo: RouteInfo?,
@@ -112,7 +120,7 @@ fun ScrollableContent5(
                     onClick = { onButtonClick(1) },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    // 在Direction等於0時，按鈕顯示routeDepDesInfo中的destinationStopNameZh
+                    // Display routeDepDesInfo's destinationStopNameZh when Direction is 0
                     val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
                     Text(text = "往 $departureStopNameZh")
                 }
@@ -124,7 +132,7 @@ fun ScrollableContent5(
                     onClick = { onButtonClick(0) },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    // 在Direction等於1時，按鈕顯示routeDepDesInfo中的departureStopNameZh
+                    // Display routeDepDesInfo's departureStopNameZh when Direction is 1
                     val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
                     Text(text = "往 $destinationStopNameZh")
                 }

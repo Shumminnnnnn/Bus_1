@@ -9,16 +9,14 @@ import okhttp3.*
 import okio.GzipSource
 import okio.buffer
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.Calendar
-import java.util.TimeZone
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 data class RouteInfo(val routeDepDesInfo: String, val arrivalTimeInfoDirection0: String, val arrivalTimeInfoDirection1: String)
 
 object Route_arrivetime {
-    suspend fun main(): RouteInfo {
+    suspend fun main(subRouteName: String): RouteInfo {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val clientId = "s11026310-7c639d60-e149-4847" // clientId
         val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6" // clientSecret
@@ -30,15 +28,18 @@ object Route_arrivetime {
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
 
+        // Call with correct parameters
         val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken) }
-        val arrivalTimeInfoDirection0 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, 0) }
-        val arrivalTimeInfoDirection1 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, 1) }
+        val arrivalTimeInfoDirection0 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 0) }
+        val arrivalTimeInfoDirection1 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 1) }
 
         return RouteInfo(routeDepDesInfo, arrivalTimeInfoDirection0, arrivalTimeInfoDirection1)
     }
 
-    private suspend fun getArrivalTimeInfo(accessToken: String, directionFilter: Int): String {
-        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taoyuan/155?%24format=JSON"
+    private suspend fun getArrivalTimeInfo(accessToken: String, subRouteName: String, directionFilter: Int): String {
+        // Update URL to use subRouteName
+        val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taoyuan/$subRouteName?%24format=JSON"
+
         return getJsonString(tdxUrl, accessToken) { jsonString ->
             val objectMapper = ObjectMapper()
             val jsonNodes = objectMapper.readTree(jsonString)
@@ -70,7 +71,6 @@ object Route_arrivetime {
                         // 加上8小時配合台灣時區
                         val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Taipei"))
                         calendar.time = date
-                        // calendar.add(Calendar.HOUR, 8)
                         val adjustedDate = calendar.time
 
                         targetFormat.format(adjustedDate)
@@ -100,6 +100,7 @@ object Route_arrivetime {
             result.toString()
         }
     }
+
     private suspend fun getRouteDepDesInfo(accessToken: String): String {
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/155?%24format=JSON"
         return getJsonString(tdxUrl, accessToken) { jsonString ->
@@ -113,6 +114,7 @@ object Route_arrivetime {
             result.toString()
         }
     }
+
     @Throws(IOException::class)
     private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
@@ -137,6 +139,7 @@ object Route_arrivetime {
             return response.body?.string() ?: throw IOException("Empty response body")
         }
     }
+
     @Throws(IOException::class)
     private fun getJsonString(url: String, accessToken: String, processJson: (String) -> String): String {
         val client = OkHttpClient()

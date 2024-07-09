@@ -76,7 +76,7 @@ class RouteFilter : ComponentActivity() {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             // Parse the result and display each item in a bordered box with centered text
-                            routeResult.value.split("\n\n").forEach { routeItem ->
+                            routeResult.value.split("\n").forEach { routeItem ->
                                 if (routeItem.isNotEmpty()) {
                                     Box(
                                         modifier = Modifier
@@ -85,20 +85,19 @@ class RouteFilter : ComponentActivity() {
                                             .border(1.dp, Color.Gray)
                                             .padding(8.dp)
                                             .clickable {
-                                                // Navigate to RouteActivity4
+                                                // Navigate to RouteActivity4 with subRouteName as extra
                                                 val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
+                                                intent.putExtra("subRouteName", routeItem)
                                                 startActivity(intent)
                                                 Log.d("RouteFilter", "Navigating to RouteActivity4 with: $routeItem")
                                             },
                                         contentAlignment = Alignment.CenterStart
                                     ) {
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                        ) {
-                                            routeItem.split("\n").forEach { line ->
-                                                Text(text = line)
-                                            }
-                                        }
+                                        Text(
+                                            text = routeItem,
+                                            fontSize = 16.sp,
+                                            color = Color.Black
+                                        )
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
@@ -131,6 +130,7 @@ class RouteFilter : ComponentActivity() {
         }
     }
 }
+
 
 
 @Composable
