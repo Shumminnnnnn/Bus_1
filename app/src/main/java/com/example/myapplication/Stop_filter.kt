@@ -104,8 +104,8 @@ object Stop_filter {
             val formattedLatitude = "%.4f".format(latitude)
 
             // Define the range for longitude and latitude
-            val lonInRange = formattedLongitude.toDouble() in 121.0444..121.2482
-            val latInRange = formattedLatitude.toDouble() in 24.7966..25.0181
+            val lonInRange = formattedLongitude.toDouble() in 120.9867..121.5040
+            val latInRange = formattedLatitude.toDouble() in 24.6324..25.1171
 
             // Check if both longitude and latitude are within the specified ranges
             if (lonInRange && latInRange) {
