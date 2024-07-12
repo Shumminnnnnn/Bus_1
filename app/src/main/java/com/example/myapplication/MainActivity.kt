@@ -64,20 +64,18 @@ class MainActivity : ComponentActivity() {
                             val intent = Intent(this@MainActivity, StopActivity::class.java)
                             startActivity(intent)
                         },
-//                        onButtonClick4 = {
-//                            val intent = Intent(this@MainActivity, RouteActivity4::class.java)
-//                            startActivity(intent)
-//                        },
+
                         onButtonClick5 = {
                             val intent = Intent(this@MainActivity, PlanActivity::class.java)
                             startActivity(intent)
                         },
-//                        onButtonClick6 = {
-//                            val intent = Intent(this@MainActivity, StopFilter::class.java)
-//                            startActivity(intent)
-//                        },
+
                         onButtonClick7 = {
                             val intent = Intent(this@MainActivity, PlanFilter::class.java)
+                            startActivity(intent)
+                        },
+                        onButtonClick8 = {
+                            val intent = Intent(this@MainActivity, TimeActivity::class.java)
                             startActivity(intent)
                         }
                     )
@@ -92,10 +90,9 @@ fun ScrollableContent(
     onButtonClick1: () -> Unit,
     onButtonClick2: () -> Unit,
     onButtonClick3: () -> Unit,
-//    onButtonClick4: () -> Unit,
     onButtonClick5: () -> Unit,
-//    onButtonClick6: () -> Unit,
-    onButtonClick7: () -> Unit
+    onButtonClick7: () -> Unit,
+    onButtonClick8: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -122,13 +119,6 @@ fun ScrollableContent(
             Text(text = "附近站牌")
         }
 
-//        Button(
-//            onClick = onButtonClick4,
-//            modifier = Modifier.padding(top = 16.dp)
-//        ) {
-//            Text(text = "路線查詢")
-//        }
-
         Button(
             onClick = onButtonClick5,
             modifier = Modifier.padding(top = 16.dp)
@@ -136,18 +126,18 @@ fun ScrollableContent(
             Text(text = "路線規劃")
         }
 
-//        Button(
-//            onClick = onButtonClick6,
-//            modifier = Modifier.padding(top = 16.dp)
-//        ) {
-//            Text(text = "站牌(地點)篩選")
-//        }
-
         Button(
             onClick = onButtonClick7,
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "路線規劃篩選")
+        }
+
+        Button(
+            onClick = onButtonClick8,
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "時間選擇器")
         }
     }
 }

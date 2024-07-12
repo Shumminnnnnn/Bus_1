@@ -38,6 +38,7 @@
         <activity android:name=".PlanFilter"/>
         <activity android:name=".BiginFilter"/>
         <activity android:name=".EndFilter"/>
+        <activity android:name=".TimeActivity"/>
 
     </application>
 
