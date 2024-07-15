@@ -34,6 +34,10 @@ class PlanFilter : ComponentActivity() {
         handleActivityResult(result, "endLocation")
     }
 
+    private val timeActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // 处理从 TimeActivity 返回的数据（如果需要）
+    }
+
     private var startLocation by mutableStateOf("")
     private var endLocation by mutableStateOf("")
 
@@ -82,6 +86,10 @@ class PlanFilter : ComponentActivity() {
                         onEndLocationClick = {
                             val intent = Intent(this@PlanFilter, EndFilter::class.java)
                             endLocationResultLauncher.launch(intent)
+                        },
+                        onTimeClick = {
+                            val intent = Intent(this@PlanFilter, TimeActivity::class.java)
+                            timeActivityResultLauncher.launch(intent)
                         }
                     )
                 }
@@ -106,7 +114,6 @@ class PlanFilter : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun ScrollableContent8(
     tdxResult: String,
@@ -116,7 +123,8 @@ fun ScrollableContent8(
     onEndLocationChange: (String) -> Unit,
     currentTime: String,
     onStartLocationClick: () -> Unit,
-    onEndLocationClick: () -> Unit
+    onEndLocationClick: () -> Unit,
+    onTimeClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,8 +155,10 @@ fun ScrollableContent8(
         )
         // 現在時間
         Text(
-            text = "現在時間: $currentTime",
-            modifier = Modifier.padding(bottom = 8.dp),
+            text = "$currentTime",
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .clickable { onTimeClick() },
             fontSize = 18.sp
         )
         // TDX結果
