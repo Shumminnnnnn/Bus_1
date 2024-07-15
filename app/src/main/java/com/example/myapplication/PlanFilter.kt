@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -29,7 +30,7 @@ class PlanFilter : ComponentActivity() {
     private var startLong: Double by mutableStateOf(0.0)
     private var endLat: Double by mutableStateOf(0.0)
     private var endLong: Double by mutableStateOf(0.0)
-    private val currentTime: MutableState<String> = mutableStateOf(getCurrentTime())
+    private val currentTime: String = getCurrentTime() // Static value
     private val tdxResult = mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,20 +66,15 @@ class PlanFilter : ComponentActivity() {
                         tdxResult.value,
                         onNavigateToBiginFilter = {
                             startLocationResultLauncher.launch(Intent(this@PlanFilter, BiginFilter::class.java))
+                        },
+                        onNavigateToEndFilter = {
+                            endLocationResultLauncher.launch(Intent(this@PlanFilter, EndFilter::class.java))
                         }
-                    ) {
-                        endLocationResultLauncher.launch(
-                            Intent(
-                                this@PlanFilter,
-                                EndFilter::class.java
-                            )
-                        )
-                    }
+                    )
                 }
             }
         }
     }
-
 
     private fun handleActivityResult(result: ActivityResult, locationType: String) {
         if (result.resultCode == Activity.RESULT_OK) {
@@ -100,9 +96,8 @@ class PlanFilter : ComponentActivity() {
         }
     }
 
-
     private fun getCurrentTime(): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         return sdf.format(Date())
     }
 
@@ -131,32 +126,12 @@ class PlanFilter : ComponentActivity() {
 fun PlanFilterContent(
     startLocation: String,
     endLocation: String,
-    currentTime: MutableState<String>,
+    currentTime: String,
     tdxResult: String,
     onNavigateToBiginFilter: () -> Unit,
     onNavigateToEndFilter: () -> Unit
 ) {
-    val startLocationResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data = result.data
-            data?.let {
-                // Handle startLocation result
-            }
-        }
-    }
-
-    val endLocationResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data = result.data
-            data?.let {
-                // Handle endLocation result
-            }
-        }
-    }
+    var showTdxResult by remember { mutableStateOf(false) } // State to control TDX result visibility
 
     Column(
         modifier = Modifier
@@ -164,24 +139,55 @@ fun PlanFilterContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Text(
-            text = "開始地點: $startLocation",
+        // Start location with box and click effect
+        Box(
             modifier = Modifier
-                .clickable { onNavigateToBiginFilter() }
+                .fillMaxWidth() // Make the box fill the available width
                 .padding(8.dp)
-        )
+                .border(1.dp, MaterialTheme.colorScheme.primary) // Border for the box
+                .clickable { onNavigateToBiginFilter() } // Click effect
+                .padding(16.dp) // Padding inside the box
+        ) {
+            Text(
+                text = "開始地點: $startLocation",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "終點地點: $endLocation",
+
+        // End location with box and click effect
+        Box(
             modifier = Modifier
-                .clickable { onNavigateToEndFilter() }
+                .fillMaxWidth() // Make the box fill the available width
                 .padding(8.dp)
-        )
+                .border(1.dp, MaterialTheme.colorScheme.primary) // Border for the box
+                .clickable { onNavigateToEndFilter() } // Click effect
+                .padding(16.dp) // Padding inside the box
+        ) {
+            Text(
+                text = "終點地點: $endLocation",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "目前時間: $currentTime", modifier = Modifier.padding(8.dp))
+        Text(text = "目前時間和日期: $currentTime", modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "TDX 結果:", modifier = Modifier.padding(8.dp))
+
+        // Button to show TDX result
+        Button(
+            onClick = { showTdxResult = true },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = "Show TDX Result")
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+
+        // Conditionally show TDX result
+        if (showTdxResult) {
+
+            Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+        }
     }
 }
