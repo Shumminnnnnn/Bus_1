@@ -12,8 +12,9 @@ import okio.GzipSource
 import okio.buffer
 import kotlin.math.*
 
+data class PlanInfo(val markname: String, val formattedLongitude: String, val formattedLatitude: String)
 object Plan_filter {
-    suspend fun main(url: String): String {
+    suspend fun main(url: String): List<PlanInfo> {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
         val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
@@ -82,13 +83,13 @@ object Plan_filter {
         }
     }
 
-    private fun parseJson(jsonString: String): String {
+    private fun parseJson(jsonString: String): List<PlanInfo> {
         val objectMapper = ObjectMapper()
         val rootNode = objectMapper.readTree(jsonString)
-        val stringBuilder = StringBuilder()
+        val planInfoList = mutableListOf<PlanInfo>()
 
         if (rootNode.isEmpty) {
-            return "查無此地點資料，請重新輸入地點"
+            return emptyList()
         }
 
         for (node in rootNode) {
@@ -99,19 +100,19 @@ object Plan_filter {
             val latitude = coordinates.getOrNull(1)?.toDoubleOrNull() ?: continue
 
             // Format longitude and latitude to five decimal places
-            val formattedLongitude = "%.5f".format(longitude)
-            val formattedLatitude = "%.5f".format(latitude)
+            val formattedLongitude = "%.6f".format(longitude)
+            val formattedLatitude = "%.6f".format(latitude)
 
             // Define the range for longitude and latitude
-            val lonInRange = formattedLongitude.toDouble() in 121.04444..121.24815
-            val latInRange = formattedLatitude.toDouble() in 24.79667..25.01806
+            val lonInRange = formattedLongitude.toDouble() in 120.9867..121.5040
+            val latInRange = formattedLatitude.toDouble() in 24.6324..25.1171
 
             // Check if both longitude and latitude are within the specified ranges
             if (lonInRange && latInRange) {
-                stringBuilder.append("$markname\n\n")
+                planInfoList.add(PlanInfo(markname, formattedLongitude, formattedLatitude))
             }
         }
 
-        return stringBuilder.toString().trim()
+        return planInfoList
     }
 }

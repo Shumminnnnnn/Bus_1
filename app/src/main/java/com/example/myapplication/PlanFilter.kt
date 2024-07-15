@@ -7,10 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -37,7 +34,7 @@ class PlanFilter : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val tdxResult = remember { mutableStateOf("Loading news data...") }
-                    val startLocation = remember { mutableStateOf("") }
+                    val startLocation = remember { mutableStateOf(getStartLocation()) }
                     val endLocation = remember { mutableStateOf("") }
                     val currentTime = remember { mutableStateOf(getCurrentTime()) }
 
@@ -81,7 +78,13 @@ class PlanFilter : ComponentActivity() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         return dateFormat.format(Date())
     }
+
+    private fun getStartLocation(): String {
+        // Retrieve the start location from the Intent
+        return intent.getStringExtra("startLocation") ?: ""
+    }
 }
+
 
 @Composable
 fun ScrollableContent8(

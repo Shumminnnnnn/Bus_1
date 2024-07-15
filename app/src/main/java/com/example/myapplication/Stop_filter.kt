@@ -31,7 +31,7 @@ object Stop_filter {
     }
 
     @Throws(IOException::class)
-    private fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
+    fun getAccessToken(tokenUrl: String, clientId: String, clientSecret: String): String {
         val client = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
@@ -56,7 +56,7 @@ object Stop_filter {
     }
 
     @Throws(IOException::class)
-    private fun getJsonString(url: String, accessToken: String): String {
+    fun getJsonString(url: String, accessToken: String): String {
         val client = OkHttpClient()
 
         val request = Request.Builder()
@@ -83,7 +83,7 @@ object Stop_filter {
         }
     }
 
-    private fun parseJson(jsonString: String): List<StopInfo> {
+    fun parseJson(jsonString: String): List<StopInfo> {
         val objectMapper = ObjectMapper()
         val rootNode = objectMapper.readTree(jsonString)
         val stopInfoList = mutableListOf<StopInfo>()

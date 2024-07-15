@@ -1,18 +1,16 @@
 package com.example.myapplication
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -24,7 +22,6 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class BiginFilter : ComponentActivity() {
-    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -33,35 +30,20 @@ class BiginFilter : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val stopResult = remember { mutableStateOf<String?>(null) }
-                    val lastStopResult = remember { mutableStateOf<String?>(null) }
+                    val stopResults = remember { mutableStateOf<List<PlanInfo>?>(null) }
                     var inputText by remember { mutableStateOf("") }
-                    var isLoading by remember { mutableStateOf(false) }
 
                     fun fetchStopData(stopNumber: String) {
-                        isLoading = true
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 val encodedStopNumber = URLEncoder.encode(stopNumber, StandardCharsets.UTF_8.toString())
                                 val url = "https://tdx.transportdata.tw/api/advanced/V3/Map/GeoCode/Coordinate/Markname/$encodedStopNumber?%24format=JSON"
-                                val stopResultJson = Plan_filter.main(url) // Pass dynamic URL
+                                val stopResultList = Plan_filter.main(url)
                                 withContext(Dispatchers.Main) {
-                                    isLoading = false
-                                    if (stopResultJson.isNotBlank()) {
-                                        stopResult.value = stopResultJson
-                                        lastStopResult.value = stopResultJson // Update last result
-                                    } else {
-                                        stopResult.value = "查無此地點資料，請重新輸入地點"
-                                    }
+                                    stopResults.value = stopResultList
                                 }
                             } catch (e: Exception) {
-                                Log.e("StopFilter", "Error fetching stop data: ${e.message}", e)
-                                withContext(Dispatchers.Main) {
-                                    isLoading = false
-                                    stopResult.value = "Error fetching stop data: ${e.message}"
-                                    // Retain previous result on error
-                                    lastStopResult.value = lastStopResult.value ?: stopResult.value
-                                }
+                                stopResults.value = null
                             }
                         }
                     }
@@ -80,45 +62,40 @@ class BiginFilter : ComponentActivity() {
                                     if (newValue.isNotBlank()) {
                                         fetchStopData(newValue)
                                     } else {
-                                        stopResult.value = lastStopResult.value // 如果搜尋欄位內容清空，仍保留上一次的回傳內容
+                                        stopResults.value = null
                                     }
                                 },
-                                label = { Text("請輸入起點") },
+                                label = { Text("想搜尋哪個地點呢?") },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp),
-                                singleLine = true // Ensures that input field remains on one line
+                                singleLine = true
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
-//                            Button(onClick = {
-//                                val intent = Intent(this@BiginFilter, PlanFilter::class.java)
-//                                startActivity(intent)
-//                            }) {
-//                                Text("返回")
-//                            }
-
-                            // 如果结果不为空则显示
-                            stopResult.value?.let { result ->
-                                result.split("\n\n").forEachIndexed { index, stopItem ->
-                                    if (stopItem.isNotEmpty()) {
-                                        Text(
-                                            text = stopItem,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(8.dp),
-                                            fontSize = 16.sp
-                                        )
-                                        if (index < result.split("\n\n").size - 1) {
-                                            Divider(
-                                                color = Color.Gray,
-                                                thickness = 1.dp,
-                                                modifier = Modifier.padding(vertical = 8.dp)
-                                            )
-                                        }
-                                    }
+                            stopResults.value?.let { resultList ->
+                                resultList.forEach { planInfo ->
+                                    Text(
+                                        text = "${planInfo.markname}\n",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                            .clickable {
+                                                val intent = Intent(this@BiginFilter, PlanFilter::class.java).apply {
+                                                    putExtra("startLocation", planInfo.markname) // Pass markname here
+                                                }
+                                                startActivity(intent)
+                                            },
+                                        fontSize = 16.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
-                                Spacer(modifier = Modifier.height(200.dp)) // 回传内容底部和键盘之间的距离，避免被遮挡
+                            } ?: run {
+                                Text(
+                                    text = "查無此地點資料，請重新輸入地點",
+                                    modifier = Modifier.padding(8.dp),
+                                    fontSize = 16.sp
+                                )
                             }
                         }
                     }
