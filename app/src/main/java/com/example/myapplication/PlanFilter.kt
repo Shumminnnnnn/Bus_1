@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,6 +26,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class PlanFilter : ComponentActivity() {
+    private val startLocationResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        handleActivityResult(result, "startLocation")
+    }
+
+    private val endLocationResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        handleActivityResult(result, "endLocation")
+    }
+
+    private var startLocation by mutableStateOf("")
+    private var endLocation by mutableStateOf("")
+
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +47,11 @@ class PlanFilter : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val tdxResult = remember { mutableStateOf("Loading news data...") }
-                    val startLocation = remember { mutableStateOf(getStartLocation()) }
-                    val endLocation = remember { mutableStateOf("") }
                     val currentTime = remember { mutableStateOf(getCurrentTime()) }
+
+                    // Handle Intent data
+                    intent.getStringExtra("startLocation")?.let { startLocation = it }
+                    intent.getStringExtra("endLocation")?.let { endLocation = it }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
@@ -55,20 +70,31 @@ class PlanFilter : ComponentActivity() {
 
                     ScrollableContent8(
                         tdxResult.value,
-                        startLocation.value,
-                        { startLocation.value = it },
-                        endLocation.value,
-                        { endLocation.value = it },
+                        startLocation,
+                        { startLocation = it },
+                        endLocation,
+                        { endLocation = it },
                         currentTime.value,
                         onStartLocationClick = {
                             val intent = Intent(this@PlanFilter, BiginFilter::class.java)
-                            startActivity(intent)
+                            startLocationResultLauncher.launch(intent)
                         },
                         onEndLocationClick = {
                             val intent = Intent(this@PlanFilter, EndFilter::class.java)
-                            startActivity(intent)
+                            endLocationResultLauncher.launch(intent)
                         }
                     )
+                }
+            }
+        }
+    }
+
+    private fun handleActivityResult(result: ActivityResult, key: String) {
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra(key)?.let { value ->
+                when (key) {
+                    "startLocation" -> startLocation = value
+                    "endLocation" -> endLocation = value
                 }
             }
         }
@@ -77,11 +103,6 @@ class PlanFilter : ComponentActivity() {
     private fun getCurrentTime(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         return dateFormat.format(Date())
-    }
-
-    private fun getStartLocation(): String {
-        // Retrieve the start location from the Intent
-        return intent.getStringExtra("startLocation") ?: ""
     }
 }
 

@@ -3,6 +3,8 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +24,18 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class BiginFilter : ComponentActivity() {
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra("startLocation")?.let { selectedLocation ->
+                val intent = Intent().apply {
+                    putExtra("startLocation", selectedLocation)
+                }
+                setResult(RESULT_OK, intent)
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -81,10 +95,11 @@ class BiginFilter : ComponentActivity() {
                                             .fillMaxWidth()
                                             .padding(8.dp)
                                             .clickable {
-                                                val intent = Intent(this@BiginFilter, PlanFilter::class.java).apply {
-                                                    putExtra("startLocation", planInfo.markname) // Pass markname here
+                                                val intent = Intent().apply {
+                                                    putExtra("startLocation", planInfo.markname)
                                                 }
-                                                startActivity(intent)
+                                                setResult(RESULT_OK, intent)
+                                                finish()
                                             },
                                         fontSize = 16.sp
                                     )

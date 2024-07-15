@@ -3,6 +3,8 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +24,18 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class EndFilter : ComponentActivity() {
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra("endLocation")?.let { selectedLocation ->
+                val intent = Intent().apply {
+                    putExtra("endLocation", selectedLocation)
+                }
+                setResult(RESULT_OK, intent)
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -30,7 +44,7 @@ class EndFilter : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val stopResults = remember { mutableStateOf<List<StopInfo>?>(null) }
+                    val stopResults = remember { mutableStateOf<List<PlanInfo>?>(null) }
                     var inputText by remember { mutableStateOf("") }
 
                     fun fetchStopData(stopNumber: String) {
@@ -38,7 +52,7 @@ class EndFilter : ComponentActivity() {
                             try {
                                 val encodedStopNumber = URLEncoder.encode(stopNumber, StandardCharsets.UTF_8.toString())
                                 val url = "https://tdx.transportdata.tw/api/advanced/V3/Map/GeoCode/Coordinate/Markname/$encodedStopNumber?%24format=JSON"
-                                val stopResultList = Stop_filter.main(url)
+                                val stopResultList = Plan_filter.main(url)
                                 withContext(Dispatchers.Main) {
                                     stopResults.value = stopResultList
                                 }
@@ -74,18 +88,18 @@ class EndFilter : ComponentActivity() {
                             Spacer(modifier = Modifier.height(8.dp))
 
                             stopResults.value?.let { resultList ->
-                                resultList.forEach { stopInfo ->
+                                resultList.forEach { planInfo ->
                                     Text(
-                                        text = "${stopInfo.markname}\n",
+                                        text = "${planInfo.markname}\n",
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(8.dp)
                                             .clickable {
-                                                val intent = Intent(this@EndFilter, PlanFilter::class.java).apply {
-                                                    putExtra("latitude", stopInfo.formattedLatitude.toDouble())
-                                                    putExtra("longitude", stopInfo.formattedLongitude.toDouble())
+                                                val intent = Intent().apply {
+                                                    putExtra("endLocation", planInfo.markname)
                                                 }
-                                                startActivity(intent)
+                                                setResult(RESULT_OK, intent)
+                                                finish()
                                             },
                                         fontSize = 16.sp
                                     )
