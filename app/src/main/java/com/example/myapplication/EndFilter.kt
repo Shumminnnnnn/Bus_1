@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,17 +22,6 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class EndFilter : ComponentActivity() {
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            result.data?.getStringExtra("endLocation")?.let { selectedLocation ->
-                val intent = Intent().apply {
-                    putExtra("endLocation", selectedLocation)
-                }
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +44,9 @@ class EndFilter : ComponentActivity() {
                                     stopResults.value = stopResultList
                                 }
                             } catch (e: Exception) {
-                                stopResults.value = null
+                                withContext(Dispatchers.Main) {
+                                    stopResults.value = null
+                                }
                             }
                         }
                     }
@@ -96,6 +86,8 @@ class EndFilter : ComponentActivity() {
                                             .clickable {
                                                 val intent = Intent().apply {
                                                     putExtra("endLocation", planInfo.markname)
+                                                    putExtra("latitude", planInfo.formattedLatitude.toDouble())
+                                                    putExtra("longitude", planInfo.formattedLongitude.toDouble())
                                                 }
                                                 setResult(RESULT_OK, intent)
                                                 finish()

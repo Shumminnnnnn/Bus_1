@@ -18,21 +18,34 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     private var formattedDate: String = ""
     private var staticTime: String = ""
+    private var originLatitude: Double = 24.957677 // 默认值
+    private var originLongitude: Double = 121.240729 // 默认值
+    private var destinationLatitude: Double = 24.953601 // 默认值
+    private var destinationLongitude: Double = 121.225383 // 默认值
 
     init {
-        // Get current time and format it once at initialization
         val currentTime = Calendar.getInstance().time
         val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         formattedDate = dateFormatter.format(currentTime)
 
-        // Compute static time as HH:mm:ss plus 1 minute
         val calendar = Calendar.getInstance()
         calendar.time = currentTime
-        calendar.add(Calendar.MINUTE, 1) // Add 1 minute
-
+        calendar.add(Calendar.MINUTE, 10)
         val timeFormatterWithMinute = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         staticTime = timeFormatterWithMinute.format(calendar.time)
+    }
+
+    fun setLocations(
+        originLat: Double,
+        originLong: Double,
+        destinationLat: Double,
+        destinationLong: Double
+    ) {
+        originLatitude = originLat
+        originLongitude = originLong
+        destinationLatitude = destinationLat
+        destinationLongitude = destinationLong
     }
 
     suspend fun main(): String {
@@ -48,7 +61,6 @@ object Route_plan {
             val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
             val accessToken: String = tokenElem.get("access_token").asText()
 
-            // Construct TDX URL with static formatted time
             val tdxUrl = constructTdxUrl()
 
             withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
@@ -58,9 +70,8 @@ object Route_plan {
     }
 
     private fun constructTdxUrl(): String {
-        // Format time as HH:mm:ss and URL encode it
         val timeFormatted = staticTime.replace(":", "%3A")
-        return "https://tdx.transportdata.tw/api/maas/routing?origin=24.957677%2C121.240729&destination=24.953601%2C121.225383&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=${formattedDate}T${timeFormatted}&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
+        return "https://tdx.transportdata.tw/api/maas/routing?origin=$originLatitude%2C$originLongitude&destination=$destinationLatitude%2C$destinationLongitude&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=${formattedDate}T${timeFormatted}&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
     }
 
     @Throws(IOException::class)

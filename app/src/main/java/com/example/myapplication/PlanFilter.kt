@@ -1,13 +1,13 @@
 package com.example.myapplication
 
-import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,142 +23,165 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class PlanFilter : ComponentActivity() {
-    private val startLocationResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        handleActivityResult(result, "startLocation")
-    }
+    private var startLocation: String by mutableStateOf("")
+    private var endLocation: String by mutableStateOf("")
+    private var startLat: Double by mutableStateOf(0.0)
+    private var startLong: Double by mutableStateOf(0.0)
+    private var endLat: Double by mutableStateOf(0.0)
+    private var endLong: Double by mutableStateOf(0.0)
+    private val currentTime: MutableState<String> = mutableStateOf(getCurrentTime())
+    private val tdxResult = mutableStateOf("")
 
-    private val endLocationResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        handleActivityResult(result, "endLocation")
-    }
-
-    private val timeActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        // 处理从 TimeActivity 返回的数据（如果需要）
-    }
-
-    private var startLocation by mutableStateOf("")
-    private var endLocation by mutableStateOf("")
-
-    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val tdxResult = remember { mutableStateOf("Loading news data...") }
-                    val currentTime = remember { mutableStateOf(getCurrentTime()) }
+            val startLocationResultLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                handleActivityResult(result, "startLocation")
+            }
 
-                    // Handle Intent data
-                    intent.getStringExtra("startLocation")?.let { startLocation = it }
-                    intent.getStringExtra("endLocation")?.let { endLocation = it }
+            val endLocationResultLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                handleActivityResult(result, "endLocation")
+            }
 
-                    // Launch Coroutines
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val tdxResultJson = Route_plan.main()
-                            withContext(Dispatchers.Main) {
-                                tdxResult.value = tdxResultJson
-                            }
-                        } catch (e: Exception) {
-                            Log.e("PlanFilter", "Error fetching TDX data: ${e.message}", e)
-                            withContext(Dispatchers.Main) {
-                                tdxResult.value = "Error fetching TDX data: ${e.message}"
-                            }
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    val coroutineScope = rememberCoroutineScope()
+
+                    // Fetch TDX data
+                    LaunchedEffect(startLat, startLong, endLat, endLong) {
+                        coroutineScope.launch {
+                            fetchTdxData(startLat, startLong, endLat, endLong, tdxResult)
                         }
                     }
 
-                    ScrollableContent8(
-                        tdxResult.value,
+                    PlanFilterContent(
                         startLocation,
-                        { startLocation = it },
                         endLocation,
-                        { endLocation = it },
-                        currentTime.value,
-                        onStartLocationClick = {
-                            val intent = Intent(this@PlanFilter, BiginFilter::class.java)
-                            startLocationResultLauncher.launch(intent)
-                        },
-                        onEndLocationClick = {
-                            val intent = Intent(this@PlanFilter, EndFilter::class.java)
-                            endLocationResultLauncher.launch(intent)
-                        },
-                        onTimeClick = {
-                            val intent = Intent(this@PlanFilter, TimeActivity::class.java)
-                            timeActivityResultLauncher.launch(intent)
+                        currentTime,
+                        tdxResult.value,
+                        onNavigateToBiginFilter = {
+                            startLocationResultLauncher.launch(Intent(this@PlanFilter, BiginFilter::class.java))
                         }
-                    )
+                    ) {
+                        endLocationResultLauncher.launch(
+                            Intent(
+                                this@PlanFilter,
+                                EndFilter::class.java
+                            )
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun handleActivityResult(result: ActivityResult, key: String) {
-        if (result.resultCode == RESULT_OK) {
-            result.data?.getStringExtra(key)?.let { value ->
-                when (key) {
-                    "startLocation" -> startLocation = value
-                    "endLocation" -> endLocation = value
+
+    private fun handleActivityResult(result: ActivityResult, locationType: String) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data?.let {
+                when (locationType) {
+                    "startLocation" -> {
+                        startLocation = it.getStringExtra("startLocation") ?: ""
+                        startLat = it.getDoubleExtra("latitude", 0.0)
+                        startLong = it.getDoubleExtra("longitude", 0.0)
+                    }
+                    "endLocation" -> {
+                        endLocation = it.getStringExtra("endLocation") ?: ""
+                        endLat = it.getDoubleExtra("latitude", 0.0)
+                        endLong = it.getDoubleExtra("longitude", 0.0)
+                    }
                 }
             }
         }
     }
+
 
     private fun getCurrentTime(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-        return dateFormat.format(Date())
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    private suspend fun fetchTdxData(
+        startLat: Double,
+        startLong: Double,
+        endLat: Double,
+        endLong: Double,
+        tdxResult: MutableState<String>
+    ) {
+        try {
+            Route_plan.setLocations(startLat, startLong, endLat, endLong)
+            val tdxData = Route_plan.main()
+            withContext(Dispatchers.Main) {
+                tdxResult.value = tdxData
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                tdxResult.value = "Failed to load data: ${e.message}"
+            }
+        }
     }
 }
 
 @Composable
-fun ScrollableContent8(
-    tdxResult: String,
+fun PlanFilterContent(
     startLocation: String,
-    onStartLocationChange: (String) -> Unit,
     endLocation: String,
-    onEndLocationChange: (String) -> Unit,
-    currentTime: String,
-    onStartLocationClick: () -> Unit,
-    onEndLocationClick: () -> Unit,
-    onTimeClick: () -> Unit
+    currentTime: MutableState<String>,
+    tdxResult: String,
+    onNavigateToBiginFilter: () -> Unit,
+    onNavigateToEndFilter: () -> Unit
 ) {
+    val startLocationResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data?.let {
+                // Handle startLocation result
+            }
+        }
+    }
+
+    val endLocationResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data?.let {
+                // Handle endLocation result
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .padding(16.dp)
     ) {
-        // 起點欄位
-        OutlinedTextField(
-            value = startLocation,
-            onValueChange = onStartLocationChange,
-            label = { Text("起點") },
-            readOnly = true,
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable { onStartLocationClick() }
-                .fillMaxWidth()
-        )
-        // 終點欄位
-        OutlinedTextField(
-            value = endLocation,
-            onValueChange = onEndLocationChange,
-            label = { Text("終點") },
-            readOnly = true,
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable { onEndLocationClick() }
-                .fillMaxWidth()
-        )
-        // 現在時間
         Text(
-            text = "$currentTime",
+            text = "開始地點: $startLocation",
             modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable { onTimeClick() },
-            fontSize = 18.sp
+                .clickable { onNavigateToBiginFilter() }
+                .padding(8.dp)
         )
-        // TDX結果
-        Text(text = tdxResult)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "終點地點: $endLocation",
+            modifier = Modifier
+                .clickable { onNavigateToEndFilter() }
+                .padding(8.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "目前時間: $currentTime", modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "TDX 結果:", modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = tdxResult, modifier = Modifier.padding(8.dp))
     }
 }
