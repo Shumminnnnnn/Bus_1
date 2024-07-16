@@ -45,7 +45,7 @@ class BiginFilter : ComponentActivity() {
                                 }
                             } catch (e: Exception) {
                                 withContext(Dispatchers.Main) {
-                                    stopResults.value = null
+                                    stopResults.value = emptyList()
                                 }
                             }
                         }
@@ -76,32 +76,36 @@ class BiginFilter : ComponentActivity() {
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            stopResults.value?.let { resultList ->
-                                resultList.forEach { planInfo ->
-                                    Text(
-                                        text = "${planInfo.markname}\n",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(8.dp)
-                                            .clickable {
-                                                val intent = Intent().apply {
-                                                    putExtra("startLocation", planInfo.markname)
-                                                    putExtra("latitude", planInfo.formattedLatitude.toDouble())
-                                                    putExtra("longitude", planInfo.formattedLongitude.toDouble())
-                                                }
-                                                setResult(RESULT_OK, intent)
-                                                finish()
-                                            },
-                                        fontSize = 16.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
+                            if (inputText.isNotBlank()) {
+                                stopResults.value?.let { resultList ->
+                                    if (resultList.isEmpty()) {
+                                        Text(
+                                            text = "查無此地點資料，請重新輸入地點",
+                                            modifier = Modifier.padding(8.dp),
+                                            fontSize = 16.sp
+                                        )
+                                    } else {
+                                        resultList.forEach { planInfo ->
+                                            Text(
+                                                text = "${planInfo.markname}\n",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(8.dp)
+                                                    .clickable {
+                                                        val intent = Intent().apply {
+                                                            putExtra("startLocation", planInfo.markname)
+                                                            putExtra("latitude", planInfo.formattedLatitude.toDouble())
+                                                            putExtra("longitude", planInfo.formattedLongitude.toDouble())
+                                                        }
+                                                        setResult(RESULT_OK, intent)
+                                                        finish()
+                                                    },
+                                                fontSize = 16.sp
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                        }
+                                    }
                                 }
-                            } ?: run {
-                                Text(
-                                    text = "查無此地點資料，請重新輸入地點",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 16.sp
-                                )
                             }
                         }
                     }

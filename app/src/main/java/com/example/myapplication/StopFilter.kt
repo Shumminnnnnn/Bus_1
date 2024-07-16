@@ -43,7 +43,9 @@ class StopFilter : ComponentActivity() {
                                     stopResults.value = stopResultList
                                 }
                             } catch (e: Exception) {
-                                stopResults.value = null
+                                withContext(Dispatchers.Main) {
+                                    stopResults.value = emptyList()
+                                }
                             }
                         }
                     }
@@ -73,30 +75,34 @@ class StopFilter : ComponentActivity() {
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            stopResults.value?.let { resultList ->
-                                resultList.forEach { stopInfo ->
-                                    Text(
-                                        text = "${stopInfo.markname}\n",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(8.dp)
-                                            .clickable {
-                                                val intent = Intent(this@StopFilter, StopActivity::class.java).apply {
-                                                    putExtra("latitude", stopInfo.formattedLatitude.toDouble())
-                                                    putExtra("longitude", stopInfo.formattedLongitude.toDouble())
-                                                }
-                                                startActivity(intent)
-                                            },
-                                        fontSize = 16.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
+                            if (inputText.isNotBlank()) {
+                                stopResults.value?.let { resultList ->
+                                    if (resultList.isEmpty()) {
+                                        Text(
+                                            text = "查無此地點資料，請重新輸入地點",
+                                            modifier = Modifier.padding(8.dp),
+                                            fontSize = 16.sp
+                                        )
+                                    } else {
+                                        resultList.forEach { stopInfo ->
+                                            Text(
+                                                text = "${stopInfo.markname}\n",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(8.dp)
+                                                    .clickable {
+                                                        val intent = Intent(this@StopFilter, StopActivity::class.java).apply {
+                                                            putExtra("latitude", stopInfo.formattedLatitude.toDouble())
+                                                            putExtra("longitude", stopInfo.formattedLongitude.toDouble())
+                                                        }
+                                                        startActivity(intent)
+                                                    },
+                                                fontSize = 16.sp
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                        }
+                                    }
                                 }
-                            } ?: run {
-                                Text(
-                                    text = "查無此地點資料，請重新輸入地點",
-                                    modifier = Modifier.padding(8.dp),
-                                    fontSize = 16.sp
-                                )
                             }
                         }
                     }

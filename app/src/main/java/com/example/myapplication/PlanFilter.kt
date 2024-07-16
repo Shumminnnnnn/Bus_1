@@ -149,7 +149,7 @@ fun PlanFilterContent(
                 .padding(16.dp) // Padding inside the box
         ) {
             Text(
-                text = "開始地點: $startLocation",
+                text = "起點: $startLocation",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -166,13 +166,13 @@ fun PlanFilterContent(
                 .padding(16.dp) // Padding inside the box
         ) {
             Text(
-                text = "終點地點: $endLocation",
+                text = "終點: $endLocation",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "目前時間和日期: $currentTime", modifier = Modifier.padding(8.dp))
+        Text(text = "$currentTime", modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to show TDX result
@@ -180,7 +180,7 @@ fun PlanFilterContent(
             onClick = { showTdxResult = true },
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(text = "Show TDX Result")
+            Text(text = "查詢")
         }
         Spacer(modifier = Modifier.height(8.dp))
 

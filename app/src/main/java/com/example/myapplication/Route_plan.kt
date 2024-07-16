@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     private var formattedDate: String = ""
     private var staticTime: String = ""
-    private var originLatitude: Double = 24.957677 // 默认值
-    private var originLongitude: Double = 121.240729 // 默认值
-    private var destinationLatitude: Double = 24.953601 // 默认值
-    private var destinationLongitude: Double = 121.225383 // 默认值
+    private var originLatitude: Double = 0.0// 默认值
+    private var originLongitude: Double = 0.0 // 默认值
+    private var destinationLatitude: Double = 0.0 // 默认值
+    private var destinationLongitude: Double = 0.0 // 默认值
 
     init {
         val currentTime = Calendar.getInstance().time
@@ -31,7 +31,7 @@ object Route_plan {
 
         val calendar = Calendar.getInstance()
         calendar.time = currentTime
-        calendar.add(Calendar.MINUTE, 10)
+        calendar.add(Calendar.MINUTE, 5)
         val timeFormatterWithMinute = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         staticTime = timeFormatterWithMinute.format(calendar.time)
     }
@@ -139,7 +139,7 @@ object Route_plan {
 
         val routes = rootNode.path("data").path("routes")
         if (routes.isEmpty) {
-            return "No route planning results."
+            return "無路線規畫結果"
         }
 
         val sb = StringBuilder()
