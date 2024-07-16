@@ -36,7 +36,7 @@ class NewsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val tdxResult = remember { mutableStateOf("Loading news data...") }
+                    val tdxResult = remember { mutableStateOf("載入最新消息頁...") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {

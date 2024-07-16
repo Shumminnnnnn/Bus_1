@@ -18,10 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class StopActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -33,7 +29,7 @@ class StopActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val routeResult = remember { mutableStateOf("Loading route schedule data...") }
+                    val routeResult = remember { mutableStateOf("載入中...") }
                     val currentLocation = remember { mutableStateOf("所在位置:") }
 
                     val latitude = intent.getDoubleExtra("latitude", 0.0)
@@ -63,7 +59,6 @@ class StopActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationClick: () -> Unit) {
     Column(
@@ -89,7 +84,7 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (routeResult == "Loading route schedule data...") {
+        if (routeResult == "載入中...") {
             Text(text = routeResult, modifier = Modifier.padding(16.dp))
         } else {
             routeResult.split("\n\n").forEach { routeItem ->
@@ -116,4 +111,3 @@ fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationC
         }
     }
 }
-
