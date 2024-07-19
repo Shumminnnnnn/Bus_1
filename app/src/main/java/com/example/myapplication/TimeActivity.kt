@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +25,13 @@ class TimeActivity : ComponentActivity() {
         setContent {
             ClockTestTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    DateTimePickerScreen()
+                    DateTimePickerScreen { selectedTime ->
+                        val resultIntent = Intent().apply {
+                            putExtra("selectedTime", selectedTime)
+                        }
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+                    }
                 }
             }
         }
@@ -32,7 +39,7 @@ class TimeActivity : ComponentActivity() {
 }
 
 @Composable
-fun DateTimePickerScreen() {
+fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
 
@@ -50,12 +57,11 @@ fun DateTimePickerScreen() {
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
-
             DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
-                date = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                date = "$selectedYear-${selectedMonth + 1}-$selectedDay"
             }, year, month, day).show()
         }) {
-            Text("選擇日期")
+            Text("Select Date")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -66,12 +72,12 @@ fun DateTimePickerScreen() {
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
-
             TimePickerDialog(context, { _, selectedHour, selectedMinute ->
                 time = "$selectedHour:$selectedMinute"
+                onTimeSelected("$date $time")
             }, hour, minute, true).show()
         }) {
-            Text("選擇時間")
+            Text("Select Time")
         }
     }
 }

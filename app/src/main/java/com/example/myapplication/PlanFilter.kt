@@ -30,7 +30,7 @@ class PlanFilter : ComponentActivity() {
     private var startLong: Double by mutableStateOf(0.0)
     private var endLat: Double by mutableStateOf(0.0)
     private var endLong: Double by mutableStateOf(0.0)
-    private val currentTime: String = getCurrentTime() // Static value
+    private var currentTime: String by mutableStateOf(fetchCurrentTime()) // Mutable state for currentTime
     private val tdxResult = mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +46,17 @@ class PlanFilter : ComponentActivity() {
                 contract = ActivityResultContracts.StartActivityForResult()
             ) { result ->
                 handleActivityResult(result, "endLocation")
+            }
+
+            val timeResultLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data = result.data
+                    data?.let {
+                        currentTime = it.getStringExtra("selectedTime") ?: fetchCurrentTime()
+                    }
+                }
             }
 
             MaterialTheme {
@@ -69,6 +80,9 @@ class PlanFilter : ComponentActivity() {
                         },
                         onNavigateToEndFilter = {
                             endLocationResultLauncher.launch(Intent(this@PlanFilter, EndFilter::class.java))
+                        },
+                        onNavigateToTimeActivity = {
+                            timeResultLauncher.launch(Intent(this@PlanFilter, TimeActivity::class.java))
                         }
                     )
                 }
@@ -96,7 +110,7 @@ class PlanFilter : ComponentActivity() {
         }
     }
 
-    private fun getCurrentTime(): String {
+    private fun fetchCurrentTime(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         return sdf.format(Date())
     }
@@ -122,6 +136,7 @@ class PlanFilter : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun PlanFilterContent(
     startLocation: String,
@@ -129,7 +144,8 @@ fun PlanFilterContent(
     currentTime: String,
     tdxResult: String,
     onNavigateToBiginFilter: () -> Unit,
-    onNavigateToEndFilter: () -> Unit
+    onNavigateToEndFilter: () -> Unit,
+    onNavigateToTimeActivity: () -> Unit
 ) {
     var showTdxResult by remember { mutableStateOf(false) } // State to control TDX result visibility
 
@@ -172,7 +188,14 @@ fun PlanFilterContent(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "$currentTime", modifier = Modifier.padding(8.dp))
+
+        // Current time with click effect
+        Text(
+            text = currentTime,
+            modifier = Modifier
+                .padding(8.dp)
+                .clickable { onNavigateToTimeActivity() }
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         // Button to show TDX result
@@ -186,7 +209,6 @@ fun PlanFilterContent(
 
         // Conditionally show TDX result
         if (showTdxResult) {
-
             Text(text = tdxResult, modifier = Modifier.padding(8.dp))
         }
     }

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     private var formattedDate: String = ""
     private var staticTime: String = ""
-    private var originLatitude: Double = 0.0// 默认值
+    private var originLatitude: Double = 0.0 // 默认值
     private var originLongitude: Double = 0.0 // 默认值
     private var destinationLatitude: Double = 0.0 // 默认值
     private var destinationLongitude: Double = 0.0 // 默认值
@@ -34,6 +34,14 @@ object Route_plan {
         calendar.add(Calendar.MINUTE, 5)
         val timeFormatterWithMinute = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         staticTime = timeFormatterWithMinute.format(calendar.time)
+    }
+
+    fun updateFormattedDate(date: String) {
+        formattedDate = date
+    }
+
+    fun updateStaticTime(time: String) {
+        staticTime = time
     }
 
     fun setLocations(
