@@ -30,7 +30,8 @@ class PlanFilter : ComponentActivity() {
     private var startLong: Double by mutableStateOf(0.0)
     private var endLat: Double by mutableStateOf(0.0)
     private var endLong: Double by mutableStateOf(0.0)
-    private var currentTime: String by mutableStateOf(fetchCurrentTime()) // Mutable state for currentTime
+    private var currentTime: String by mutableStateOf(fetchCurrentTime())
+    private var isTimeSelected: Boolean by mutableStateOf(false)
     private val tdxResult = mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +56,7 @@ class PlanFilter : ComponentActivity() {
                     val data = result.data
                     data?.let {
                         currentTime = it.getStringExtra("selectedTime") ?: fetchCurrentTime()
+                        isTimeSelected = true // Indicate that time is selected from TimeActivity
                     }
                 }
             }
@@ -62,13 +64,6 @@ class PlanFilter : ComponentActivity() {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val coroutineScope = rememberCoroutineScope()
-
-                    // Fetch TDX data
-                    LaunchedEffect(startLat, startLong, endLat, endLong) {
-                        coroutineScope.launch {
-                            fetchTdxData(startLat, startLong, endLat, endLong, tdxResult)
-                        }
-                    }
 
                     PlanFilterContent(
                         startLocation,
@@ -83,6 +78,11 @@ class PlanFilter : ComponentActivity() {
                         },
                         onNavigateToTimeActivity = {
                             timeResultLauncher.launch(Intent(this@PlanFilter, TimeActivity::class.java))
+                        },
+                        onQueryButtonClick = {
+                            coroutineScope.launch {
+                                fetchTdxData(startLat, startLong, endLat, endLong, currentTime, tdxResult, isTimeSelected)
+                            }
                         }
                     )
                 }
@@ -120,9 +120,14 @@ class PlanFilter : ComponentActivity() {
         startLong: Double,
         endLat: Double,
         endLong: Double,
-        tdxResult: MutableState<String>
+        currentTime: String,
+        tdxResult: MutableState<String>,
+        isTimeSelected: Boolean
     ) {
         try {
+            val (date, time) = parseCurrentTime(currentTime, isTimeSelected)
+            Route_plan.updateFormattedDate(date)
+            Route_plan.updateStaticTime(time)
             Route_plan.setLocations(startLat, startLong, endLat, endLong)
             val tdxData = Route_plan.main()
             withContext(Dispatchers.Main) {
@@ -134,8 +139,24 @@ class PlanFilter : ComponentActivity() {
             }
         }
     }
-}
 
+    private fun parseCurrentTime(currentTime: String, isTimeSelected: Boolean): Pair<String, String> {
+        val parts = currentTime.split(" ")
+        val date = parts[0]
+        var time = parts[1].replace(":", "%3A") // Encode time for URL
+
+        if (!isTimeSelected) {
+            // Add 3 minutes to the current time
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            val calendar = Calendar.getInstance()
+            calendar.time = sdf.parse(currentTime)!!
+            calendar.add(Calendar.MINUTE, 3)
+            time = sdf.format(calendar.time).split(" ")[1].replace(":", "%3A")
+        }
+
+        return Pair(date, time)
+    }
+}
 
 @Composable
 fun PlanFilterContent(
@@ -145,7 +166,8 @@ fun PlanFilterContent(
     tdxResult: String,
     onNavigateToBiginFilter: () -> Unit,
     onNavigateToEndFilter: () -> Unit,
-    onNavigateToTimeActivity: () -> Unit
+    onNavigateToTimeActivity: () -> Unit,
+    onQueryButtonClick: () -> Unit // New parameter for the button click
 ) {
     var showTdxResult by remember { mutableStateOf(false) } // State to control TDX result visibility
 
@@ -198,9 +220,12 @@ fun PlanFilterContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Button to show TDX result
+        // Button to fetch and show TDX result
         Button(
-            onClick = { showTdxResult = true },
+            onClick = {
+                showTdxResult = true
+                onQueryButtonClick() // Trigger fetching TDX data
+            },
             modifier = Modifier.padding(8.dp)
         ) {
             Text(text = "查詢")

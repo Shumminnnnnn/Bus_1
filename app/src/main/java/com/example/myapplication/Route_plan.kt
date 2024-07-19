@@ -18,23 +18,10 @@ import java.util.concurrent.TimeUnit
 object Route_plan {
     private var formattedDate: String = ""
     private var staticTime: String = ""
-    private var originLatitude: Double = 0.0 // 默认值
-    private var originLongitude: Double = 0.0 // 默认值
-    private var destinationLatitude: Double = 0.0 // 默认值
-    private var destinationLongitude: Double = 0.0 // 默认值
-
-    init {
-        val currentTime = Calendar.getInstance().time
-        val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val timeFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-        formattedDate = dateFormatter.format(currentTime)
-
-        val calendar = Calendar.getInstance()
-        calendar.time = currentTime
-        calendar.add(Calendar.MINUTE, 5)
-        val timeFormatterWithMinute = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-        staticTime = timeFormatterWithMinute.format(calendar.time)
-    }
+    private var originLatitude: Double = 0.0
+    private var originLongitude: Double = 0.0
+    private var destinationLatitude: Double = 0.0
+    private var destinationLongitude: Double = 0.0
 
     fun updateFormattedDate(date: String) {
         formattedDate = date
@@ -78,7 +65,7 @@ object Route_plan {
     }
 
     private fun constructTdxUrl(): String {
-        val timeFormatted = staticTime.replace(":", "%3A")
+        val timeFormatted = staticTime
         return "https://tdx.transportdata.tw/api/maas/routing?origin=$originLatitude%2C$originLongitude&destination=$destinationLatitude%2C$destinationLongitude&gc=1.0&top=5&transit=5&transfer_time=0%2C60&depart=${formattedDate}T${timeFormatted}&first_mile_mode=0&first_mile_time=15&last_mile_mode=0&last_mile_time=15"
     }
 
