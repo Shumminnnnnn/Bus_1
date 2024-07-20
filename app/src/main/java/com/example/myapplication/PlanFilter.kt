@@ -128,7 +128,7 @@ class PlanFilter : ComponentActivity() {
             val (date, time) = parseCurrentTime(currentTime, isTimeSelected)
             Route_plan.updateFormattedDate(date)
             Route_plan.updateStaticTime(time)
-            Route_plan.setLocations(startLat, startLong, endLat, endLong)
+            Route_plan.setLocations(startLat, startLong, endLat, endLong, endLocation) // 传递 endLocation
             val tdxData = Route_plan.main()
             withContext(Dispatchers.Main) {
                 tdxResult.value = tdxData

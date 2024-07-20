@@ -11,8 +11,6 @@ import okhttp3.Request
 import okio.GzipSource
 import okio.buffer
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 object Route_plan {
@@ -22,6 +20,7 @@ object Route_plan {
     private var originLongitude: Double = 0.0
     private var destinationLatitude: Double = 0.0
     private var destinationLongitude: Double = 0.0
+    private var endLocation: String = "" // 全局变量
 
     fun updateFormattedDate(date: String) {
         formattedDate = date
@@ -35,12 +34,14 @@ object Route_plan {
         originLat: Double,
         originLong: Double,
         destinationLat: Double,
-        destinationLong: Double
+        destinationLong: Double,
+        endLoc: String // 使用更具描述性的名称
     ) {
         originLatitude = originLat
         originLongitude = originLong
         destinationLatitude = destinationLat
         destinationLongitude = destinationLong
+        endLocation = endLoc // 赋值
     }
 
     suspend fun main(): String {
@@ -157,8 +158,7 @@ object Route_plan {
                         if (arrivalPlace.get("type").asText() == "station") {
                             sb.append("${arrivalPlace.get("name").asText()} ")
                         } else {
-                            val location = arrivalPlace.path("location")
-                            sb.append("lat:${location.get("lat").asDouble()}, lng: ${location.get("lng").asDouble()} ")
+                            sb.append("$endLocation ") // 这里使用 endLocation
                         }
                         val duration = section.path("travelSummary").get("duration").asInt() / 60
                         sb.append("($duration 分鐘)\n\n")
