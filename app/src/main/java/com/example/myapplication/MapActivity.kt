@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -35,7 +36,13 @@ class MapActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
-                LocationScreen()
+                LocationScreen { location ->
+                    val intent = Intent(this, StopActivity::class.java).apply {
+                        putExtra("latitude", location.latitude)
+                        putExtra("longitude", location.longitude)
+                    }
+                    startActivity(intent)
+                }
             }
         }
     }
@@ -65,9 +72,9 @@ class LocationService(context: Context) {
     @SuppressLint("MissingPermission")
     fun startLocationUpdates(onLocationUpdate: (Location) -> Unit) {
         val locationRequest = LocationRequest.create().apply {
-            interval = 10000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//            interval = 10000
+//            fastestInterval = 5000
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
         val locationCallback = object : LocationCallback() {
@@ -84,7 +91,7 @@ class LocationService(context: Context) {
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
-fun LocationScreen() {
+fun LocationScreen(onLocationObtained: (Location) -> Unit) {
     var location by remember { mutableStateOf<Location?>(null) }
     var hasPermission by remember { mutableStateOf(false) }
 
@@ -99,6 +106,7 @@ fun LocationScreen() {
         LaunchedEffect(Unit) {
             locationService.startLocationUpdates { newLocation ->
                 location = newLocation
+                onLocationObtained(newLocation)
             }
         }
     }
@@ -118,4 +126,3 @@ fun LocationScreen() {
         }
     }
 }
-

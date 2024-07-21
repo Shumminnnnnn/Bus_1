@@ -31,9 +31,12 @@ class StopActivity : ComponentActivity() {
                 ) {
                     val routeResult = remember { mutableStateOf("載入中...") }
                     val currentLocation = remember { mutableStateOf("所在位置:") }
+                    val showRouteResult = remember { mutableStateOf(false) }
 
                     val latitude = intent.getDoubleExtra("latitude", 0.0)
                     val longitude = intent.getDoubleExtra("longitude", 0.0)
+
+                    currentLocation.value = "所在位置: $latitude, $longitude"
 
                     LaunchedEffect(latitude, longitude) {
                         try {
@@ -48,8 +51,16 @@ class StopActivity : ComponentActivity() {
                     ScrollableContent7(
                         routeResult = routeResult.value,
                         currentLocation = currentLocation.value,
+                        showRouteResult = showRouteResult.value,
                         onLocationClick = {
                             val intent = Intent(this@StopActivity, StopFilter::class.java)
+                            startActivity(intent)
+                        },
+                        onQueryClick = {
+                            showRouteResult.value = true
+                        },
+                        onCurrentLocationClick = {
+                            val intent = Intent(this@StopActivity, MapActivity::class.java)
                             startActivity(intent)
                         }
                     )
@@ -60,52 +71,83 @@ class StopActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent7(routeResult: String, currentLocation: String, onLocationClick: () -> Unit) {
+fun ScrollableContent7(
+    routeResult: String,
+    currentLocation: String,
+    showRouteResult: Boolean,
+    onLocationClick: () -> Unit,
+    onQueryClick: () -> Unit,
+    onCurrentLocationClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Box(
+        // Use Row to place "所在位置" and "目前位置" button horizontally
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .border(1.dp, Color.Gray)
-                .clickable(onClick = onLocationClick)
-                .padding(8.dp),
-            contentAlignment = Alignment.CenterStart
         ) {
-            Text(
-                text = currentLocation,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.align(Alignment.CenterStart)
-            )
+            // Create a clickable Box for "所在位置" text
+            Box(
+                modifier = Modifier
+                    .weight(1f)  // Take up remaining space
+                    .clickable(onClick = onLocationClick)
+                    .padding(8.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = currentLocation,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            // Place the "目前位置" button to the right
+            Button(
+                onClick = onCurrentLocationClick,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text("目前位置")
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (routeResult == "載入中...") {
-            Text(text = routeResult, modifier = Modifier.padding(16.dp))
-        } else {
-            routeResult.split("\n\n").forEach { routeItem ->
-                if (routeItem.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(90.dp)
-                            .border(1.dp, Color.Gray)
-                            .padding(8.dp),
-                        contentAlignment = Alignment.CenterStart
-                    ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
+        Button(onClick = onQueryClick) {
+            Text("查詢")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (showRouteResult) {
+            if (routeResult == "載入中...") {
+                Text(text = routeResult, modifier = Modifier.padding(16.dp))
+            } else {
+                routeResult.split("\n\n").forEach { routeItem ->
+                    if (routeItem.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(90.dp)
+                                .border(1.dp, Color.Gray)
+                                .padding(8.dp),
+                            contentAlignment = Alignment.CenterStart
                         ) {
-                            routeItem.split("\n").forEach { line ->
-                                Text(text = line)
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                routeItem.split("\n").forEach { line ->
+                                    Text(text = line)
+                                }
                             }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
