@@ -16,8 +16,8 @@ data class StopInfo(val markname: String, val formattedLongitude: String, val fo
 object Stop_filter {
     suspend fun main(url: String): List<StopInfo> {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
+        val clientId = "11026349-b9820ce1-cd51-4721" // clientId
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

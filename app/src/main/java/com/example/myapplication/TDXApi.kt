@@ -17,8 +17,8 @@ object TDXApi {
     suspend fun main(): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/News/City/Taoyuan?%24top=30&%24format=JSON"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
+        val clientId = "11026349-b9820ce1-cd51-4721" // clientId
+        val clientSecret = "c02bf37f-9945-4fcd-bb6d-8a4a2769716c" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

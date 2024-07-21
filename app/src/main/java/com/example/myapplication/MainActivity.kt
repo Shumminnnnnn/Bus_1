@@ -73,10 +73,6 @@ class MainActivity : ComponentActivity() {
                         onButtonClick7 = {
                             val intent = Intent(this@MainActivity, PlanFilter::class.java)
                             startActivity(intent)
-                        },
-                        onButtonClick8 = {
-                            val intent = Intent(this@MainActivity, TimeActivity::class.java)
-                            startActivity(intent)
                         }
                     )
                 }
@@ -91,8 +87,7 @@ fun ScrollableContent(
     onButtonClick2: () -> Unit,
     onButtonClick3: () -> Unit,
     onButtonClick5: () -> Unit,
-    onButtonClick7: () -> Unit,
-    onButtonClick8: () -> Unit
+    onButtonClick7: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -131,13 +126,6 @@ fun ScrollableContent(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "路線規劃篩選")
-        }
-
-        Button(
-            onClick = onButtonClick8,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "時間選擇器")
         }
     }
 }

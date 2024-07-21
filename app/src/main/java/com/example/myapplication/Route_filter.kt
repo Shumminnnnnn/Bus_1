@@ -19,8 +19,8 @@ object Route_filter {
     suspend fun main(routeNumber: String): String {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/$routeNumber?%24format=JSON"
-        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
-        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
+        val clientId = "s11026310-7c639d60-e149-4847" // clientId
+        val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
