@@ -24,7 +24,6 @@ class RouteActivity4 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Retrieve subRouteName from Intent extras if needed
         val subRouteName = intent.getStringExtra("subRouteName") ?: "DefaultSubRouteName"
 
         setContent {
@@ -42,12 +41,8 @@ class RouteActivity4 : ComponentActivity() {
 
         val coroutineScope = rememberCoroutineScope()
 
-        // Effect to launch coroutine for fetching data every 30 seconds
         LaunchedEffect(true) {
-            // Initially fetch data
             fetchDataAndUpdate(routeInfo, subRouteName)
-
-            // Set up periodic data refresh
             while (isActive) {
                 delay(20000) // Wait for 20 seconds
                 fetchDataAndUpdate(routeInfo, subRouteName)
@@ -81,7 +76,6 @@ class RouteActivity4 : ComponentActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        // Navigate to the main screen
         finish()
     }
 
@@ -120,7 +114,7 @@ fun ScrollableContent5(
                     onClick = { onButtonClick(1) },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    // Display routeDepDesInfo's destinationStopNameZh when Direction is 0
+
                     val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
                     Text(text = "往 $departureStopNameZh")
                 }
@@ -132,13 +126,13 @@ fun ScrollableContent5(
                     onClick = { onButtonClick(0) },
                     modifier = Modifier.padding(top = 16.dp)
                 ) {
-                    // Display routeDepDesInfo's departureStopNameZh when Direction is 1
+
                     val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
                     Text(text = "往 $destinationStopNameZh")
                 }
             }
         } else {
-            Text(text = "Loading route data...")
+            Text(text = "載入公車路線動態中...")
         }
 
         Button(

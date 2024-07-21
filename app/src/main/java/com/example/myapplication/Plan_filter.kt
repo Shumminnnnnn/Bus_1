@@ -99,15 +99,12 @@ object Plan_filter {
             val longitude = coordinates.getOrNull(0)?.toDoubleOrNull() ?: continue
             val latitude = coordinates.getOrNull(1)?.toDoubleOrNull() ?: continue
 
-            // Format longitude and latitude to five decimal places
             val formattedLongitude = "%.6f".format(longitude)
             val formattedLatitude = "%.6f".format(latitude)
 
-            // Define the range for longitude and latitude
             val lonInRange = formattedLongitude.toDouble() in 120.9867..121.5040
             val latInRange = formattedLatitude.toDouble() in 24.6324..25.1171
 
-            // Check if both longitude and latitude are within the specified ranges
             if (lonInRange && latInRange) {
                 planInfoList.add(PlanInfo(markname, formattedLongitude, formattedLatitude))
             }

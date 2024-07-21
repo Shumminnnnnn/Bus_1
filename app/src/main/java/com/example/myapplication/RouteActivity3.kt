@@ -35,9 +35,8 @@ class RouteActivity3 : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val routeResult = remember { mutableStateOf("Loading route schedule data...") }
+                    val routeResult = remember { mutableStateOf("載入路線發車時刻表中...") }
 
-                    // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val routeResultJson = Route_schedule.main()
@@ -61,7 +60,7 @@ class RouteActivity3 : ComponentActivity() {
 
 @Composable
 fun ScrollableContent4(routeResult: String) {
-    val parts = routeResult.split("<<DIVIDER>>") // Split the result into parts at the divider markers
+    val parts = routeResult.split("<<DIVIDER>>")
 
     Column(
         modifier = Modifier

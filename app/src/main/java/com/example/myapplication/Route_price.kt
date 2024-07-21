@@ -80,13 +80,11 @@ object Route_price {
                 responseBody.string()
             }
 
-            // Parse JSON and extract information
             val gson = Gson()
             val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
             val result = StringBuilder()
             val priceCountMap = mutableMapOf<Int, Int>()
 
-            // Count occurrences of each price
             for (jsonElement in jsonArray) {
                 val jsonObject = jsonElement.asJsonObject
                 val odFares = jsonObject.getAsJsonArray("ODFares")
@@ -99,10 +97,8 @@ object Route_price {
                 }
             }
 
-            // Find price with the maximum occurrence
             val maxPrice = priceCountMap.maxByOrNull { it.value }?.key
 
-            // Display prices
             if (maxPrice != null) {
                 result.append("全程一段票($maxPrice 元)\n")
             }

@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val tdxResult = remember { mutableStateOf("Loading TDX data...") }
+                    val tdxResult = remember { mutableStateOf("載入主畫面中...") }
 
                     // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
@@ -64,12 +64,6 @@ class MainActivity : ComponentActivity() {
                             val intent = Intent(this@MainActivity, StopActivity::class.java)
                             startActivity(intent)
                         },
-
-                        onButtonClick5 = {
-                            val intent = Intent(this@MainActivity, MapActivity::class.java)
-                            startActivity(intent)
-                        },
-
                         onButtonClick7 = {
                             val intent = Intent(this@MainActivity, PlanFilter::class.java)
                             startActivity(intent)
@@ -86,7 +80,6 @@ fun ScrollableContent(
     onButtonClick1: () -> Unit,
     onButtonClick2: () -> Unit,
     onButtonClick3: () -> Unit,
-    onButtonClick5: () -> Unit,
     onButtonClick7: () -> Unit
 ) {
     Column(
@@ -112,13 +105,6 @@ fun ScrollableContent(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "附近站牌")
-        }
-
-        Button(
-            onClick = onButtonClick5,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "所在位置")
         }
 
         Button(

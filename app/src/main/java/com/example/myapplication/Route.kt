@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import okhttp3.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -81,18 +80,16 @@ object Route {
                 } else {
                     responseBody.string()
                 }
-            // Parse JSON and extract RouteName, StopName "Zh_tw", and Direction
+
             val gson = Gson()
             val jsonArray = gson.fromJson(jsonString, JsonArray::class.java)
             val stopNames = StringBuilder()
             for (jsonElement in jsonArray) {
                 val jsonObject = jsonElement.asJsonObject
 
-                // Extract RouteName "Zh_tw"
                 val routeNameZhTw = jsonObject.getAsJsonObject("RouteName").getAsJsonPrimitive("Zh_tw").asString
                 stopNames.append("路線名稱: ").append(routeNameZhTw).append("\n\n")
 
-                // Extract Direction and map it to "去程" or "返程"
                 val direction = jsonObject.getAsJsonPrimitive("Direction").asInt
                 val directionStr = if (direction == 0) "去程" else "返程"
                 stopNames.append("方向: ").append(directionStr).append("\n")

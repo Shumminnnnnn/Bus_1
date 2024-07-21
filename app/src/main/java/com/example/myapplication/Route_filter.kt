@@ -30,11 +30,9 @@ object Route_filter {
         val accessToken: String = tokenElem.get("access_token").asText()
         val jsonString = withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
 
-        // Check if the result contains a special message for empty routes
         return if (jsonString.contains("沒有此路線，請重新輸入")) {
             jsonString
         } else {
-            // Format the subRouteDataList as a string
             formatSubRouteData(parseSubRouteData(jsonString))
         }
     }

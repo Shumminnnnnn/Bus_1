@@ -92,6 +92,7 @@ class StopFilter : ComponentActivity() {
                                                     .padding(8.dp)
                                                     .clickable {
                                                         val intent = Intent(this@StopFilter, StopActivity::class.java).apply {
+                                                            putExtra("markname", stopInfo.markname)  // Passing markname
                                                             putExtra("latitude", stopInfo.formattedLatitude.toDouble())
                                                             putExtra("longitude", stopInfo.formattedLongitude.toDouble())
                                                         }

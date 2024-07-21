@@ -62,7 +62,7 @@ fun RequestLocationPermission(onPermissionGranted: () -> Unit) {
     }
 
     if (!permissionState.status.isGranted) {
-        Text(text = "Location permission required")
+//        Text(text = "Location permission required")
     }
 }
 
@@ -119,10 +119,8 @@ fun LocationScreen(onLocationObtained: (Location) -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         location?.let {
-            Text(text = "Latitude: ${it.latitude}")
-            Text(text = "Longitude: ${it.longitude}")
         } ?: run {
-            Text(text = "Getting location...")
+            Text(text = "定位中...")
         }
     }
 }

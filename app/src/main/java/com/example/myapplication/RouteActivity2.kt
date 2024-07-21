@@ -36,9 +36,8 @@ class RouteActivity2 : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val routeResult = remember { mutableStateOf("Loading route stop data...") }
+                    val routeResult = remember { mutableStateOf("載入路線動態中...") }
 
-                    // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val routeResultJson = Route.main()

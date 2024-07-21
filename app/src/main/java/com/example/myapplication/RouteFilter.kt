@@ -62,7 +62,7 @@ class RouteFilter : ComponentActivity() {
                                 .padding(8.dp)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            // Display the input text in a non-clickable TextField
+
                             OutlinedTextField(
                                 value = inputText,
                                 onValueChange = {},
@@ -75,7 +75,6 @@ class RouteFilter : ComponentActivity() {
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Parse the result and display each item in a bordered box with centered text
                             routeResult.value.split("\n").chunked(2).forEach { routeItem ->
                                 if (routeItem.size == 2) {
                                     val (subRouteName, headsign) = routeItem
@@ -86,7 +85,6 @@ class RouteFilter : ComponentActivity() {
                                             .border(1.dp, Color.Gray)
                                             .padding(8.dp)
                                             .clickable {
-                                                // Set the subRouteName in Route_depdes and navigate to RouteActivity4
                                                 Route_depdes.subRouteName = subRouteName
                                                 val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
                                                 intent.putExtra("subRouteName", subRouteName)
@@ -111,7 +109,7 @@ class RouteFilter : ComponentActivity() {
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
-                            Spacer(modifier = Modifier.height(200.dp)) // 路線資料底部和鍵盤的間隔，避免資料被鍵盤部分遮擋
+                            Spacer(modifier = Modifier.height(200.dp))
                         }
 
                         CustomKeyboard(
@@ -130,7 +128,7 @@ class RouteFilter : ComponentActivity() {
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .zIndex(1f) // 確保鍵盤在其他內容上
-                                .background(Color(0xFF6650a4)) // 鍵盤背景顏色
+                                .background(Color(0xFF6650a4))
                                 .height(200.dp)
                         )
                     }
@@ -149,7 +147,7 @@ fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) 
         listOf("A", "B", "0", "清除")
     )
 
-    Column(modifier = modifier.padding(8.dp).background(Color(0xFF6650a4))) { // Purple background
+    Column(modifier = modifier.padding(8.dp).background(Color(0xFF6650a4))) {
         keys.forEach { row ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 row.forEach { key ->

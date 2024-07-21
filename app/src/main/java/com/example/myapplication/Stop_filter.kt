@@ -89,6 +89,7 @@ object Stop_filter {
         val stopInfoList = mutableListOf<StopInfo>()
 
         if (rootNode.isEmpty) {
+            println("200公尺內無站牌!")
             return emptyList()
         }
 
@@ -99,15 +100,13 @@ object Stop_filter {
             val longitude = coordinates.getOrNull(0)?.toDoubleOrNull() ?: continue
             val latitude = coordinates.getOrNull(1)?.toDoubleOrNull() ?: continue
 
-            // Format longitude and latitude to four decimal places
             val formattedLongitude = "%.4f".format(longitude)
             val formattedLatitude = "%.4f".format(latitude)
 
-            // Define the range for longitude and latitude
+            // 確認經緯度是否在範圍內
             val lonInRange = formattedLongitude.toDouble() in 120.9867..121.5040
             val latInRange = formattedLatitude.toDouble() in 24.6324..25.1171
 
-            // Check if both longitude and latitude are within the specified ranges
             if (lonInRange && latInRange) {
                 stopInfoList.add(StopInfo(markname, formattedLongitude, formattedLatitude))
             }

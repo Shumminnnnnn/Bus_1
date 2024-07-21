@@ -56,7 +56,7 @@ class PlanFilter : ComponentActivity() {
                     val data = result.data
                     data?.let {
                         currentTime = it.getStringExtra("selectedTime") ?: fetchCurrentTime()
-                        isTimeSelected = true // Indicate that time is selected from TimeActivity
+                        isTimeSelected = true
                     }
                 }
             }
@@ -177,10 +177,9 @@ fun PlanFilterContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        // Start location with box and click effect
         Box(
             modifier = Modifier
-                .fillMaxWidth() // Make the box fill the available width
+                .fillMaxWidth()
                 .padding(8.dp)
                 .border(1.dp, MaterialTheme.colorScheme.primary) // Border for the box
                 .clickable { onNavigateToBiginFilter() } // Click effect
@@ -192,15 +191,15 @@ fun PlanFilterContent(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        // End location with box and click effect
         Box(
             modifier = Modifier
-                .fillMaxWidth() // Make the box fill the available width
+                .fillMaxWidth()
                 .padding(8.dp)
-                .border(1.dp, MaterialTheme.colorScheme.primary) // Border for the box
-                .clickable { onNavigateToEndFilter() } // Click effect
+                .border(1.dp, MaterialTheme.colorScheme.primary)
+                .clickable { onNavigateToEndFilter() }
                 .padding(16.dp) // Padding inside the box
         ) {
             Text(
@@ -209,30 +208,30 @@ fun PlanFilterContent(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Current time with click effect
         Text(
             text = currentTime,
             modifier = Modifier
                 .padding(8.dp)
                 .clickable { onNavigateToTimeActivity() }
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Button to fetch and show TDX result
         Button(
             onClick = {
                 showTdxResult = true
-                onQueryButtonClick() // Trigger fetching TDX data
+                onQueryButtonClick()
             },
             modifier = Modifier.padding(8.dp)
         ) {
             Text(text = "查詢")
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Conditionally show TDX result
         if (showTdxResult) {
             Text(text = tdxResult, modifier = Modifier.padding(8.dp))
         }

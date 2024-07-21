@@ -29,11 +29,15 @@ object ArroundStop {
         val tokenInfo = withContext(Dispatchers.IO) { getAccessToken(tokenUrl, clientId, clientSecret) }
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
-        Log.d("ArroundStop", "Access Token: $accessToken") // Debug log
+        Log.d("ArroundStop", "Access Token: $accessToken")
         val stopDataList = withContext(Dispatchers.IO) { getStopString(tdxUrl, accessToken) }
-        Log.d("ArroundStop", "Stop Data List: $stopDataList") // Debug log
+        Log.d("ArroundStop", "Stop Data List: $stopDataList")
 
-        return formatStopData(stopDataList)
+        return if (stopDataList.isEmpty()) {
+            "200公尺內無公車站牌"
+        } else {
+            formatStopData(stopDataList)
+        }
     }
 
     fun createUrlWithCoordinates(latitude: Double, longitude: Double): String {

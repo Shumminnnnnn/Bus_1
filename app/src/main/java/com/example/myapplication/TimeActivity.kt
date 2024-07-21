@@ -37,7 +37,6 @@ class TimeActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
     var date by remember { mutableStateOf("") }
@@ -50,7 +49,7 @@ fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        Text(text = "Selected Date: $date")
+        Text(text = "已選擇日期: $date")
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = {
             val calendar = Calendar.getInstance()
@@ -61,12 +60,12 @@ fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
                 date = "$selectedYear-${selectedMonth + 1}-$selectedDay"
             }, year, month, day).show()
         }) {
-            Text("Select Date")
+            Text("選擇日期")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Selected Time: $time")
+        Text(text = "已選擇時間: $time")
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = {
             val calendar = Calendar.getInstance()
@@ -77,7 +76,7 @@ fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
                 onTimeSelected("$date $time")
             }, hour, minute, true).show()
         }) {
-            Text("Select Time")
+            Text("選擇時間")
         }
     }
 }

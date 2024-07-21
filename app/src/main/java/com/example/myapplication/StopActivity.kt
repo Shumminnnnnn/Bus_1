@@ -1,9 +1,7 @@
 package com.example.myapplication
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
@@ -19,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
+
 class StopActivity : ComponentActivity() {
-    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -35,15 +33,15 @@ class StopActivity : ComponentActivity() {
 
                     val latitude = intent.getDoubleExtra("latitude", 0.0)
                     val longitude = intent.getDoubleExtra("longitude", 0.0)
+                    val markname = intent.getStringExtra("markname") ?: ""
 
-                    currentLocation.value = "所在位置: $latitude, $longitude"
+                    currentLocation.value = "所在位置: $markname"
 
                     LaunchedEffect(latitude, longitude) {
                         try {
                             val routeResultJson = ArroundStop.fetchStopData(latitude, longitude)
                             routeResult.value = routeResultJson
                         } catch (e: Exception) {
-                            Log.e("StopActivity", "Error fetching route data: ${e.message}", e)
                             routeResult.value = "Error fetching route data: ${e.message}"
                         }
                     }
@@ -84,17 +82,15 @@ fun ScrollableContent7(
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Use Row to place "所在位置" and "目前位置" button horizontally
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .border(1.dp, Color.Gray)
         ) {
-            // Create a clickable Box for "所在位置" text
             Box(
                 modifier = Modifier
-                    .weight(1f)  // Take up remaining space
+                    .weight(1f)
                     .clickable(onClick = onLocationClick)
                     .padding(8.dp)
                     .align(Alignment.CenterVertically)
@@ -105,14 +101,13 @@ fun ScrollableContent7(
                 )
             }
 
-            // Place the "目前位置" button to the right
             Button(
                 onClick = onCurrentLocationClick,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .align(Alignment.CenterVertically)
             ) {
-                Text("目前位置")
+                Text("套用目前位置")
             }
         }
 
@@ -130,11 +125,17 @@ fun ScrollableContent7(
             } else {
                 routeResult.split("\n\n").forEach { routeItem ->
                     if (routeItem.isNotEmpty()) {
+                        val isNoStopMessage = routeItem.contains("200公尺內無公車站牌")
+                        val boxModifier = if (isNoStopMessage) {
+                            Modifier
+                        } else {
+                            Modifier.border(1.dp, Color.Gray)
+                        }
+
                         Box(
-                            modifier = Modifier
+                            modifier = boxModifier
                                 .fillMaxWidth()
                                 .height(90.dp)
-                                .border(1.dp, Color.Gray)
                                 .padding(8.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {

@@ -46,21 +46,19 @@ object Route_arrivetime {
 
             val result = StringBuilder()
 
-            // 取得並顯示 RouteName
             val routeNameZhTw = jsonNodes[0]["RouteName"]["Zh_tw"].asText()
             result.append("路線名稱: $routeNameZhTw\n\n")
 
-            // 處理去程和返程
             val stopInfos = mutableListOf<Pair<Int, String>>()
 
             for (node in jsonNodes) {
                 val dir = node["Direction"].asInt()
-                if (dir != directionFilter) continue // Filter by direction
+                if (dir != directionFilter) continue
                 val stopSequence = node["StopSequence"].asInt()
                 val stopName = node["StopName"]["Zh_tw"].asText()
                 val stopStatus = node["StopStatus"].asInt()
-                val estimateTime = node["EstimateTime"]?.asInt() ?: -1 // Extract EstimateTime, -1 if not present
-                val nextBusTime = node["NextBusTime"].asText(null) // Extract NextBusTime, null if not present
+                val estimateTime = node["EstimateTime"]?.asInt() ?: -1
+                val nextBusTime = node["NextBusTime"].asText(null)
 
                 val nextBusTimeFormatted = nextBusTime?.let {
                     try {
@@ -68,7 +66,6 @@ object Route_arrivetime {
                         val targetFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                         val date = originalFormat.parse(it)
 
-                        // 加上8小時配合台灣時區
                         val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Taipei"))
                         calendar.time = date
                         val adjustedDate = calendar.time

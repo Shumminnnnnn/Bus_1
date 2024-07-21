@@ -40,7 +40,6 @@ class RouteActivity5 : ComponentActivity() {
         val routeInfo = remember { mutableStateOf<RouteData?>(null) }
 
         LaunchedEffect(Unit) {
-            // Launch Coroutine to fetch data
             try {
                 val fetchedRouteInfo = Route_depdes.main()
                 routeInfo.value = fetchedRouteInfo
@@ -54,7 +53,6 @@ class RouteActivity5 : ComponentActivity() {
                 routeDepDesInfo = "${info.departureStopNameZh} - ${info.destinationStopNameZh}",
                 routeMapImageUrl = info.routeMapImageUrl
             ) {
-                // On button click, open external link
                 info.routeMapImageUrl?.let { url ->
                     openExternalLink(url)
                 }
@@ -79,7 +77,6 @@ fun ScrollableContent6(
             .padding(8.dp)
             .verticalScroll(rememberScrollState())
     ) {
-
         Text(text = routeDepDesInfo, modifier = Modifier.padding(16.dp))
         Text(
             text = "路線簡圖：",

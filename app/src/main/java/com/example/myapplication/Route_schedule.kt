@@ -68,7 +68,6 @@ object Route_schedule {
             val responseBody = response.body ?: throw IOException("Empty response body")
 
             val jsonString = if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
-                // Decompress gzip data
                 responseBody.source().use { source ->
                     GzipSource(source).buffer().use { gzipBuffer ->
                         gzipBuffer.readUtf8()
@@ -95,11 +94,9 @@ object Route_schedule {
                 val direction = route["Direction"].asInt()
                 val directionLabel = if (direction == 0) "去程" else "返程"
 
-                // Append divider for return direction
                 if (direction == 1) {
                     result.append("<<DIVIDER>>")
                 }
-
                 result.append("方向: ").append(directionLabel).append("\n\n")
 
                 val holidayTimetables = timetables.filter {
@@ -112,7 +109,6 @@ object Route_schedule {
                             it["ServiceDay"]["Friday"].asInt() == 1
                 }.sortedBy { it["TripID"].asText().replace("-", "").toInt() }
 
-                // Display holiday timetables
                 if (holidayTimetables.isNotEmpty()) {
                     result.append("假日時刻表: \n")
                     for (timetable in holidayTimetables) {
@@ -125,7 +121,6 @@ object Route_schedule {
                     result.append("\n")
                 }
 
-                // Display weekday timetables
                 if (weekdayTimetables.isNotEmpty()) {
                     result.append("平日時刻表: \n")
                     for (timetable in weekdayTimetables) {

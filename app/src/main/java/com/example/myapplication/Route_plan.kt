@@ -20,7 +20,7 @@ object Route_plan {
     private var originLongitude: Double = 0.0
     private var destinationLatitude: Double = 0.0
     private var destinationLongitude: Double = 0.0
-    private var endLocation: String = "" // 全局变量
+    private var endLocation: String = ""
 
     fun updateFormattedDate(date: String) {
         formattedDate = date
@@ -35,13 +35,13 @@ object Route_plan {
         originLong: Double,
         destinationLat: Double,
         destinationLong: Double,
-        endLoc: String // 使用更具描述性的名称
+        endLoc: String
     ) {
         originLatitude = originLat
         originLongitude = originLong
         destinationLatitude = destinationLat
         destinationLongitude = destinationLong
-        endLocation = endLoc // 赋值
+        endLocation = endLoc
     }
 
     suspend fun main(): String {
