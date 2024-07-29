@@ -111,7 +111,7 @@ fun ScrollableContent(
             onClick = onButtonClick7,
             modifier = Modifier.padding(top = 16.dp)
         ) {
-            Text(text = "路線規劃篩選")
+            Text(text = "路線規劃")
         }
     }
 }

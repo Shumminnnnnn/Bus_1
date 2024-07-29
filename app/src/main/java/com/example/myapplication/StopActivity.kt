@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.example.myapplication.ui.theme.MyApplicationTheme
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class StopActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,10 +70,16 @@ class StopActivity : ComponentActivity() {
                             val intent = Intent(this@StopActivity, MapActivity::class.java)
                             startActivity(intent)
                         }
-                    )
+                    ) { onBackClick() }
                 }
             }
         }
+    }
+
+    private fun onBackClick() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
 
@@ -83,7 +90,8 @@ fun ScrollableContent7(
     showRouteResult: Boolean,
     onLocationClick: () -> Unit,
     onQueryClick: () -> Unit,
-    onCurrentLocationClick: () -> Unit
+    onCurrentLocationClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -94,60 +102,94 @@ fun ScrollableContent7(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF9e7cfe))
-                .padding(vertical = 15.dp)
+                .padding(vertical = 10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .padding(horizontal = 8.dp)
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .height(50.dp)
-                    .clickable(onClick = onLocationClick)
+            Column(
+                modifier = Modifier.padding(10.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                        .align(Alignment.CenterVertically)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-13).dp)) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(3.dp))
                     Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.Gray)) {
-                                append("所在位置: ")
-                            }
-                            withStyle(style = SpanStyle(color = Color.Black)) {
-                                append(currentLocation)
-                            }
-                        },
-                        style = MaterialTheme.typography.bodyLarge
+                        text = "附近站牌",
+                        style = androidx.compose.ui.text.TextStyle(
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
                     )
                 }
-
-                IconButton(
-                    onClick = onCurrentLocationClick,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.map_pin),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+                    Row(
+                        modifier = Modifier
+                            .weight(8f)
+                            .background(Color.White, shape = RoundedCornerShape(8.dp))
+                            .height(60.dp)
+                            .clickable(onClick = onLocationClick),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = buildAnnotatedString {
+                                    withStyle(style = SpanStyle(color = Color.Gray)) {
+                                        append("所在位置: ")
+                                    }
+                                    withStyle(style = SpanStyle(color = Color.Black)) {
+                                        append(currentLocation)
+                                    }
+                                },
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
 
-            IconButton(
-                onClick = onQueryClick,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 8.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.search),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White),
-                    modifier = Modifier.size(24.dp)
-                )
+                        IconButton(
+                            onClick = onCurrentLocationClick,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.map_pin),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = onQueryClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.search),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(Color.White),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
         }
 

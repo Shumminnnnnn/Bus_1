@@ -217,14 +217,14 @@ fun PlanFilterContent(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-10).dp)) {
+                        IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-13).dp)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                                 contentDescription = "Back",
                                 tint = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = "路線規劃",
                             style = androidx.compose.ui.text.TextStyle(
@@ -370,6 +370,7 @@ fun PlanFilterContent(
             if (showTdxResult) {
                 if (tdxResult.isNotEmpty()) {
                     Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+
                 } else {
                     Box(
                         modifier = Modifier

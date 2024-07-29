@@ -188,7 +188,7 @@ class EndFilter : ComponentActivity() {
                                                         thickness = 1.dp,
                                                         modifier = Modifier
                                                             .padding(vertical = 8.dp)
-                                                            .width(250.dp)
+                                                            .width(300.dp)
                                                     )
                                                 }
                                             }
