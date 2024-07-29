@@ -32,6 +32,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
@@ -203,8 +204,8 @@ fun PlanFilterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
         ) {
+            // Fixed top section
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -367,101 +368,110 @@ fun PlanFilterContent(
                 }
             }
 
-            if (showTdxResult) {
-                if (tdxResult.isNotEmpty()) {
-                    Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+            // Scrollable bottom section
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                item {
+                    if (showTdxResult) {
+                        if (tdxResult.isNotEmpty()) {
+                            Text(text = tdxResult, modifier = Modifier.padding(8.dp))
 
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        } else {
                             Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(89.dp)
-                                        .offset(y = (-50).dp)
-                                        .background(Color(0xFF9e7cfe), shape = CircleShape)
-                                )
-                                Image(
-                                    painter = painterResource(id = R.drawable.logo),
-                                    contentDescription = "Logo",
-                                    modifier = Modifier.size(250.dp)
-                                )
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(89.dp)
+                                                .offset(y = (-50).dp)
+                                                .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                        )
+                                        Image(
+                                            painter = painterResource(id = R.drawable.logo),
+                                            contentDescription = "Logo",
+                                            modifier = Modifier.size(250.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = "查無路線規劃結果!",
+                                            style = androidx.compose.ui.text.TextStyle(
+                                                fontSize = 18.sp,
+                                                color = Color.Black,
+                                            ),
+                                            modifier = Modifier
+                                                .padding(10.dp)
+                                                .offset(y = (-140).dp)
+                                        )
+                                    }
+                                }
                             }
-                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(
-                                    text = "查無路線規劃結果!",
-                                    style = androidx.compose.ui.text.TextStyle(
-                                        fontSize = 18.sp,
-                                        color = Color.Black,
-                                    ),
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .offset(y = (-140).dp)
-                                )
+                                Box(
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(89.dp)
+                                            .offset(y = (-50).dp)
+                                            .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                    )
+                                    Image(
+                                        painter = painterResource(id = R.drawable.logo),
+                                        contentDescription = "Logo",
+                                        modifier = Modifier.size(250.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "告訴我們你想去哪裡吧!",
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 18.sp,
+                                            color = Color.Black,
+                                        ),
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .offset(y = (-140).dp)
+                                    )
+                                    Text(
+                                        text = "輸入起點及終點，讓我們幫你找到最佳路線!",
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 15.sp,
+                                            color = Color.Gray,
+                                        ),
+                                        modifier = Modifier
+                                            .offset(y = (-140).dp)
+                                    )
+                                }
                             }
-                        }
-                    }
-                }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(89.dp)
-                                    .offset(y = (-50).dp)
-                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.logo),
-                                contentDescription = "Logo",
-                                modifier = Modifier.size(250.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "告訴我們你想去哪裡吧!",
-                                style = androidx.compose.ui.text.TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color.Black,
-                                ),
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .offset(y = (-140).dp)
-                            )
-                            Text(
-                                text = "輸入起點及終點，讓我們幫你找到最佳路線!",
-                                style = androidx.compose.ui.text.TextStyle(
-                                    fontSize = 15.sp,
-                                    color = Color.Gray,
-                                ),
-                                modifier = Modifier
-                                    .offset(y = (-140).dp)
-                            )
                         }
                     }
                 }

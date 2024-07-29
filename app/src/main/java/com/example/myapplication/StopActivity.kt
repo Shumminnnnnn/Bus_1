@@ -77,8 +77,6 @@ class StopActivity : ComponentActivity() {
     }
 
     private fun onBackClick() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
         finish()
     }
 }
