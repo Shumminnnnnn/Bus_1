@@ -134,10 +134,9 @@ object Route_plan {
         }
 
         val routes = rootNode.path("data").path("routes")
-        if (routes.isEmpty) {
-            return "無路線規畫結果"
-        }
-
+//        if (routes.isEmpty) {
+//            return "無路線規畫結果"
+//        }
         val sb = StringBuilder()
         for (route in routes) {
             val startTime = route.get("start_time").asText().split("T").getOrNull(1)?.substring(0, 5) ?: "N/A"

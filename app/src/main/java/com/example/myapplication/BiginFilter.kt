@@ -4,13 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -29,10 +41,10 @@ class BiginFilter : ComponentActivity() {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colors.background
                 ) {
                     val stopResults = remember { mutableStateOf<List<PlanInfo>?>(null) }
-                    var inputText by remember { mutableStateOf("") }
+                    var inputText by remember { mutableStateOf(TextFieldValue("")) }
 
                     fun fetchStopData(stopNumber: String) {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -52,61 +64,146 @@ class BiginFilter : ComponentActivity() {
                     }
 
                     Box(modifier = Modifier.fillMaxSize()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            OutlinedTextField(
-                                value = inputText,
-                                onValueChange = { newValue ->
-                                    inputText = newValue
-                                    if (newValue.isNotBlank()) {
-                                        fetchStopData(newValue)
-                                    } else {
-                                        stopResults.value = null
-                                    }
-                                },
-                                label = { Text("想搜尋哪個地點呢?") },
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            // Top purple area
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp),
-                                singleLine = true
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            if (inputText.isNotBlank()) {
-                                stopResults.value?.let { resultList ->
-                                    if (resultList.isEmpty()) {
-                                        Text(
-                                            text = "查無此地點資料，請重新輸入地點",
-                                            modifier = Modifier.padding(8.dp),
-                                            fontSize = 16.sp
+                                    .background(Color(0xFF9e7cfe))
+                                    .padding(16.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    IconButton(
+                                        onClick = { finish() },
+                                        modifier = Modifier
+                                            .background(Color(0xFF9e7cfe))
+                                            .size(40.dp)
+                                            .offset(x = (-8).dp) // Move the button to the left
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                                            contentDescription = null,
+                                            tint = Color.White
                                         )
-                                    } else {
-                                        resultList.forEach { planInfo ->
+                                    }
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .height(48.dp)
+                                            .background(Color.White)
+                                            .padding(horizontal = 16.dp),
+                                        contentAlignment = Alignment.CenterStart
+                                    ) {
+                                        if (inputText.text.isEmpty()) {
                                             Text(
-                                                text = "${planInfo.markname}\n",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(8.dp)
-                                                    .clickable {
-                                                        val intent = Intent().apply {
-                                                            putExtra("startLocation", planInfo.markname)
-                                                            putExtra("latitude", planInfo.formattedLatitude.toDouble())
-                                                            putExtra("longitude", planInfo.formattedLongitude.toDouble())
-                                                        }
-                                                        setResult(RESULT_OK, intent)
-                                                        finish()
-                                                    },
+                                                text = "想搜尋哪個地點呢?",
+                                                color = Color.Gray,
                                                 fontSize = 16.sp
                                             )
-                                            Spacer(modifier = Modifier.height(8.dp))
+                                        }
+                                        BasicTextField(
+                                            value = inputText,
+                                            onValueChange = { newValue ->
+                                                inputText = newValue
+                                                if (newValue.text.isNotBlank()) {
+                                                    fetchStopData(newValue.text)
+                                                } else {
+                                                    stopResults.value = null
+                                                }
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            textStyle = TextStyle(
+                                                fontSize = 16.sp,
+                                                textAlign = TextAlign.Start,
+                                                color = Color.Black
+                                            ),
+                                            singleLine = true
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Scrollable content area
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(8.dp)
+                            ) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "搜尋結果",
+                                    modifier = Modifier.padding(8.dp),
+                                    fontSize = 16.sp,
+                                    color = Color.Gray,
+                                )
+                                if (inputText.text.isNotBlank()) {
+                                    stopResults.value?.let { resultList ->
+                                        if (resultList.isEmpty()) {
+                                            Text(
+                                                text = "查無此地點資料，請重新輸入地點",
+                                                modifier = Modifier.padding(8.dp),
+                                                fontSize = 16.sp
+                                            )
+                                        } else {
+                                            resultList.forEach { planInfo ->
+                                                Column(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(8.dp)
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.clickable {
+                                                            val intent = Intent().apply {
+                                                                putExtra("startLocation", planInfo.markname)
+                                                                putExtra("latitude", planInfo.formattedLatitude.toDouble())
+                                                                putExtra("longitude", planInfo.formattedLongitude.toDouble())
+                                                            }
+                                                            setResult(RESULT_OK, intent)
+                                                            finish()
+                                                        }
+                                                    ) {
+                                                        Image(
+                                                            painter = painterResource(id = R.drawable.map_pin),
+                                                            contentDescription = null,
+                                                            colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)), // Set the tint color to purple
+                                                            modifier = Modifier
+                                                                .size(24.dp)
+                                                                .padding(end = 8.dp)
+                                                        )
+                                                        Text(
+                                                            text = planInfo.markname,
+                                                            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                                                            fontSize = 16.sp
+                                                        )
+                                                    }
+                                                    Divider(
+                                                        color = Color.Gray,
+                                                        thickness = 1.dp,
+                                                        modifier = Modifier
+                                                            .padding(vertical = 8.dp)
+                                                            .width(250.dp)
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
+
+                            // Bottom purple area
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFF9e7cfe))
+                                    .padding(25.dp)
+                            )
                         }
                     }
                 }

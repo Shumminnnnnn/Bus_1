@@ -64,7 +64,7 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(1f)
     ) {
         Box(
             modifier = Modifier
@@ -82,10 +82,11 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                         contentDescription = "Back",
-                        tint = Color.White // White icon color
+                        tint = Color.White
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
+
             }
 
             Box(
@@ -106,7 +107,7 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
 
         Column(
             modifier = Modifier
-                .weight(1f) // Fill the remaining space
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
@@ -129,7 +130,7 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
                         color = Color(0xFF9e7cfe),
                         thickness = 2.dp,
                         modifier = Modifier
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 5.dp)
                             .fillMaxWidth(1f)
                     )
                 }
@@ -141,7 +142,7 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
             modifier = Modifier
                 .background(Color(0xFF9e7cfe))
                 .fillMaxWidth()
-                .padding(vertical = 30.dp)
+                .padding(vertical = 25.dp)
         )
     }
 }

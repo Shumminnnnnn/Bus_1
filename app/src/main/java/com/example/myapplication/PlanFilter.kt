@@ -8,20 +8,34 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 class PlanFilter : ComponentActivity() {
     private var startLocation: String by mutableStateOf("")
@@ -85,9 +99,13 @@ class PlanFilter : ComponentActivity() {
                             }
                         }
                     )
+                    { onBackClick() }
                 }
             }
         }
+    }
+    private fun onBackClick() {
+        finish()
     }
 
     private fun handleActivityResult(result: ActivityResult, locationType: String) {
@@ -143,7 +161,7 @@ class PlanFilter : ComponentActivity() {
     private fun parseCurrentTime(currentTime: String, isTimeSelected: Boolean): Pair<String, String> {
         val parts = currentTime.split(" ")
         val date = parts[0]
-        var time = parts[1].replace(":", "%3A") // Encode time for URL
+        var time = parts[1].replace(":", "%3A")
 
         if (!isTimeSelected) {
             // Add 3 minutes to the current time
@@ -157,7 +175,6 @@ class PlanFilter : ComponentActivity() {
         return Pair(date, time)
     }
 }
-
 @Composable
 fun PlanFilterContent(
     startLocation: String,
@@ -167,73 +184,287 @@ fun PlanFilterContent(
     onNavigateToBiginFilter: () -> Unit,
     onNavigateToEndFilter: () -> Unit,
     onNavigateToTimeActivity: () -> Unit,
-    onQueryButtonClick: () -> Unit // New parameter for the button click
+    onQueryButtonClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
-    var showTdxResult by remember { mutableStateOf(false) } // State to control TDX result visibility
+    var showTdxResult by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .border(1.dp, MaterialTheme.colorScheme.primary) // Border for the box
-                .clickable { onNavigateToBiginFilter() } // Click effect
-                .padding(16.dp) // Padding inside the box
-        ) {
-            Text(
-                text = "起點: $startLocation",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+    Scaffold(
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .background(Color(0xFF9e7cfe))
             )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .border(1.dp, MaterialTheme.colorScheme.primary)
-                .clickable { onNavigateToEndFilter() }
-                .padding(16.dp) // Padding inside the box
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
-            Text(
-                text = "終點: $endLocation",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF9e7cfe))
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-10).dp)) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "路線規劃",
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.disc),
+                                    contentDescription = "Disc Icon",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .height(50.dp)
+                                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp))
+                                        .background(Color.White)
+                                        .clickable { onNavigateToBiginFilter() }
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp)
+                                    ) {
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                append("起點: ")
+                                                withStyle(style = SpanStyle(color = Color.Black)) {
+                                                    append(startLocation)
+                                                }
+                                            },
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                }
+                            }
 
-        Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = currentTime,
-            modifier = Modifier
-                .padding(8.dp)
-                .clickable { onNavigateToTimeActivity() }
-        )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.map_pin),
+                                    contentDescription = "Map Pin Icon",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .height(50.dp)
+                                        .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp))
+                                        .background(Color.White)
+                                        .clickable { onNavigateToEndFilter() }
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp)
+                                    ) {
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                append("終點: ")
+                                                withStyle(style = SpanStyle(color = Color.Black)) {
+                                                    append(endLocation)
+                                                }
+                                            },
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = Color.Gray
+                                        )
+                                    }
+                                }
+                            }
+                        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-        Button(
-            onClick = {
-                showTdxResult = true
-                onQueryButtonClick()
-            },
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text(text = "查詢")
-        }
+                        Box(
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = "Search",
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .clickable {
+                                        showTdxResult = true
+                                        onQueryButtonClick()
+                                    }
+                            )
+                        }
+                    }
 
-        Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-        if (showTdxResult) {
-            Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF9e7cfe))
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) { onNavigateToTimeActivity() }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_access_time_24),
+                            contentDescription = "Time Icon",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .size(25.dp)
+                                .offset(x = (-8).dp)
+                        )
+                        Text(
+                            text = "出發時間: $currentTime",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
+
+            if (showTdxResult) {
+                if (tdxResult.isNotEmpty()) {
+                    Text(text = tdxResult, modifier = Modifier.padding(8.dp))
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(89.dp)
+                                        .offset(y = (-50).dp)
+                                        .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo),
+                                    contentDescription = "Logo",
+                                    modifier = Modifier.size(250.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "查無路線規劃結果!",
+                                    style = androidx.compose.ui.text.TextStyle(
+                                        fontSize = 18.sp,
+                                        color = Color.Black,
+                                    ),
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .offset(y = (-140).dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(89.dp)
+                                    .offset(y = (-50).dp)
+                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.logo),
+                                contentDescription = "Logo",
+                                modifier = Modifier.size(250.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "告訴我們你想去哪裡吧!",
+                                style = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color.Black,
+                                ),
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .offset(y = (-140).dp)
+                            )
+                            Text(
+                                text = "輸入起點及終點，讓我們幫你找到最佳路線!",
+                                style = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 15.sp,
+                                    color = Color.Gray,
+                                ),
+                                modifier = Modifier
+                                    .offset(y = (-140).dp)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

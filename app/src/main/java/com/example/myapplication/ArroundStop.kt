@@ -34,7 +34,7 @@ object ArroundStop {
         Log.d("ArroundStop", "Stop Data List: $stopDataList")
 
         return if (stopDataList.isEmpty()) {
-            "200公尺內無公車站牌"
+            "200公尺內無公車站牌!"
         } else {
             formatStopData(stopDataList)
         }

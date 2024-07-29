@@ -4,18 +4,26 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 
 
 class StopActivity : ComponentActivity() {
@@ -35,7 +43,7 @@ class StopActivity : ComponentActivity() {
                     val longitude = intent.getDoubleExtra("longitude", 0.0)
                     val markname = intent.getStringExtra("markname") ?: ""
 
-                    currentLocation.value = "所在位置: $markname"
+                    currentLocation.value = " $markname"
 
                     LaunchedEffect(latitude, longitude) {
                         try {
@@ -79,42 +87,68 @@ fun ScrollableContent7(
 ) {
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
-                .border(1.dp, Color.Gray)
+                .background(Color(0xFF9e7cfe))
+                .padding(vertical = 15.dp)
         ) {
-            Box(
+            Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth(0.85f)
+                    .padding(horizontal = 8.dp)
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .height(50.dp)
                     .clickable(onClick = onLocationClick)
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
             ) {
-                Text(
-                    text = currentLocation,
-                    style = MaterialTheme.typography.bodyLarge
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                                append("所在位置: ")
+                            }
+                            withStyle(style = SpanStyle(color = Color.Black)) {
+                                append(currentLocation)
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                IconButton(
+                    onClick = onCurrentLocationClick,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.map_pin),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            IconButton(
+                onClick = onQueryClick,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.search),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(24.dp)
                 )
             }
-
-            Button(
-                onClick = onCurrentLocationClick,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Text("套用目前位置")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = onQueryClick) {
-            Text("查詢")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
