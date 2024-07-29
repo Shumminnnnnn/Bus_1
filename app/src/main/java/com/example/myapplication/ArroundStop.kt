@@ -125,7 +125,7 @@ object ArroundStop {
 
     private fun formatStopData(stopDataList: List<StopData>): String {
         return stopDataList.joinToString(separator = "") { stopData ->
-            "站牌名稱: ${stopData.stopName}\n所有路線: ${stopData.routeNames.joinToString(", ")}\n\n"
+            " ${stopData.stopName}\n路線: ${stopData.routeNames.joinToString(", ")}\n\n"
         }
     }
 }

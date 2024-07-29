@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -91,140 +90,179 @@ fun ScrollableContent7(
     onCurrentLocationClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF9e7cfe))
-                .padding(vertical = 10.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(10.dp)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Top purple area
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF9e7cfe))
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-13).dp)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(3.dp))
-                    Text(
-                        text = "附近站牌",
-                        style = androidx.compose.ui.text.TextStyle(
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(10.dp)
                 ) {
                     Row(
-                        modifier = Modifier
-                            .weight(8f)
-                            .background(Color.White, shape = RoundedCornerShape(8.dp))
-                            .height(60.dp)
-                            .clickable(onClick = onLocationClick),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(color = Color.Gray)) {
-                                        append("所在位置: ")
-                                    }
-                                    withStyle(style = SpanStyle(color = Color.Black)) {
-                                        append(currentLocation)
-                                    }
-                                },
-                                style = MaterialTheme.typography.bodyLarge
+                        IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-13).dp)) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                                contentDescription = "Back",
+                                tint = Color.White
                             )
                         }
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = "附近站牌",
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .weight(8f)
+                                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                                .height(60.dp)
+                                .clickable(onClick = onLocationClick),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = buildAnnotatedString {
+                                        withStyle(style = SpanStyle(color = Color.Gray)) {
+                                            append("所在位置: ")
+                                        }
+                                        withStyle(style = SpanStyle(color = Color.Black)) {
+                                            append(currentLocation)
+                                        }
+                                    },
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
+                            IconButton(
+                                onClick = onCurrentLocationClick,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.map_pin),
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         IconButton(
-                            onClick = onCurrentLocationClick,
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                            onClick = onQueryClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.map_pin),
+                                painter = painterResource(id = R.drawable.search),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                colorFilter = ColorFilter.tint(Color.White),
                                 modifier = Modifier.size(24.dp)
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    IconButton(
-                        onClick = onQueryClick,
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.search),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(Color.White),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        if (showRouteResult) {
-            if (routeResult == "載入中...") {
-                Text(text = routeResult, modifier = Modifier.padding(16.dp))
-            } else {
-                routeResult.split("\n\n").forEach { routeItem ->
-                    if (routeItem.isNotEmpty()) {
-                        val isNoStopMessage = routeItem.contains("200公尺內無公車站牌")
-                        val boxModifier = if (isNoStopMessage) {
-                            Modifier
-                        } else {
-                            Modifier.border(1.dp, Color.Gray)
-                        }
+            // Scrollable content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                if (showRouteResult) {
+                    if (routeResult == "載入中...") {
+                        Text(text = routeResult, modifier = Modifier.padding(16.dp))
+                    } else {
+                        val routeItems = routeResult.split("\n\n")
+                        routeItems.forEachIndexed { index, routeItem ->
+                            if (routeItem.isNotEmpty()) {
+                                val lines = routeItem.split("\n")
+                                val stationName = lines.firstOrNull() ?: ""
+                                val routes = lines.drop(1)
 
-                        Box(
-                            modifier = boxModifier
-                                .fillMaxWidth()
-                                .height(90.dp)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                            ) {
-                                routeItem.split("\n").forEach { line ->
-                                    Text(text = line)
+                                val boxModifier = if (stationName.contains("200公尺內無公車站牌")) {
+                                    Modifier
+                                } else {
+                                    Modifier
+                                        .fillMaxWidth(0.95f)
+                                        .padding(horizontal = 8.dp)
                                 }
+
+                                Box(
+                                    modifier = boxModifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                    ) {
+                                        // Add the icon only to the station name
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.map_pin),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text(text = stationName)
+                                        }
+                                        routes.forEach { line ->
+                                            Text(text = line)
+                                        }
+                                    }
+                                }
+
+                                if (index != routeItems.size - 2) {
+                                    Divider(color = Color(0xFF9e7cfe), thickness = 2.dp, modifier = Modifier.padding(horizontal = 8.dp))
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Bottom purple area
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .background(Color(0xFF9e7cfe))
+            )
         }
     }
 }
