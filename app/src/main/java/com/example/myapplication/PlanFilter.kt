@@ -35,6 +35,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class PlanFilter : ComponentActivity() {
     private var startLocation: String by mutableStateOf("")
@@ -50,55 +51,86 @@ class PlanFilter : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val startLocationResultLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                handleActivityResult(result, "startLocation")
-            }
-
-            val endLocationResultLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                handleActivityResult(result, "endLocation")
-            }
-
-            val timeResultLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data = result.data
-                    data?.let {
-                        currentTime = it.getStringExtra("selectedTime") ?: fetchCurrentTime()
-                        isTimeSelected = true
+            MyApplicationTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val startLocationResultLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.StartActivityForResult()
+                    ) { result ->
+                        handleActivityResult(result, "startLocation")
                     }
-                }
-            }
 
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    val coroutineScope = rememberCoroutineScope()
+                    val endLocationResultLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.StartActivityForResult()
+                    ) { result ->
+                        handleActivityResult(result, "endLocation")
+                    }
 
-                    PlanFilterContent(
-                        startLocation,
-                        endLocation,
-                        currentTime,
-                        tdxResult.value,
-                        onNavigateToBiginFilter = {
-                            startLocationResultLauncher.launch(Intent(this@PlanFilter, BiginFilter::class.java))
-                        },
-                        onNavigateToEndFilter = {
-                            endLocationResultLauncher.launch(Intent(this@PlanFilter, EndFilter::class.java))
-                        },
-                        onNavigateToTimeActivity = {
-                            timeResultLauncher.launch(Intent(this@PlanFilter, TimeActivity::class.java))
-                        },
-                        onQueryButtonClick = {
-                            coroutineScope.launch {
-                                fetchTdxData(startLat, startLong, endLat, endLong, currentTime, tdxResult, isTimeSelected)
+                    val timeResultLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.StartActivityForResult()
+                    ) { result ->
+                        if (result.resultCode == Activity.RESULT_OK) {
+                            val data = result.data
+                            data?.let {
+                                currentTime =
+                                    it.getStringExtra("selectedTime") ?: fetchCurrentTime()
+                                isTimeSelected = true
                             }
                         }
-                    )
-                    { onBackClick() }
+                    }
+
+                    MaterialTheme {
+                        Surface(modifier = Modifier.fillMaxSize()) {
+                            val coroutineScope = rememberCoroutineScope()
+
+                            PlanFilterContent(
+                                startLocation,
+                                endLocation,
+                                currentTime,
+                                tdxResult.value,
+                                onNavigateToBiginFilter = {
+                                    startLocationResultLauncher.launch(
+                                        Intent(
+                                            this@PlanFilter,
+                                            BiginFilter::class.java
+                                        )
+                                    )
+                                },
+                                onNavigateToEndFilter = {
+                                    endLocationResultLauncher.launch(
+                                        Intent(
+                                            this@PlanFilter,
+                                            EndFilter::class.java
+                                        )
+                                    )
+                                },
+                                onNavigateToTimeActivity = {
+                                    timeResultLauncher.launch(
+                                        Intent(
+                                            this@PlanFilter,
+                                            TimeActivity::class.java
+                                        )
+                                    )
+                                },
+                                onQueryButtonClick = {
+                                    coroutineScope.launch {
+                                        fetchTdxData(
+                                            startLat,
+                                            startLong,
+                                            endLat,
+                                            endLong,
+                                            currentTime,
+                                            tdxResult,
+                                            isTimeSelected
+                                        )
+                                    }
+                                }
+                            )
+                            { onBackClick() }
+                        }
+                    }
                 }
             }
         }
