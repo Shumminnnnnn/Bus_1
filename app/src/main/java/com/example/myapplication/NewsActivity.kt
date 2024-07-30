@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -96,9 +97,13 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
             ) {
                 Text(
                     text = "最新消息",
-                    color = Color.White,
-                    fontSize = 20.sp,
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ),
                     modifier = Modifier.align(Alignment.Center)
+                        .offset(x = (-80).dp)
                 )
             }
         }

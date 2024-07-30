@@ -6,17 +6,24 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -27,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RouteFilter : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +46,7 @@ class RouteFilter : ComponentActivity() {
                 ) {
                     val routeResult = remember { mutableStateOf("") }
                     var inputText by remember { mutableStateOf("") }
+                    var placeholderVisible by remember { mutableStateOf(true) }
 
                     fun fetchRouteData(routeNumber: String) {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -59,26 +68,16 @@ class RouteFilter : ComponentActivity() {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(8.dp)
+                                .padding(bottom = 245.dp) // 确保内容不被键盘覆盖
                                 .verticalScroll(rememberScrollState())
                         ) {
-
-                            OutlinedTextField(
-                                value = inputText,
-                                onValueChange = {},
-                                label = { Text("今天想搭哪輛公車呢?") },
-                                enabled = false,
-                                readOnly = true,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(125.dp)) // 留出顶部固定区域的空间
 
                             routeResult.value.split("\n").chunked(2).forEach { routeItem ->
                                 if (routeItem.size == 2) {
                                     val (subRouteName, headsign) = routeItem
-                                    Box(
+
+                                    Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(80.dp)
@@ -91,26 +90,55 @@ class RouteFilter : ComponentActivity() {
                                                 startActivity(intent)
                                                 Log.d("RouteFilter", "Navigating to RouteActivity4 with: $subRouteName")
                                             },
-                                        contentAlignment = Alignment.CenterStart
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
+                                        Box(
+                                            contentAlignment = Alignment.Center,
+                                            modifier = Modifier.size(80.dp)
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(30.dp)
+                                                    .offset(x = (-20).dp)
+                                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                            )
+                                            Image(
+                                                painter = painterResource(id = R.drawable.logo),
+                                                contentDescription = "Logo",
+                                                modifier = Modifier
+                                                    .size(600.dp)
+                                                    .offset(y = (-75).dp)
+                                                    .offset(x = (-20).dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
                                         Column {
                                             Text(
                                                 text = subRouteName,
-                                                fontSize = 16.sp,
-                                                color = Color.Black
+                                                fontSize = 18.sp,
+                                                color = Color.Black,
+                                                modifier = Modifier.offset(x = (-38).dp)
                                             )
                                             Text(
                                                 text = headsign,
-                                                fontSize = 14.sp,
-                                                color = Color.Gray
+                                                fontSize = 16.sp,
+                                                color = Color.Gray,
+                                                modifier = Modifier.offset(x = (-38).dp)
                                             )
                                         }
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
-                            Spacer(modifier = Modifier.height(200.dp))
                         }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(20.dp)
+                                .background(Color(0xFF9e7cfe))
+                                .align(Alignment.BottomCenter)
+                        )
 
                         CustomKeyboard(
                             onKeyPress = { key ->
@@ -118,19 +146,78 @@ class RouteFilter : ComponentActivity() {
                                     "清除" -> {
                                         inputText = ""
                                         routeResult.value = ""
+                                        placeholderVisible = true
                                     }
                                     else -> {
                                         inputText += key
                                         fetchRouteData(inputText)
+                                        placeholderVisible = false
                                     }
                                 }
                             },
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .zIndex(1f) // 確保鍵盤在其他內容上
-                                .background(Color(0xFF6650a4))
-                                .height(200.dp)
+                                .padding(bottom = 20.dp)
+                                .zIndex(1f)
                         )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(125.dp)
+                                .background(Color(0xFF9e7cfe))
+                                .align(Alignment.TopCenter)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                                ) {
+                                    IconButton(
+                                        onClick = { finish() },
+                                        modifier = Modifier
+                                            .background(Color(0xFF9e7cfe))
+                                            .offset(x = (-110).dp)
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                                            contentDescription = "Back",
+                                            tint = Color.White
+                                        )
+                                    }
+                                    Text(
+                                        text = "路線查詢",
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 22.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        ),
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .offset(x = (-110).dp)
+                                    )
+                                }
+
+                                TextField(
+                                    value = inputText,
+                                    onValueChange = {},
+                                    placeholder = { if (placeholderVisible) Text("今天想搭哪輛公車呢?") else null },
+                                    readOnly = true,
+                                    colors = TextFieldDefaults.textFieldColors(
+                                        disabledTextColor = Color.Black,
+                                        containerColor = Color.White
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.9f)
+                                        .padding(8.dp)
+                                        .clip(RoundedCornerShape(20.dp))
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -147,22 +234,27 @@ fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) 
         listOf("A", "B", "0", "清除")
     )
 
-    Column(modifier = modifier.padding(8.dp).background(Color(0xFF6650a4))) {
+    Column(modifier = modifier.padding(8.dp).background(Color.White)) {
         keys.forEach { row ->
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
                 row.forEach { key ->
                     Button(
                         onClick = {
                             onKeyPress(key)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White, // 鍵盤按鈕顏色
-                            contentColor = Color.Black // 鍵盤按鈕內文字顏色
+                            containerColor = Color(0xFFd6c9fc),
+                            contentColor = Color.Black
                         ),
                         modifier = Modifier
                             .padding(2.dp)
                             .weight(1f)
                             .height(40.dp)
+                            .shadow(3.dp, shape = RoundedCornerShape(50))
                     ) {
                         Text(text = key, fontSize = 14.sp)
                     }

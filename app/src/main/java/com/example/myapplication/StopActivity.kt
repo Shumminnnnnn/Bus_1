@@ -279,7 +279,7 @@ fun ScrollableContent7(
                                                 Text(
                                                     text = stationName,
                                                     style = androidx.compose.ui.text.TextStyle(
-                                                        fontSize = 18.sp,
+                                                        fontSize = 16.sp,
                                                         color = Color.Black,
                                                         fontWeight = FontWeight.Bold
                                                     )

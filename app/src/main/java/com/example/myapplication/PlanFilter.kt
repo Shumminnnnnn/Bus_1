@@ -255,7 +255,7 @@ fun PlanFilterContent(
                                         .fillMaxWidth()
                                         .weight(1f)
                                         .clip(RoundedCornerShape(20.dp))
-                                        .height(50.dp)
+                                        .height(55.dp)
                                         .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp))
                                         .background(Color.White)
                                         .clickable { onNavigateToBiginFilter() }
@@ -294,7 +294,7 @@ fun PlanFilterContent(
                                         .fillMaxWidth()
                                         .weight(1f)
                                         .clip(RoundedCornerShape(20.dp))
-                                        .height(50.dp)
+                                        .height(55.dp)
                                         .border(1.dp, Color.Gray, shape = RoundedCornerShape(20.dp))
                                         .background(Color.White)
                                         .clickable { onNavigateToEndFilter() }
