@@ -8,14 +8,19 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.*
 
@@ -53,6 +58,7 @@ class RouteActivity4 : ComponentActivity() {
         ) {
             Column {
                 PurpleHeader(
+                    subRouteName = subRouteName,
                     onNavigate1 = {
                         val intent = Intent(this@RouteActivity4, RouteActivity5::class.java)
                         startActivity(intent)
@@ -64,6 +70,9 @@ class RouteActivity4 : ComponentActivity() {
                     onNavigate3 = {
                         val intent = Intent(this@RouteActivity4, RouteActivity3::class.java)
                         startActivity(intent)
+                    },
+                    onBackPress = {
+                        onBackPressedDispatcher.onBackPressed()
                     }
                 )
 
@@ -93,9 +102,11 @@ class RouteActivity4 : ComponentActivity() {
 
 @Composable
 fun PurpleHeader(
+    subRouteName: String,
     onNavigate1: () -> Unit,
     onNavigate2: () -> Unit,
-    onNavigate3: () -> Unit
+    onNavigate3: () -> Unit,
+    onBackPress: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -105,11 +116,43 @@ fun PurpleHeader(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.map_pin))
-            CustomButton(onClick = onNavigate2, icon = painterResource(id = R.drawable.money))
-            CustomButton(onClick = onNavigate3, icon = painterResource(id = R.drawable.info))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackPress,
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                            .offset(x = (-10).dp)
+                    )
+                }
+                Text(
+                    text = subRouteName,
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ),
+                    modifier = Modifier.padding(start = 8.dp)
+                        .offset(x = (-10).dp)
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp), // 调整按钮之间的间距
+                modifier = Modifier.padding(end = 16.dp)
+            ) {
+                CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.baseline_approval_24), offsetX = 70.dp)
+                CustomButton(onClick = onNavigate2, icon = painterResource(id = R.drawable.money), offsetX = 40.dp)
+                CustomButton(onClick = onNavigate3, icon = painterResource(id = R.drawable.baseline_info_24), offsetX = 10.dp)
+            }
         }
     }
 }
@@ -128,31 +171,33 @@ fun ScrollableContent5(
         if (routeInfo != null) {
             val arrivalTimeInfo = if (currentDirection == 0) routeInfo.arrivalTimeInfoDirection0 else routeInfo.arrivalTimeInfoDirection1
 
-            if (currentDirection == 0) {
-                val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
-                Text(text = "往 $destinationStopNameZh\n")
-                Text(text = arrivalTimeInfo)
-                Button(
-                    onClick = { onButtonClick(1) },
-                    modifier = Modifier.padding(top = 16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
-                ) {
-                    val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
-                    Text(text = "往 $departureStopNameZh")
-                }
-            } else {
-                val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
-                Text(text = "往 $departureStopNameZh\n")
-                Text(text = arrivalTimeInfo)
-                Button(
-                    onClick = { onButtonClick(0) },
-                    modifier = Modifier.padding(top = 16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
-                ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val (directionText, buttonText) = if (currentDirection == 0) {
                     val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
-                    Text(text = "往 $destinationStopNameZh")
+                    val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
+                    "往 $destinationStopNameZh" to "往 $departureStopNameZh"
+                } else {
+                    val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
+                    val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
+                    "往 $departureStopNameZh" to "往 $destinationStopNameZh"
+                }
+
+                Text(text = directionText)
+                Button(
+                    onClick = { onButtonClick(if (currentDirection == 0) 1 else 0) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
+                ) {
+                    Text(text = buttonText)
                 }
             }
+
+            Text(text = arrivalTimeInfo)
         } else {
             Text(text = "載入公車路線動態中...")
         }
@@ -160,13 +205,17 @@ fun ScrollableContent5(
 }
 
 @Composable
-fun CustomButton(onClick: () -> Unit, icon: Painter) {
+fun CustomButton(onClick: () -> Unit, icon: Painter, offsetX: Dp) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(horizontal = 16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
+        shape = CircleShape,
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .size(48.dp) // 确保按钮是一个正方形，以便变成圆形
+            .offset(x = offsetX),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe)),
+        contentPadding = PaddingValues(0.dp) // 移除默认的内边距
     ) {
-        Icon(painter = icon, contentDescription = null,modifier = Modifier
-            .size(18.dp))
+        Icon(painter = icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.White) // 确保图标大小适中且颜色对比度足够
     }
 }

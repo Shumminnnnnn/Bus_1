@@ -5,19 +5,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,20 +53,84 @@ class RouteActivity : ComponentActivity() {
                         }
                     }
 
-                    ScrollableContent1(routePriceResult.value)
+                    RoutePriceScreen(routePriceResult.value){ onBackClick() }
                 }
             }
         }
     }
+    private fun onBackClick() {
+        finish()
+    }
 }
 
 @Composable
-fun ScrollableContent1(routePriceResult: String) {
+fun RoutePriceScreen(routePriceResult: String, onBackClick: () -> Unit) {
     Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = routePriceResult)
+        // Top purple area with back button and text
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF9e7cfe))
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier
+                        .background(Color(0xFF9e7cfe))
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "公車票價資訊",
+                    style = TextStyle(
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                )
+            }
+        }
+
+        // Scrollable content area
+        Box(
+            modifier = Modifier
+                .padding(8.dp)
+                .verticalScroll(rememberScrollState())
+                .weight(1f)
+                .fillMaxWidth(), // Ensure the box takes full width
+            contentAlignment = Alignment.TopCenter // Align content to the top center
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = routePriceResult,
+                    style = TextStyle(fontSize = 18.sp),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .align(Alignment.CenterHorizontally) // Align text horizontally center
+                )
+            }
+        }
+
+        // Bottom purple area
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF9e7cfe))
+                .padding(25.dp)
+        ) {
+        }
     }
 }

@@ -36,7 +36,7 @@ object Route_arrivetime {
         return RouteInfo(routeDepDesInfo, arrivalTimeInfoDirection0, arrivalTimeInfoDirection1)
     }
 
-    private suspend fun getArrivalTimeInfo(accessToken: String, subRouteName: String, directionFilter: Int): String {
+    private fun getArrivalTimeInfo(accessToken: String, subRouteName: String, directionFilter: Int): String {
         // Update URL to use subRouteName
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taoyuan/$subRouteName?%24format=JSON"
 
@@ -47,7 +47,7 @@ object Route_arrivetime {
             val result = StringBuilder()
 
             val routeNameZhTw = jsonNodes[0]["RouteName"]["Zh_tw"].asText()
-            result.append("路線名稱: $routeNameZhTw\n\n")
+            //result.append("路線名稱: $routeNameZhTw\n\n")
 
             val stopInfos = mutableListOf<Pair<Int, String>>()
 
@@ -98,7 +98,7 @@ object Route_arrivetime {
         }
     }
 
-    private suspend fun getRouteDepDesInfo(accessToken: String, subRouteName: String): String {
+    private fun getRouteDepDesInfo(accessToken: String, subRouteName: String): String {
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/Route/City/Taoyuan/$subRouteName?%24format=JSON"
         return getJsonString(tdxUrl, accessToken) { jsonString ->
             val objectMapper = ObjectMapper()

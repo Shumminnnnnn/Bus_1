@@ -86,7 +86,7 @@ object Route_schedule {
             for (route in jsonArray) {
                 val routeName = route["RouteName"]["Zh_tw"].asText()
                 if (!routeNameAppended) {
-                    result.append("路線名稱: ").append(routeName).append("\n\n")
+                    result.append(routeName).append("\n\n")
                     routeNameAppended = true
                 }
 

@@ -84,7 +84,7 @@ class RouteFilter : ComponentActivity() {
                                             modifier = Modifier
                                                 .size(89.dp)
                                                 .offset(y = (10).dp)
-                                                .offset(x = (50).dp)
+                                                .offset(x = (60).dp)
                                                 .background(Color(0xFF9e7cfe), shape = CircleShape)
                                         )
                                         Image(
@@ -92,7 +92,7 @@ class RouteFilter : ComponentActivity() {
                                             contentDescription = "Logo",
                                             modifier = Modifier.size(250.dp)
                                                 .offset(y = (60).dp)
-                                                .offset(x = (50).dp)
+                                                .offset(x = (60).dp)
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(10.dp))
