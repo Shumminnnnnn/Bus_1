@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -124,7 +125,7 @@ fun ScrollableContent7(
                             )
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -186,10 +187,11 @@ fun ScrollableContent7(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Scrollable content
             Column(
@@ -200,54 +202,129 @@ fun ScrollableContent7(
             ) {
                 if (showRouteResult) {
                     if (routeResult == "載入中...") {
-                        Text(text = routeResult, modifier = Modifier.padding(16.dp))
+                        Text(text = routeResult, modifier = Modifier.padding(10.dp))
                     } else {
                         val routeItems = routeResult.split("\n\n")
                         routeItems.forEachIndexed { index, routeItem ->
                             if (routeItem.isNotEmpty()) {
+                                if (index == 0) {
+                                    Spacer(modifier = Modifier.height(8.dp)) // Add vertical space before the first item
+                                }
                                 val lines = routeItem.split("\n")
                                 val stationName = lines.firstOrNull() ?: ""
                                 val routes = lines.drop(1)
 
-                                val boxModifier = if (stationName.contains("200公尺內無公車站牌")) {
-                                    Modifier
+                                if (stationName.contains("500公尺內無公車站牌")) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Box(
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(89.dp)
+                                                    .offset(y = (30).dp)
+                                                    .offset(x = (60).dp)
+                                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                            )
+                                            Image(
+                                                painter = painterResource(id = R.drawable.logo),
+                                                contentDescription = "Logo",
+                                                modifier = Modifier.size(250.dp)
+                                                    .offset(y = (80).dp)
+                                                    .offset(x = (60).dp)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = "附近500公尺內無站牌!",
+                                                style = androidx.compose.ui.text.TextStyle(
+                                                    fontSize = 18.sp,
+                                                    color = Color.Black,
+                                                ),
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .offset(y = (-45).dp)
+                                                    .offset(x = (65).dp)
+                                            )
+                                        }
+                                    }
                                 } else {
-                                    Modifier
+                                    val boxModifier = Modifier
                                         .fillMaxWidth(0.95f)
                                         .padding(horizontal = 8.dp)
-                                }
 
-                                Box(
-                                    modifier = boxModifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    contentAlignment = Alignment.CenterStart
-                                ) {
-                                    Column(
-                                        verticalArrangement = Arrangement.Center,
+                                    Box(
+                                        modifier = boxModifier
+                                            .fillMaxWidth()
+                                            .padding(15.dp),
+                                        contentAlignment = Alignment.CenterStart
                                     ) {
-                                        // Add the icon only to the station name
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.map_pin),
-                                                contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
-                                                modifier = Modifier.size(24.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(4.dp))
-                                            Text(text = stationName)
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                        ) {
+                                            // Add the icon only to the station name
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.map_pin),
+                                                    contentDescription = null,
+                                                    colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Text(
+                                                    text = stationName,
+                                                    style = androidx.compose.ui.text.TextStyle(
+                                                        fontSize = 18.sp,
+                                                        color = Color.Black,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                )
+                                            }
+                                            routes.forEach { line ->
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.logo),
+                                                        contentDescription = null,
+                                                        colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                                        modifier = Modifier
+                                                            .size(80.dp)
+                                                            .offset(x = (-26).dp, y = 10.dp) // 调整 logo 的位置
+                                                    )
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .offset(x = (-40).dp, y = (-5).dp) // 根据需要调整文字的位置
+                                                    ) {
+                                                        Text(
+                                                            text = line,
+                                                            style = androidx.compose.ui.text.TextStyle(
+                                                                fontSize = 16.sp,
+                                                                color = Color.Black
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
-                                        routes.forEach { line ->
-                                            Text(text = line)
+                                    }
+                                    if (index != routeItems.size - 2) {
+                                        Box(
+                                            modifier = Modifier
+                                                .offset(x = 0.dp, y = (-15).dp) // 根据需要调整文字的位置
+                                        ){
+                                            Divider(
+                                                color = Color(0xFF9e7cfe),
+                                                thickness = 2.dp,
+                                                modifier = Modifier.padding(horizontal = 5.dp)
+                                                    .fillMaxWidth(1f)
+                                            )
                                         }
                                     }
                                 }
-
-                                if (index != routeItems.size - 2) {
-                                    Divider(color = Color(0xFF9e7cfe), thickness = 2.dp, modifier = Modifier.padding(horizontal = 8.dp))
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
                     }
@@ -260,7 +337,7 @@ fun ScrollableContent7(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(45.dp)
+                    .height(50.dp)
                     .background(Color(0xFF9e7cfe))
             )
         }

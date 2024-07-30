@@ -34,15 +34,16 @@ object ArroundStop {
         Log.d("ArroundStop", "Stop Data List: $stopDataList")
 
         return if (stopDataList.isEmpty()) {
-            "200公尺內無公車站牌!"
+            "500公尺內無公車站牌!"
         } else {
             formatStopData(stopDataList)
         }
     }
 
     fun createUrlWithCoordinates(latitude: Double, longitude: Double): String {
-        val latRange = 0.0018
-        val lonRange = 0.0019
+        //範圍是500公尺
+        val latRange = 0.0045  //0.0018是200公尺
+        val lonRange = 0.0048  //0.0019是200公尺
         val minLat = latitude - latRange
         val maxLat = latitude + latRange
         val minLon = longitude - lonRange
@@ -109,7 +110,7 @@ object ArroundStop {
             jsonNodes.forEach { stationNode ->
                 val stopsNode = stationNode.get("Stops")
                 if (stopsNode.isEmpty) {
-                    stopDataMap["附近200公尺內無站牌!"] = mutableSetOf()
+                    stopDataMap["附近500公尺內無站牌!"] = mutableSetOf()
                 } else {
                     stopsNode.forEach { stopNode ->
                         val stopName = stopNode.get("StopName").get("Zh_tw").asText()
@@ -125,7 +126,7 @@ object ArroundStop {
 
     private fun formatStopData(stopDataList: List<StopData>): String {
         return stopDataList.joinToString(separator = "") { stopData ->
-            " ${stopData.stopName}\n路線: ${stopData.routeNames.joinToString(", ")}\n\n"
+            " ${stopData.stopName}\n${stopData.routeNames.joinToString(", ")}\n\n"
         }
     }
 }
