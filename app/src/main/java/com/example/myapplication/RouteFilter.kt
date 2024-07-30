@@ -73,61 +73,108 @@ class RouteFilter : ComponentActivity() {
                         ) {
                             Spacer(modifier = Modifier.height(125.dp)) // 留出顶部固定区域的空间
 
-                            routeResult.value.split("\n").chunked(2).forEach { routeItem ->
-                                if (routeItem.size == 2) {
-                                    val (subRouteName, headsign) = routeItem
-
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(80.dp)
-                                            .border(1.dp, Color.Gray)
-                                            .padding(8.dp)
-                                            .clickable {
-                                                Route_depdes.subRouteName = subRouteName
-                                                val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
-                                                intent.putExtra("subRouteName", subRouteName)
-                                                startActivity(intent)
-                                                Log.d("RouteFilter", "Navigating to RouteActivity4 with: $subRouteName")
-                                            },
-                                        verticalAlignment = Alignment.CenterVertically
+                            if (inputText.isEmpty()) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center
                                     ) {
                                         Box(
-                                            contentAlignment = Alignment.Center,
-                                            modifier = Modifier.size(80.dp)
+                                            modifier = Modifier
+                                                .size(89.dp)
+                                                .offset(y = (10).dp)
+                                                .offset(x = (50).dp)
+                                                .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                        )
+                                        Image(
+                                            painter = painterResource(id = R.drawable.logo),
+                                            contentDescription = "Logo",
+                                            modifier = Modifier.size(250.dp)
+                                                .offset(y = (60).dp)
+                                                .offset(x = (50).dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Text(
+                                        text = "公車路線搜尋",
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 18.sp,
+                                            color = Color.Black,
+                                        ),
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .offset(y = (-80).dp)
+                                            .offset(x = (50).dp)
+                                    )
+                                    Text(
+                                        text = "請輸入公車路線編號!",
+                                        style = androidx.compose.ui.text.TextStyle(
+                                            fontSize = 15.sp,
+                                            color = Color.Gray,
+                                        ),
+                                        modifier = Modifier
+                                            .offset(y = (-80).dp)
+                                            .offset(x = (50).dp)
+                                    )
+                                }
+                            } else {
+                                routeResult.value.split("\n").chunked(2).forEach { routeItem ->
+                                    if (routeItem.size == 2) {
+                                        val (subRouteName, headsign) = routeItem
+
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(80.dp)
+                                                .border(1.dp, Color.Gray)
+                                                .padding(8.dp)
+                                                .clickable {
+                                                    Route_depdes.subRouteName = subRouteName
+                                                    val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
+                                                    intent.putExtra("subRouteName", subRouteName)
+                                                    startActivity(intent)
+                                                    Log.d("RouteFilter", "Navigating to RouteActivity4 with: $subRouteName")
+                                                },
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Box(
-                                                modifier = Modifier
-                                                    .size(30.dp)
-                                                    .offset(x = (-20).dp)
-                                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
-                                            )
-                                            Image(
-                                                painter = painterResource(id = R.drawable.logo),
-                                                contentDescription = "Logo",
-                                                modifier = Modifier
-                                                    .size(600.dp)
-                                                    .offset(y = (-75).dp)
-                                                    .offset(x = (-20).dp)
-                                            )
+                                                contentAlignment = Alignment.Center,
+                                                modifier = Modifier.size(80.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(30.dp)
+                                                        .offset(x = (-20).dp)
+                                                        .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                                )
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.logo),
+                                                    contentDescription = "Logo",
+                                                    modifier = Modifier
+                                                        .size(600.dp)
+                                                        .offset(y = (-75).dp)
+                                                        .offset(x = (-20).dp)
+                                                )
+                                            }
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Column {
+                                                Text(
+                                                    text = subRouteName,
+                                                    fontSize = 18.sp,
+                                                    color = Color.Black,
+                                                    modifier = Modifier.offset(x = (-38).dp)
+                                                )
+                                                Text(
+                                                    text = headsign,
+                                                    fontSize = 16.sp,
+                                                    color = Color.Gray,
+                                                    modifier = Modifier.offset(x = (-38).dp)
+                                                )
+                                            }
                                         }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Column {
-                                            Text(
-                                                text = subRouteName,
-                                                fontSize = 18.sp,
-                                                color = Color.Black,
-                                                modifier = Modifier.offset(x = (-38).dp)
-                                            )
-                                            Text(
-                                                text = headsign,
-                                                fontSize = 16.sp,
-                                                color = Color.Gray,
-                                                modifier = Modifier.offset(x = (-38).dp)
-                                            )
-                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
                                     }
-                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                             }
                         }

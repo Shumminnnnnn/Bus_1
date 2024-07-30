@@ -328,6 +328,51 @@ fun ScrollableContent7(
                             }
                         }
                     }
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(89.dp)
+                                    .offset(y = (10).dp)
+                                    .offset(x = (50).dp)
+                                    .background(Color(0xFF9e7cfe), shape = CircleShape)
+                            )
+                            Image(
+                                painter = painterResource(id = R.drawable.logo),
+                                contentDescription = "Logo",
+                                modifier = Modifier.size(250.dp)
+                                    .offset(y = (60).dp)
+                                    .offset(x = (50).dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "附近站牌搜尋",
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                            ),
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .offset(y = (-80).dp)
+                                .offset(x = (50).dp)
+                        )
+                        Text(
+                            text = "請輸入所在位置或點擊定位按紐!",
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+                            ),
+                            modifier = Modifier
+                                .offset(y = (-80).dp)
+                                .offset(x = (50).dp)
+                        )
+                    }
                 }
             }
 

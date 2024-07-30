@@ -460,7 +460,7 @@ fun PlanFilterContent(
                                             .offset(y = (-140).dp)
                                     )
                                     Text(
-                                        text = "輸入起點及終點，讓我們幫你找到最佳路線!",
+                                        text = "輸入起點和終點，讓我們幫你找到最佳路線!",
                                         style = androidx.compose.ui.text.TextStyle(
                                             fontSize = 15.sp,
                                             color = Color.Gray,
