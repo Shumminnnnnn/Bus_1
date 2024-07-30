@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
+
 class PlanFilter : ComponentActivity() {
     private var startLocation: String by mutableStateOf("")
     private var endLocation: String by mutableStateOf("")

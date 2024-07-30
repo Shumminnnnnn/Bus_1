@@ -5,17 +5,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.*
@@ -32,7 +31,6 @@ class RouteActivity4 : ComponentActivity() {
             }
         }
     }
-
 
     @Composable
     fun RouteActivityContent(subRouteName: String) {
@@ -53,26 +51,30 @@ class RouteActivity4 : ComponentActivity() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            ScrollableContent5(
-                routeInfo = routeInfo.value,
-                currentDirection = currentDirection.value,
-                onButtonClick = { newDirection -> currentDirection.value = newDirection },
-                onNavigate1 = {
-                    val intent = Intent(this@RouteActivity4, RouteActivity5::class.java)
-                    startActivity(intent)
-                } ,
-                onNavigate2 = {
-                    val intent = Intent(this@RouteActivity4, RouteActivity::class.java)
-                    startActivity(intent)
-                },
-                onNavigate3 = {
-                    val intent = Intent(this@RouteActivity4, RouteActivity3::class.java)
-                    startActivity(intent)
-                }
-            )
+            Column {
+                PurpleHeader(
+                    onNavigate1 = {
+                        val intent = Intent(this@RouteActivity4, RouteActivity5::class.java)
+                        startActivity(intent)
+                    },
+                    onNavigate2 = {
+                        val intent = Intent(this@RouteActivity4, RouteActivity::class.java)
+                        startActivity(intent)
+                    },
+                    onNavigate3 = {
+                        val intent = Intent(this@RouteActivity4, RouteActivity3::class.java)
+                        startActivity(intent)
+                    }
+                )
+
+                ScrollableContent5(
+                    routeInfo = routeInfo.value,
+                    currentDirection = currentDirection.value,
+                    onButtonClick = { newDirection -> currentDirection.value = newDirection }
+                )
+            }
         }
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -90,13 +92,33 @@ class RouteActivity4 : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent5(
-    routeInfo: RouteInfo?,
-    currentDirection: Int,
-    onButtonClick: (Int) -> Unit,
+fun PurpleHeader(
     onNavigate1: () -> Unit,
     onNavigate2: () -> Unit,
     onNavigate3: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF9e7cfe))
+            .padding(vertical = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.map_pin))
+            CustomButton(onClick = onNavigate2, icon = painterResource(id = R.drawable.money))
+            CustomButton(onClick = onNavigate3, icon = painterResource(id = R.drawable.info))
+        }
+    }
+}
+
+@Composable
+fun ScrollableContent5(
+    routeInfo: RouteInfo?,
+    currentDirection: Int,
+    onButtonClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -112,9 +134,9 @@ fun ScrollableContent5(
                 Text(text = arrivalTimeInfo)
                 Button(
                     onClick = { onButtonClick(1) },
-                    modifier = Modifier.padding(top = 16.dp)
+                    modifier = Modifier.padding(top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
                 ) {
-
                     val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
                     Text(text = "往 $departureStopNameZh")
                 }
@@ -124,9 +146,9 @@ fun ScrollableContent5(
                 Text(text = arrivalTimeInfo)
                 Button(
                     onClick = { onButtonClick(0) },
-                    modifier = Modifier.padding(top = 16.dp)
+                    modifier = Modifier.padding(top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
                 ) {
-
                     val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
                     Text(text = "往 $destinationStopNameZh")
                 }
@@ -134,24 +156,17 @@ fun ScrollableContent5(
         } else {
             Text(text = "載入公車路線動態中...")
         }
+    }
+}
 
-        Button(
-            onClick = onNavigate1,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "路線簡圖")
-        }
-        Button(
-            onClick = onNavigate2,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "路線票價")
-        }
-        Button(
-            onClick = onNavigate3,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "路線時刻表")
-        }
+@Composable
+fun CustomButton(onClick: () -> Unit, icon: Painter) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.padding(horizontal = 16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
+    ) {
+        Icon(painter = icon, contentDescription = null,modifier = Modifier
+            .size(18.dp))
     }
 }
