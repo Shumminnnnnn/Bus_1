@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : ComponentActivity() {
+class Blind : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,25 +53,25 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    ScrollableContent(
+                    BlindContent(
                         onButtonClick1 = {
-                            val intent = Intent(this@MainActivity, NewsActivity::class.java)
+                            val intent = Intent(this@Blind, NewsActivity::class.java)
                             startActivity(intent)
                         },
                         onButtonClick2 = {
-                            val intent = Intent(this@MainActivity, RouteFilter::class.java)
+                            val intent = Intent(this@Blind, RouteFilter::class.java)
                             startActivity(intent)
                         },
                         onButtonClick3 = {
-                            val intent = Intent(this@MainActivity, StopActivity::class.java)
+                            val intent = Intent(this@Blind, StopActivity::class.java)
                             startActivity(intent)
                         },
                         onButtonClick7 = {
-                            val intent = Intent(this@MainActivity, PlanFilter::class.java)
+                            val intent = Intent(this@Blind, PlanFilter::class.java)
                             startActivity(intent)
                         },
                         onButtonClickSetting = {
-                            val intent = Intent(this@MainActivity, Setting::class.java)
+                            val intent = Intent(this@Blind, Setting::class.java)
                             startActivity(intent)
                         }
                     )
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableContent(
+fun BlindContent(
     onButtonClick1: () -> Unit,
     onButtonClick2: () -> Unit,
     onButtonClick3: () -> Unit,
@@ -97,7 +97,6 @@ fun ScrollableContent(
             onClick = onButtonClick1,
             modifier = Modifier.padding(top = 16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
-
         ) {
             Text(text = "最新消息")
         }
@@ -105,7 +104,7 @@ fun ScrollableContent(
         Button(
             onClick = onButtonClick2,
             modifier = Modifier.padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF98d588))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
         ) {
             Text(text = "路線查詢")
         }
@@ -113,7 +112,7 @@ fun ScrollableContent(
         Button(
             onClick = onButtonClick3,
             modifier = Modifier.padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFff9ad1))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
         ) {
             Text(text = "附近站牌")
         }
@@ -121,15 +120,14 @@ fun ScrollableContent(
         Button(
             onClick = onButtonClick7,
             modifier = Modifier.padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFffb774))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
         ) {
             Text(text = "路線規劃")
         }
-
         Button(
             onClick = onButtonClickSetting,
             modifier = Modifier.padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60bcff))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
         ) {
             Text(text = "設定")
         }

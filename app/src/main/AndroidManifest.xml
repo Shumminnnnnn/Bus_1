@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".MainActivity"/>
         <activity android:name=".NewsActivity"/>
         <activity android:name=".RouteActivity"/>
@@ -41,6 +42,9 @@
         <activity android:name=".EndFilter"/>
         <activity android:name=".TimeActivity"/>
         <activity android:name=".MapActivity"/>
+        <activity android:name=".Blind"/>
+        <activity android:name=".Setting"/>
+        <activity android:name=".ThemeColor"/>
 
     </application>
 
