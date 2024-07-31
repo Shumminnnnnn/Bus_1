@@ -29,7 +29,7 @@ object Route_arrivetime {
         val accessToken: String = tokenElem.get("access_token").asText()
 
         // Call with correct parameters
-        val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken,subRouteName) }
+        val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken, subRouteName) }
         val arrivalTimeInfoDirection0 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 0) }
         val arrivalTimeInfoDirection1 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 1) }
 
@@ -52,6 +52,10 @@ object Route_arrivetime {
             val stopInfos = mutableListOf<Pair<Int, String>>()
 
             for (node in jsonNodes) {
+                // Check if RouteName.Zh_tw matches subRouteName
+                val routeName = node["RouteName"]["Zh_tw"].asText()
+                if (routeName != subRouteName) continue
+
                 val dir = node["Direction"].asInt()
                 if (dir != directionFilter) continue
                 val stopSequence = node["StopSequence"].asInt()
@@ -79,13 +83,13 @@ object Route_arrivetime {
                 val stopDisplay = when (stopStatus) {
                     0 -> {
                         when (estimateTime) {
-                            in 0..60 -> "$stopName (進站中)"
-                            in 61..150 -> "$stopName (即將進站)"
-                            else -> "$stopName (${estimateTime / 60} 分鐘)"
+                            in 0..80 -> "進站中 $stopName"
+                            in 81..240 -> "即將進站 $stopName"
+                            else -> "${estimateTime / 60}分 $stopName"
                         }
                     }
-                    1 -> nextBusTimeFormatted?.let { "$stopName ($it)" } ?: "$stopName (無資料)"
-                    else -> "$stopName (末班駛離)"  // else代表stopStatus的值為3
+                    1 -> nextBusTimeFormatted?.let { "$it $stopName" } ?: "無資料 $stopName"
+                    else -> "末班駛離 $stopName"  // else代表stopStatus的值為3
                 }
 
                 stopInfos.add(Pair(stopSequence, stopDisplay))

@@ -53,7 +53,6 @@ class RouteActivity5 : ComponentActivity() {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Top purple area with back button and text
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -87,7 +86,6 @@ class RouteActivity5 : ComponentActivity() {
                 }
             }
 
-            // Scrollable content area
             routeInfo.value?.let { info ->
                 ScrollableContent6(
                     routeDepDesInfo = "${info.departureStopNameZh} - ${info.destinationStopNameZh}",
@@ -99,17 +97,14 @@ class RouteActivity5 : ComponentActivity() {
                 }
             }
 
-            // Spacer to push the bottom box to the bottom
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom purple area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFF9e7cfe))
                     .padding(25.dp)
             ) {
-                // Content of the bottom box
             }
         }
     }
@@ -130,17 +125,17 @@ fun ScrollableContent6(
         modifier = Modifier
             .padding(15.dp)
             .verticalScroll(rememberScrollState())
-            .fillMaxHeight() // Ensure the column takes full height
+            .fillMaxHeight()
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center // Center the text
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = routeDepDesInfo,
                 style = TextStyle(
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold // Make the text bold
+                    fontWeight = FontWeight.Bold
                 ),
                 modifier = Modifier.padding(10.dp)
             )
@@ -148,7 +143,7 @@ fun ScrollableContent6(
         if (!routeMapImageUrl.isNullOrEmpty()) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center // Center the button
+                contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick,

@@ -69,7 +69,6 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Top purple area with back button and text
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,7 +100,6 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
             }
         }
 
-        // Scrollable content area
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -204,7 +202,6 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
             }
         }
 
-        // Bottom purple area
         Box(
             modifier = Modifier
                 .fillMaxWidth()

@@ -53,7 +53,6 @@ class RouteActivity2 : ComponentActivity() {
                     }
 
                     ScrollableContent2(routeResult.value){
-                        // On button click, navigate to RouteActivity
                         val intent = Intent(this@RouteActivity2, RouteActivity3::class.java)
                         startActivity(intent)
                     }

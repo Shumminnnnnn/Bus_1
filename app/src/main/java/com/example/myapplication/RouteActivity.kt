@@ -68,7 +68,6 @@ fun RoutePriceScreen(routePriceResult: String, onBackClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Top purple area with back button and text
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,14 +101,13 @@ fun RoutePriceScreen(routePriceResult: String, onBackClick: () -> Unit) {
             }
         }
 
-        // Scrollable content area
         Box(
             modifier = Modifier
                 .padding(8.dp)
                 .verticalScroll(rememberScrollState())
                 .weight(1f)
-                .fillMaxWidth(), // Ensure the box takes full width
-            contentAlignment = Alignment.TopCenter // Align content to the top center
+                .fillMaxWidth(),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -119,12 +117,11 @@ fun RoutePriceScreen(routePriceResult: String, onBackClick: () -> Unit) {
                     style = TextStyle(fontSize = 18.sp),
                     modifier = Modifier
                         .padding(10.dp)
-                        .align(Alignment.CenterHorizontally) // Align text horizontally center
+                        .align(Alignment.CenterHorizontally)
                 )
             }
         }
 
-        // Bottom purple area
         Box(
             modifier = Modifier
                 .fillMaxWidth()

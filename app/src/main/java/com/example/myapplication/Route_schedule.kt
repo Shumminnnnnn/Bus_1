@@ -84,6 +84,11 @@ object Route_schedule {
             var routeNameAppended = false
 
             for (route in jsonArray) {
+                val subRouteName = route["SubRouteName"]["Zh_tw"].asText()
+                if (subRouteName != Route_depdes.subRouteName) {
+                    continue // Skip this route if SubRouteName does not match
+                }
+
                 val routeName = route["RouteName"]["Zh_tw"].asText()
                 if (!routeNameAppended) {
                     result.append(routeName).append("\n\n")

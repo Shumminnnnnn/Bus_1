@@ -47,19 +47,18 @@ class RouteFilter : ComponentActivity() {
                     val routeResult = remember { mutableStateOf("") }
                     var inputText by remember { mutableStateOf("") }
                     var placeholderVisible by remember { mutableStateOf(true) }
+                    val coroutineScope = rememberCoroutineScope()
 
                     fun fetchRouteData(routeNumber: String) {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        coroutineScope.launch {
                             try {
-                                val routeResultJson = Route_filter.main(routeNumber)
-                                withContext(Dispatchers.Main) {
-                                    routeResult.value = routeResultJson
+                                val routeResultJson = withContext(Dispatchers.IO) {
+                                    Route_filter.main(routeNumber)
                                 }
+                                routeResult.value = routeResultJson
                             } catch (e: Exception) {
                                 Log.e("RouteFilter", "Error fetching route data: ${e.message}", e)
-                                withContext(Dispatchers.Main) {
-                                    routeResult.value = "Error fetching route data: ${e.message}"
-                                }
+                                routeResult.value = "Error fetching route data: ${e.message}"
                             }
                         }
                     }
@@ -68,10 +67,10 @@ class RouteFilter : ComponentActivity() {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(bottom = 245.dp) // 确保内容不被键盘覆盖
+                                .padding(bottom = 245.dp)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            Spacer(modifier = Modifier.height(125.dp)) // 留出顶部固定区域的空间
+                            Spacer(modifier = Modifier.height(125.dp))
 
                             if (inputText.isEmpty()) {
                                 Column(
@@ -131,10 +130,16 @@ class RouteFilter : ComponentActivity() {
                                                 .padding(8.dp)
                                                 .clickable {
                                                     Route_depdes.subRouteName = subRouteName
-                                                    val intent = Intent(this@RouteFilter, RouteActivity4::class.java)
+                                                    val intent = Intent(
+                                                        this@RouteFilter,
+                                                        RouteActivity4::class.java
+                                                    )
                                                     intent.putExtra("subRouteName", subRouteName)
                                                     startActivity(intent)
-                                                    Log.d("RouteFilter", "Navigating to RouteActivity4 with: $subRouteName")
+                                                    Log.d(
+                                                        "RouteFilter",
+                                                        "Navigating to RouteActivity4 with: $subRouteName"
+                                                    )
                                                 },
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
@@ -146,7 +151,10 @@ class RouteFilter : ComponentActivity() {
                                                     modifier = Modifier
                                                         .size(30.dp)
                                                         .offset(x = (-20).dp)
-                                                        .background(Color(0xFF9e7cfe), shape = CircleShape)
+                                                        .background(
+                                                            Color(0xFF9e7cfe),
+                                                            shape = CircleShape
+                                                        )
                                                 )
                                                 Image(
                                                     painter = painterResource(id = R.drawable.logo),
@@ -195,6 +203,7 @@ class RouteFilter : ComponentActivity() {
                                         routeResult.value = ""
                                         placeholderVisible = true
                                     }
+
                                     else -> {
                                         inputText += key
                                         fetchRouteData(inputText)
@@ -222,7 +231,11 @@ class RouteFilter : ComponentActivity() {
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                                    modifier = Modifier.padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        top = 8.dp
+                                    )
                                 ) {
                                     IconButton(
                                         onClick = { finish() },
@@ -270,40 +283,40 @@ class RouteFilter : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) {
-    val keys = listOf(
-        listOf("L", "1", "2", "3"),
-        listOf("GR", "4", "5", "6"),
-        listOf("BR", "7", "8", "9"),
-        listOf("A", "B", "0", "清除")
-    )
+    @Composable
+    fun CustomKeyboard(onKeyPress: (String) -> Unit, modifier: Modifier = Modifier) {
+        val keys = listOf(
+            listOf("L", "1", "2", "3"),
+            listOf("GR", "4", "5", "6"),
+            listOf("BR", "7", "8", "9"),
+            listOf("A", "B", "0", "清除")
+        )
 
-    Column(modifier = modifier.padding(8.dp).background(Color.White)) {
-        keys.forEach { row ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                row.forEach { key ->
-                    Button(
-                        onClick = {
-                            onKeyPress(key)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFd6c9fc),
-                            contentColor = Color.Black
-                        ),
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .weight(1f)
-                            .height(40.dp)
-                            .shadow(3.dp, shape = RoundedCornerShape(50))
-                    ) {
-                        Text(text = key, fontSize = 14.sp)
+        Column(modifier = modifier.padding(8.dp).background(Color.White)) {
+            keys.forEach { row ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    row.forEach { key ->
+                        Button(
+                            onClick = {
+                                onKeyPress(key)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFd6c9fc),
+                                contentColor = Color.Black
+                            ),
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .weight(1f)
+                                .height(40.dp)
+                                .shadow(3.dp, shape = RoundedCornerShape(50))
+                        ) {
+                            Text(text = key, fontSize = 14.sp)
+                        }
                     }
                 }
             }

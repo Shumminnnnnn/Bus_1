@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val tdxResult = remember { mutableStateOf("載入主畫面中...") }
 
-                    // Launch Coroutines
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val tdxResultJson = TDXApi.main()

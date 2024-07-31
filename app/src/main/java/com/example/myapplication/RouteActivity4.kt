@@ -3,12 +3,15 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -40,15 +43,17 @@ class RouteActivity4 : ComponentActivity() {
     @Composable
     fun RouteActivityContent(subRouteName: String) {
         val routeInfo = remember { mutableStateOf<RouteInfo?>(null) }
+        val isLoading = remember { mutableStateOf(true) }
         val currentDirection = remember { mutableStateOf(0) }
 
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(true) {
-            fetchDataAndUpdate(routeInfo, subRouteName)
+            fetchDataAndUpdate(routeInfo, subRouteName, isLoading)
             while (isActive) {
-                delay(20000) // Wait for 20 seconds
-                fetchDataAndUpdate(routeInfo, subRouteName)
+                delay(15000) // 每15秒更新一次
+                fetchDataAndUpdate(routeInfo, subRouteName, isLoading)
+                Toast.makeText(this@RouteActivity4, "已更新!", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -90,12 +95,15 @@ class RouteActivity4 : ComponentActivity() {
         finish()
     }
 
-    private suspend fun fetchDataAndUpdate(routeInfo: MutableState<RouteInfo?>, subRouteName: String) {
+    private suspend fun fetchDataAndUpdate(routeInfo: MutableState<RouteInfo?>, subRouteName: String, isLoading: MutableState<Boolean>) {
+        isLoading.value = true
         try {
             val routeResult = Route_arrivetime.main(subRouteName)
             routeInfo.value = routeResult
         } catch (e: Exception) {
             Log.e("RouteActivity4", "Error fetching route data: ${e.message}", e)
+        } finally {
+            isLoading.value = false
         }
     }
 }
@@ -146,7 +154,7 @@ fun PurpleHeader(
                 )
             }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp), // 调整按钮之间的间距
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(end = 16.dp)
             ) {
                 CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.baseline_approval_24), offsetX = 70.dp)
@@ -197,12 +205,114 @@ fun ScrollableContent5(
                 }
             }
 
-            Text(text = arrivalTimeInfo)
+            routeInfo.arrivalTimeInfoDirection0.split("\n").forEach { info ->
+                if (info.contains("站名")) {
+                    Text(
+                        text = info.split(":")[1].trim(),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+            ArrivalTimeInfoText(arrivalTimeInfo)
         } else {
-            Text(text = "載入公車路線動態中...")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(89.dp)
+                            .offset(y = (30).dp)
+                            .offset(x = (60).dp)
+                            .background(Color(0xFF9e7cfe), shape = CircleShape)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(250.dp)
+                            .offset(y = (80).dp)
+                            .offset(x = (60).dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "載入公車路線動態中...",
+                        style = androidx.compose.ui.text.TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.Black,
+                        ),
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .offset(y = (-45).dp)
+                            .offset(x = (65).dp)
+                    )
+                }
+            }
         }
     }
 }
+
+@Composable
+fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
+    Column {
+        arrivalTimeInfo.split("\n").forEach { info ->
+            val color = when {
+                info.contains("進站中") || info.contains("即將進站") -> Color(0xFFff4b4b)
+                else -> Color.LightGray
+            }
+            val textColor = Color.Black
+
+            val infoParts = info.split(" ", limit = 2)
+            val timeInfo = infoParts[0]
+            val stopName = if (infoParts.size > 1) infoParts[1] else ""
+
+            if (stopName.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .background(Color.Transparent)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(80.dp)
+                                .height(40.dp)
+                                .background(color, shape = RoundedCornerShape(20.dp))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = timeInfo,
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = stopName,
+                            color = textColor,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun CustomButton(onClick: () -> Unit, icon: Painter, offsetX: Dp) {
@@ -211,10 +321,10 @@ fun CustomButton(onClick: () -> Unit, icon: Painter, offsetX: Dp) {
         shape = CircleShape,
         modifier = Modifier
             .padding(horizontal = 8.dp)
-            .size(48.dp) // 确保按钮是一个正方形，以便变成圆形
+            .size(48.dp)
             .offset(x = offsetX),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe)),
-        contentPadding = PaddingValues(0.dp) // 移除默认的内边距
+        contentPadding = PaddingValues(0.dp)
     ) {
         Icon(painter = icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.White) // 确保图标大小适中且颜色对比度足够
     }
