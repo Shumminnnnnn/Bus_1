@@ -82,7 +82,9 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Color.White,
+                        modifier = Modifier.offset(x = (-13).dp)
+                            .offset(y = 3.dp)
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
@@ -102,7 +104,7 @@ fun ScrollableContent3(tdxResult: String, onBackClick: () -> Unit) {
                         color = Color.White
                     ),
                     modifier = Modifier.align(Alignment.Center)
-                        .offset(x = (-80).dp)
+                        .offset(x = (-60).dp)
                 )
             }
         }

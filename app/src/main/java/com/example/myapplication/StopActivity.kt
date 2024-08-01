@@ -108,14 +108,17 @@ fun ScrollableContent7(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = onBackClick, modifier = Modifier.offset(x = (-13).dp)) {
+                        IconButton(onClick = onBackClick,
+                            modifier = Modifier.offset(x = (-13).dp)
+                                .offset(y = 3.dp)
+                        ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                                 contentDescription = "Back",
                                 tint = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.width(3.dp))
+
                         Text(
                             text = "附近站牌",
                             style = androidx.compose.ui.text.TextStyle(

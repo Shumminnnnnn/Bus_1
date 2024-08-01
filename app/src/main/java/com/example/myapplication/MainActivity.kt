@@ -141,7 +141,11 @@ fun MainScreen(
                     .height(38.dp)
                     .width(110.dp)
             ) {
-                Text(text = "最新消息")
+                Text(text = "最新消息",
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 16.sp,
+                        color = Color.White
+                    ))
             }
         }
 

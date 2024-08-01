@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -118,16 +115,14 @@ class RouteFilter : ComponentActivity() {
                                     )
                                 }
                             } else {
-                                routeResult.value.split("\n").chunked(2).forEach { routeItem ->
+                                val routeItems = routeResult.value.split("\n").chunked(2)
+                                routeItems.forEachIndexed { index, routeItem ->
                                     if (routeItem.size == 2) {
                                         val (subRouteName, headsign) = routeItem
 
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(80.dp)
-                                                .border(1.dp, Color.Gray)
-                                                .padding(8.dp)
                                                 .clickable {
                                                     Route_depdes.subRouteName = subRouteName
                                                     val intent = Intent(
@@ -140,7 +135,8 @@ class RouteFilter : ComponentActivity() {
                                                         "RouteFilter",
                                                         "Navigating to RouteActivity4 with: $subRouteName"
                                                     )
-                                                },
+                                                }
+                                                .padding(8.dp),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Box(
@@ -149,8 +145,8 @@ class RouteFilter : ComponentActivity() {
                                             ) {
                                                 Box(
                                                     modifier = Modifier
-                                                        .size(30.dp)
-                                                        .offset(x = (-20).dp)
+                                                        .size(35.dp)
+                                                        .offset(x = 0.dp)
                                                         .background(
                                                             Color(0xFF9e7cfe),
                                                             shape = CircleShape
@@ -160,28 +156,30 @@ class RouteFilter : ComponentActivity() {
                                                     painter = painterResource(id = R.drawable.logo),
                                                     contentDescription = "Logo",
                                                     modifier = Modifier
-                                                        .size(600.dp)
-                                                        .offset(y = (-75).dp)
-                                                        .offset(x = (-20).dp)
+                                                        .size(90.dp)
+                                                        .offset(y = (-81).dp)
+                                                        .offset(x = 0.dp)
                                                 )
                                             }
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Column {
+                                            Column(
+                                                modifier = Modifier.padding(start = 8.dp)
+                                            ) {
                                                 Text(
                                                     text = subRouteName,
-                                                    fontSize = 18.sp,
+                                                    fontSize = 20.sp,
                                                     color = Color.Black,
-                                                    modifier = Modifier.offset(x = (-38).dp)
                                                 )
                                                 Text(
                                                     text = headsign,
-                                                    fontSize = 16.sp,
+                                                    fontSize = 18.sp,
                                                     color = Color.Gray,
-                                                    modifier = Modifier.offset(x = (-38).dp)
                                                 )
                                             }
                                         }
-                                        Spacer(modifier = Modifier.height(8.dp))
+
+                                        if (index < routeItems.size - 1) {
+                                            Divider(color = Color.LightGray, thickness = 1.dp)
+                                        }
                                     }
                                 }
                             }
@@ -241,24 +239,25 @@ class RouteFilter : ComponentActivity() {
                                         onClick = { finish() },
                                         modifier = Modifier
                                             .background(Color(0xFF9e7cfe))
-                                            .offset(x = (-110).dp)
+                                            .offset(x = (-90).dp)
+                                            .offset(y = 3.dp)
+
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                                             contentDescription = "Back",
-                                            tint = Color.White
+                                            tint = Color.White,
                                         )
                                     }
                                     Text(
-                                        text = "路線查詢",
+                                        text = "  路線查詢",
                                         style = androidx.compose.ui.text.TextStyle(
                                             fontSize = 22.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color.White
                                         ),
                                         modifier = Modifier
-                                            .padding(start = 8.dp)
-                                            .offset(x = (-110).dp)
+                                            .offset(x = (-90).dp)
                                     )
                                 }
 
@@ -312,10 +311,8 @@ class RouteFilter : ComponentActivity() {
                             modifier = Modifier
                                 .padding(2.dp)
                                 .weight(1f)
-                                .height(40.dp)
-                                .shadow(3.dp, shape = RoundedCornerShape(50))
                         ) {
-                            Text(text = key, fontSize = 14.sp)
+                            Text(text = key)
                         }
                     }
                 }

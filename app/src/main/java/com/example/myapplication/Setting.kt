@@ -74,7 +74,7 @@ fun SettingContent(
         // Top purple area with back button and text
         Box(
             modifier = Modifier
-                .height(60.dp)
+                .height(80.dp)
                 .fillMaxWidth()
                 .background(Color(0xFF9e7cfe)),
             contentAlignment = Alignment.CenterStart
