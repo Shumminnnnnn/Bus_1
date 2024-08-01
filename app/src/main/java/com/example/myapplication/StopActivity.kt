@@ -166,7 +166,7 @@ fun ScrollableContent7(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.map_pin),
+                                    painter = painterResource(id = R.drawable.baseline_location_on_24),
                                     contentDescription = null,
                                     colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                     modifier = Modifier.size(24.dp)
@@ -273,7 +273,7 @@ fun ScrollableContent7(
                                             // Add the icon only to the station name
                                             Row(verticalAlignment = Alignment.CenterVertically) {
                                                 Image(
-                                                    painter = painterResource(id = R.drawable.map_pin),
+                                                    painter = painterResource(id = R.drawable.baseline_location_on_24),
                                                     contentDescription = null,
                                                     colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                                     modifier = Modifier.size(24.dp)

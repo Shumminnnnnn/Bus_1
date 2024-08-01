@@ -32,7 +32,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -408,8 +413,7 @@ fun PlanFilterContent(
                 item {
                     if (showTdxResult) {
                         if (tdxResult.isNotEmpty()) {
-                            Text(text = tdxResult, modifier = Modifier.padding(8.dp))
-
+                            AnnotatedTdxResult(tdxResult)
                         } else {
                             Box(
                                 modifier = Modifier
@@ -509,4 +513,86 @@ fun PlanFilterContent(
             }
         }
     }
+}
+
+@Composable
+fun AnnotatedTdxResult(tdxResult: String) {
+    val annotatedText = buildAnnotatedString {
+        val lines = tdxResult.split("\n")
+        for (line in lines) {
+            when {
+                line.contains("[USER_ICON]") -> {
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        appendInlineContent("userIcon", "[USER_ICON]")
+                    }
+                    append(line.replace("[USER_ICON]", ""))
+                }
+                line.contains("[baseline_directions_bus_24_ICON]") -> {
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        appendInlineContent("busIcon", "[baseline_directions_bus_24_ICON]")
+                    }
+                    append(line.replace("[baseline_directions_bus_24_ICON]", ""))
+                }
+                line.contains("[MINUS_ICON]") -> {
+                    withStyle(style = SpanStyle(color = Color.Black)) {
+                        appendInlineContent("minusIcon", "[MINUS_ICON]")
+                    }
+                    append(line.replace("[MINUS_ICON]", ""))
+                }
+                else -> append(line)
+            }
+            append("\n")
+        }
+    }
+
+    val inlineContent = mapOf(
+        "userIcon" to InlineTextContent(
+            Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.user),
+                contentDescription = "User Icon",
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        "busIcon" to InlineTextContent(
+            Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_directions_bus_24),
+                contentDescription = "Bus Icon",
+                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                modifier = Modifier.size(24.dp),
+
+
+            )
+        },
+        "minusIcon" to InlineTextContent(
+            Placeholder(
+                width = 24.sp,
+                height = 24.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+            )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.minus),
+                contentDescription = "Minus Icon",
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    )
+
+    Text(
+        text = annotatedText,
+        inlineContent = inlineContent,
+        modifier = Modifier.padding(8.dp)
+    )
 }

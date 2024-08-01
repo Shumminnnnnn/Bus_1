@@ -134,9 +134,6 @@ object Route_plan {
         }
 
         val routes = rootNode.path("data").path("routes")
-//        if (routes.isEmpty) {
-//            return "無路線規畫結果"
-//        }
         val sb = StringBuilder()
         for (route in routes) {
             val startTime = route.get("start_time").asText().split("T").getOrNull(1)?.substring(0, 5) ?: "N/A"
@@ -152,18 +149,19 @@ object Route_plan {
             for (section in sections) {
                 when (section.get("type").asText()) {
                     "pedestrian" -> {
-                        sb.append("步行到 ")
+                        sb.append("[USER_ICON] 步行到 ")
                         val arrivalPlace = section.path("arrival").path("place")
                         if (arrivalPlace.get("type").asText() == "station") {
                             sb.append("${arrivalPlace.get("name").asText()} ")
                         } else {
-                            sb.append("$endLocation ") // 这里使用 endLocation
+                            sb.append("$endLocation ")
                         }
                         val duration = section.path("travelSummary").get("duration").asInt() / 60
-                        sb.append("($duration 分鐘)\n\n")
+                        sb.append("($duration 分鐘)\n")
+                        sb.append("[MINUS_ICON]\n")
                     }
                     "transit" -> {
-                        sb.append("搭乘 ")
+                        sb.append("[baseline_directions_bus_24_ICON] 搭乘 ")
                         val transport = section.path("transport")
                         if (transport.get("mode").asText() == "Bus") {
                             sb.append("${transport.get("name").asText()} ")
@@ -177,13 +175,15 @@ object Route_plan {
                             sb.append("${departurePlace.get("name").asText()} > ")
                         }
                         if (arrivalPlace.get("type").asText() == "station") {
-                            sb.append("${arrivalPlace.get("name").asText()}\n\n")
+                            sb.append("${arrivalPlace.get("name").asText()}\n")
+                            sb.append("([MINUS_ICON]\n")
                         }
                     }
                 }
             }
-            sb.append("\n")
+            sb.append("\n\n")
         }
         return sb.toString()
     }
+
 }

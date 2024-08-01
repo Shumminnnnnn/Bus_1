@@ -44,7 +44,6 @@
         <activity android:name=".MapActivity"/>
         <activity android:name=".Blind"/>
         <activity android:name=".Setting"/>
-        <activity android:name=".ThemeColor"/>
 
     </application>
 

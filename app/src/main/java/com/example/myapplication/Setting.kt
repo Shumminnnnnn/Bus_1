@@ -22,6 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,20 +42,21 @@ class Setting : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val selectedTheme = intent.getStringExtra("selectedTheme") ?: ""
+                    val selectedTheme = remember { mutableStateOf("") }
 
                     SettingContent(
-                        onButtonClickThemeColor = {
-                            val intent = Intent(this@Setting, ThemeColor::class.java)
-                            startActivity(intent)
+                        onButtonClickColorBlind = {
+                            selectedTheme.value = "Blind"
+                            val returnIntent = Intent(this@Setting, Blind::class.java)
+                            startActivity(returnIntent)
+                        },
+                        onButtonClickGeneral = {
+                            selectedTheme.value = "Main"
+                            val returnIntent = Intent(this@Setting, MainActivity::class.java)
+                            startActivity(returnIntent)
                         },
                         onBackButtonClick = {
-                            val returnIntent = if (selectedTheme == "Blind") {
-                                Intent(this@Setting, Blind::class.java)
-                            } else {
-                                Intent(this@Setting, MainActivity::class.java)
-                            }
-                            startActivity(returnIntent)
+                            finish()
                         }
                     )
                 }
@@ -64,7 +67,8 @@ class Setting : ComponentActivity() {
 
 @Composable
 fun SettingContent(
-    onButtonClickThemeColor: () -> Unit,
+    onButtonClickColorBlind: () -> Unit,
+    onButtonClickGeneral: () -> Unit,
     onBackButtonClick: () -> Unit
 ) {
     Column(
@@ -116,11 +120,28 @@ fun SettingContent(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .background(Color(0xFFE0E0E0))
-                    .clickable(onClick = onButtonClickThemeColor)
+                    .clickable(onClick = onButtonClickColorBlind)
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "主題顏色",
+                    text = "色覺障礙者友善",
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 20.sp,
+                        color = Color.Black
+                    )
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .background(Color(0xFFE0E0E0))
+                    .clickable(onClick = onButtonClickGeneral)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "一般使用者",
                     style = androidx.compose.ui.text.TextStyle(
                         fontSize = 20.sp,
                         color = Color.Black
