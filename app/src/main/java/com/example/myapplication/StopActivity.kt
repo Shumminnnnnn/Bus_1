@@ -236,7 +236,7 @@ fun ScrollableContent7(
                                                     .offset(x = (60).dp)
                                             )
                                         }
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(8.dp))
                                         Column(
                                             horizontalAlignment = Alignment.CenterHorizontally
                                         ) {
@@ -339,7 +339,7 @@ fun ScrollableContent7(
                                 modifier = Modifier
                                     .size(89.dp)
                                     .offset(y = (10).dp)
-                                    .offset(x = (50).dp)
+                                    .offset(x = (58).dp)
                                     .background(Color(0xFF9e7cfe), shape = CircleShape)
                             )
                             Image(
@@ -347,7 +347,7 @@ fun ScrollableContent7(
                                 contentDescription = "Logo",
                                 modifier = Modifier.size(250.dp)
                                     .offset(y = (60).dp)
-                                    .offset(x = (50).dp)
+                                    .offset(x = (58).dp)
                             )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
@@ -360,7 +360,7 @@ fun ScrollableContent7(
                             modifier = Modifier
                                 .padding(10.dp)
                                 .offset(y = (-80).dp)
-                                .offset(x = (50).dp)
+                                .offset(x = (58).dp)
                         )
                         Text(
                             text = "請輸入所在位置或點擊定位按紐!",
@@ -370,7 +370,7 @@ fun ScrollableContent7(
                             ),
                             modifier = Modifier
                                 .offset(y = (-80).dp)
-                                .offset(x = (50).dp)
+                                .offset(x = (58).dp)
                         )
                     }
                 }

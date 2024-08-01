@@ -274,7 +274,7 @@ class RouteFilter : ComponentActivity() {
                                     modifier = Modifier
                                         .fillMaxWidth(0.9f)
                                         .padding(8.dp)
-                                        .clip(RoundedCornerShape(20.dp))
+                                        .clip(RoundedCornerShape(30.dp))
                                 )
                             }
                         }

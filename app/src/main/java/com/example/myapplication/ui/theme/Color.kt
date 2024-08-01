@@ -2,10 +2,9 @@ package com.example.myapplication.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-//深色背景預設色
-//val Purple80 = Color(0xFFD0BCFF)
-//val PurpleGrey80 = Color(0xFFCCC2DC)
-//val Pink80 = Color(0xFFEFB8C8)
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
 
 val Purple01 = Color(0xFF9e7cfe)
 val Purple02= Color(0xFFd6c9fc)
