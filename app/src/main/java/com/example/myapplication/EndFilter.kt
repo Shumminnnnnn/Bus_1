@@ -151,7 +151,7 @@ class EndFilter : ComponentActivity() {
                                                 fontSize = 16.sp
                                             )
                                         } else {
-                                            resultList.forEach { planInfo ->
+                                            resultList.forEachIndexed { index, planInfo ->
                                                 Column(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
@@ -183,13 +183,15 @@ class EndFilter : ComponentActivity() {
                                                             fontSize = 16.sp
                                                         )
                                                     }
-                                                    Divider(
-                                                        color = Color.Gray,
-                                                        thickness = 1.dp,
-                                                        modifier = Modifier
-                                                            .padding(vertical = 8.dp)
-                                                            .width(300.dp)
-                                                    )
+                                                    if (index != resultList.size - 1) {
+                                                        Divider(
+                                                            color = Color.Gray,
+                                                            thickness = 1.dp,
+                                                            modifier = Modifier
+                                                                .padding(vertical = 8.dp)
+                                                                .width(300.dp)
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }

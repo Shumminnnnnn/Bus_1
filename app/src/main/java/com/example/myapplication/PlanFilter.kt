@@ -41,6 +41,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import kotlinx.coroutines.delay
 
 
 class PlanFilter : ComponentActivity() {
@@ -225,6 +226,7 @@ fun PlanFilterContent(
     onBackClick: () -> Unit
 ) {
     var showTdxResult by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -366,7 +368,8 @@ fun PlanFilterContent(
                                 modifier = Modifier
                                     .size(35.dp)
                                     .clickable {
-                                        showTdxResult = true
+                                        isLoading = true
+                                        showTdxResult = false
                                         onQueryButtonClick()
                                     }
                             )
@@ -411,7 +414,25 @@ fun PlanFilterContent(
                     .padding(16.dp)
             ) {
                 item {
-                    if (showTdxResult) {
+                    if (isLoading) {
+                        LaunchedEffect(Unit) {
+                            delay(2500) // Wait for 2.5 seconds
+                            isLoading = false
+                            showTdxResult = true
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "載入路線規畫結果中...",
+                                style = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 18.sp,
+                                    color = Color.Black
+                                )
+                            )
+                        }
+                    } else if (showTdxResult) {
                         if (tdxResult.isNotEmpty()) {
                             AnnotatedTdxResult(tdxResult)
                         } else {
@@ -539,7 +560,19 @@ fun AnnotatedTdxResult(tdxResult: String) {
                     }
                     append(line.replace("[MINUS_ICON]", ""))
                 }
-                else -> append(line)
+                else -> {
+                    if (line.contains(" 分鐘 ") || line.contains(" - ")) {
+                        withStyle(style = SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+                            append(line)
+                        }
+                    } else if (line.startsWith("車資:")) {
+                        withStyle(style = SpanStyle(color = Color.Gray)) {
+                            append(line)
+                        }
+                    } else {
+                        append(line)
+                    }
+                }
             }
             append("\n")
         }
@@ -556,7 +589,7 @@ fun AnnotatedTdxResult(tdxResult: String) {
             Image(
                 painter = painterResource(id = R.drawable.user),
                 contentDescription = "User Icon",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(22.dp)
             )
         },
         "busIcon" to InlineTextContent(
@@ -570,9 +603,7 @@ fun AnnotatedTdxResult(tdxResult: String) {
                 painter = painterResource(id = R.drawable.baseline_directions_bus_24),
                 contentDescription = "Bus Icon",
                 colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
-                modifier = Modifier.size(24.dp),
-
-
+                modifier = Modifier.size(24.dp)
             )
         },
         "minusIcon" to InlineTextContent(

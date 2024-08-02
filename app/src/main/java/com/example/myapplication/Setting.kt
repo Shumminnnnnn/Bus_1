@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -115,35 +116,48 @@ fun SettingContent(
                 .weight(1f)
                 .padding(8.dp)
         ) {
+            Text(
+                text = "主題顏色",
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.Gray
+                )
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
-                    .background(Color(0xFFE0E0E0))
+                    .padding(bottom = 8.dp)
+                    .background(Color.White)
                     .clickable(onClick = onButtonClickColorBlind)
                     .padding(16.dp)
             ) {
                 Text(
                     text = "色覺障礙者友善",
                     style = androidx.compose.ui.text.TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         color = Color.Black
                     )
                 )
             }
-
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .background(Color(0xFFE0E0E0))
+                    .padding(top = 8.dp)
+                    .background(Color.White)
                     .clickable(onClick = onButtonClickGeneral)
                     .padding(16.dp)
             ) {
                 Text(
                     text = "一般使用者",
                     style = androidx.compose.ui.text.TextStyle(
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         color = Color.Black
                     )
                 )

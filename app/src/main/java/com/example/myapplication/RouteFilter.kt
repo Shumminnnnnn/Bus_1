@@ -239,8 +239,8 @@ class RouteFilter : ComponentActivity() {
                                         onClick = { finish() },
                                         modifier = Modifier
                                             .background(Color(0xFF9e7cfe))
-                                            .offset(x = (-90).dp)
-                                            .offset(y = 3.dp)
+                                            .offset(x = (-110).dp)
+                                            .offset(y = 2.dp)
 
                                     ) {
                                         Icon(
@@ -257,7 +257,7 @@ class RouteFilter : ComponentActivity() {
                                             color = Color.White
                                         ),
                                         modifier = Modifier
-                                            .offset(x = (-90).dp)
+                                            .offset(x = (-110).dp)
                                     )
                                 }
 

@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -141,12 +147,15 @@ object Route_plan {
             val travelTime = route.get("travel_time").asInt() / 60
             val totalPrice = route.get("total_price").asText()
 
-            sb.append("$startTime - $endTime ")
-                .append("($travelTime 分鐘)                       ")
-                .append("車資: $totalPrice\n\n")
+            // 每一部分单独处理，使用换行符分开
+            sb.append("$startTime - $endTime  ")
+            sb.append("($travelTime 分鐘)\n")
+            sb.append("車資: $totalPrice\n")
 
             val sections = route.path("sections")
-            for (section in sections) {
+            for (i in 0 until sections.size()) {
+                val section = sections[i]
+
                 when (section.get("type").asText()) {
                     "pedestrian" -> {
                         sb.append("[USER_ICON] 步行到 ")
@@ -158,7 +167,11 @@ object Route_plan {
                         }
                         val duration = section.path("travelSummary").get("duration").asInt() / 60
                         sb.append("($duration 分鐘)\n")
-                        sb.append("[MINUS_ICON]\n")
+
+                        val shouldAppendMinusIcon = i + 1 < sections.size() && sections[i + 1].get("type").asText() != "pedestrian"
+                        if (shouldAppendMinusIcon) {
+                            sb.append("[MINUS_ICON]\n")
+                        }
                     }
                     "transit" -> {
                         sb.append("[baseline_directions_bus_24_ICON] 搭乘 ")
@@ -176,7 +189,6 @@ object Route_plan {
                         }
                         if (arrivalPlace.get("type").asText() == "station") {
                             sb.append("${arrivalPlace.get("name").asText()}\n")
-                            sb.append("([MINUS_ICON]\n")
                         }
                     }
                 }

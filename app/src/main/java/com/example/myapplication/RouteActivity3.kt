@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -187,6 +189,7 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(Color(0xFFd6c9fc))
+                                        .clip(RoundedCornerShape(20.dp))
                                         .padding(vertical = 4.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -241,7 +244,8 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(Color(0xFFd6c9fc))
-                                        .padding(vertical = 4.dp),
+                                        .padding(vertical = 4.dp)
+                                        .clip(RoundedCornerShape(20.dp)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
