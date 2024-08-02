@@ -1,11 +1,5 @@
 package com.example.myapplication
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -147,7 +141,6 @@ object Route_plan {
             val travelTime = route.get("travel_time").asInt() / 60
             val totalPrice = route.get("total_price").asText()
 
-            // 每一部分单独处理，使用换行符分开
             sb.append("$startTime - $endTime  ")
             sb.append("($travelTime 分鐘)\n")
             sb.append("車資: $totalPrice\n")

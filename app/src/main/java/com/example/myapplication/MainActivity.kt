@@ -107,7 +107,6 @@ fun MainScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Top purple area with text
         Box(
             modifier = Modifier
                 .height(60.dp)
@@ -125,7 +124,6 @@ fun MainScreen(
             )
         }
 
-        // Additional purple area with button
         Box(
             modifier = Modifier
                 .height(50.dp)
@@ -149,7 +147,6 @@ fun MainScreen(
             }
         }
 
-        // Scrollable content area with centered buttons
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -163,14 +160,14 @@ fun MainScreen(
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF98d588)), // Apply background color after clip
+                    .background(Color(0xFF98d588)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick2,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -198,14 +195,14 @@ fun MainScreen(
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFff9ad1)), // Apply background color after clip
+                    .background(Color(0xFFff9ad1)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick3,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -233,14 +230,14 @@ fun MainScreen(
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFffb774)), // Apply background color after clip
+                    .background(Color(0xFFffb774)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick7,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -268,14 +265,14 @@ fun MainScreen(
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF60bcff)), // Apply background color after clip
+                    .background(Color(0xFF60bcff)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClickSetting,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -298,8 +295,6 @@ fun MainScreen(
                 }
             }
         }
-
-        // Bottom purple area
         Box(
             modifier = Modifier
                 .height(50.dp)

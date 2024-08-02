@@ -65,7 +65,6 @@ fun DateTimePickerScreen(onTimeSelected: (String) -> Unit) {
                     .padding(start = 16.dp)
                     .size(24.dp)
                     .clickable {
-                        // Navigate back to PlanFilter
                         (context as? ComponentActivity)?.finish()
                     }
             )

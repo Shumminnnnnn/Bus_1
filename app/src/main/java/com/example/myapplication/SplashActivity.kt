@@ -31,9 +31,8 @@ class SplashActivity : ComponentActivity() {
             }
         }
 
-        // Launch coroutine to delay the splash screen
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1000) // 1.5 seconds delay
+            delay(1000) //開啟動畫顯示1秒
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()

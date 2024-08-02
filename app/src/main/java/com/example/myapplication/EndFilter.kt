@@ -65,7 +65,7 @@ class EndFilter : ComponentActivity() {
 
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(modifier = Modifier.fillMaxSize()) {
-                            // Top purple area
+
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -80,7 +80,7 @@ class EndFilter : ComponentActivity() {
                                         modifier = Modifier
                                             .background(Color(0xFF9e7cfe))
                                             .size(40.dp)
-                                            .offset(x = (-8).dp) // Move the button to the left
+                                            .offset(x = (-8).dp)
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
@@ -127,8 +127,6 @@ class EndFilter : ComponentActivity() {
                                     }
                                 }
                             }
-
-                            // Scrollable content area
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -172,7 +170,7 @@ class EndFilter : ComponentActivity() {
                                                         Image(
                                                             painter = painterResource(id = R.drawable.map_pin),
                                                             contentDescription = null,
-                                                            colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)), // Set the tint color to purple
+                                                            colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                                             modifier = Modifier
                                                                 .size(24.dp)
                                                                 .padding(end = 8.dp)
@@ -198,8 +196,6 @@ class EndFilter : ComponentActivity() {
                                     }
                                 }
                             }
-
-                            // Bottom purple area
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()

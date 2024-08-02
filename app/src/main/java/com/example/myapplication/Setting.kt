@@ -76,7 +76,7 @@ fun SettingContent(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // Top purple area with back button and text
+
         Box(
             modifier = Modifier
                 .height(80.dp)
@@ -164,7 +164,6 @@ fun SettingContent(
             }
         }
 
-        // Bottom purple area
         Box(
             modifier = Modifier
                 .height(50.dp)

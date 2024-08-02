@@ -94,7 +94,6 @@ object Route_filter {
             val subRoutesNode = jsonNodes.get(0)?.get("SubRoutes")
 
             return if (subRoutesNode == null || subRoutesNode.isEmpty) {
-                // Return a special message if SubRoutes is empty
                 "沒有此路線，請重新輸入"
             } else {
                 jsonString

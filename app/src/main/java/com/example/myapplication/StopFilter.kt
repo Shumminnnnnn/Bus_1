@@ -63,7 +63,6 @@ class StopFilter : ComponentActivity() {
 
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(modifier = Modifier.fillMaxSize()) {
-                            // Top purple area
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -78,7 +77,7 @@ class StopFilter : ComponentActivity() {
                                         modifier = Modifier
                                             .background(Color(0xFF9e7cfe))
                                             .size(40.dp)
-                                            .offset(x = (-8).dp) // Move the button to the left
+                                            .offset(x = (-8).dp)
                                     ) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
@@ -126,7 +125,6 @@ class StopFilter : ComponentActivity() {
                                 }
                             }
 
-                            // Scrollable content area
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -159,7 +157,7 @@ class StopFilter : ComponentActivity() {
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.clickable {
                                                             val intent = Intent(this@StopFilter, StopActivity::class.java).apply {
-                                                                putExtra("markname", stopInfo.markname)  // Passing markname
+                                                                putExtra("markname", stopInfo.markname)
                                                                 putExtra("latitude", stopInfo.formattedLatitude.toDouble())
                                                                 putExtra("longitude", stopInfo.formattedLongitude.toDouble())
                                                             }
@@ -169,7 +167,7 @@ class StopFilter : ComponentActivity() {
                                                         Image(
                                                             painter = painterResource(id = R.drawable.map_pin),
                                                             contentDescription = null,
-                                                            colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)), // Set the tint color to purple
+                                                            colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                                             modifier = Modifier
                                                                 .size(24.dp)
                                                                 .padding(end = 8.dp)
@@ -196,7 +194,6 @@ class StopFilter : ComponentActivity() {
                                 }
                             }
 
-                            // Bottom purple area
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()

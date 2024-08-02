@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -94,7 +93,6 @@ fun ScrollableContent7(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top purple area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -197,7 +195,6 @@ fun ScrollableContent7(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Scrollable content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -212,7 +209,7 @@ fun ScrollableContent7(
                         routeItems.forEachIndexed { index, routeItem ->
                             if (routeItem.isNotEmpty()) {
                                 if (index == 0) {
-                                    Spacer(modifier = Modifier.height(8.dp)) // Add vertical space before the first item
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                                 val lines = routeItem.split("\n")
                                 val stationName = lines.firstOrNull() ?: ""
@@ -271,7 +268,7 @@ fun ScrollableContent7(
                                         Column(
                                             verticalArrangement = Arrangement.Center,
                                         ) {
-                                            // Add the icon only to the station name
+
                                             Row(verticalAlignment = Alignment.CenterVertically) {
                                                 Image(
                                                     painter = painterResource(id = R.drawable.baseline_location_on_24),
@@ -297,11 +294,11 @@ fun ScrollableContent7(
                                                         colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                                         modifier = Modifier
                                                             .size(80.dp)
-                                                            .offset(x = (-26).dp, y = 10.dp) // 调整 logo 的位置
+                                                            .offset(x = (-26).dp, y = 10.dp)
                                                     )
                                                     Box(
                                                         modifier = Modifier
-                                                            .offset(x = (-40).dp, y = (-5).dp) // 根据需要调整文字的位置
+                                                            .offset(x = (-40).dp, y = (-5).dp)
                                                     ) {
                                                         Text(
                                                             text = line,
@@ -318,7 +315,7 @@ fun ScrollableContent7(
                                     if (index != routeItems.size - 2) {
                                         Box(
                                             modifier = Modifier
-                                                .offset(x = 0.dp, y = (-15).dp) // 根据需要调整文字的位置
+                                                .offset(x = 0.dp, y = (-15).dp)
                                         ){
                                             Divider(
                                                 color = Color(0xFF9e7cfe),
@@ -382,7 +379,6 @@ fun ScrollableContent7(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Bottom purple area
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

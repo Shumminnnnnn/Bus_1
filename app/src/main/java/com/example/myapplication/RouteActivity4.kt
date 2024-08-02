@@ -175,7 +175,6 @@ fun ScrollableContent5(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
-            // 固定的紫色區域
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -215,12 +214,11 @@ fun ScrollableContent5(
                 }
             }
 
-            // 可滑動區域
             Box(modifier = Modifier.fillMaxSize()) {
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .padding(bottom = 45.dp)  // Add bottom padding to avoid overlap with the fixed bottom bar
+                        .padding(bottom = 45.dp)
                 ) {
                     if (routeInfo != null) {
                         val arrivalTimeInfo = if (currentDirection == 0) routeInfo.arrivalTimeInfoDirection0 else routeInfo.arrivalTimeInfoDirection1

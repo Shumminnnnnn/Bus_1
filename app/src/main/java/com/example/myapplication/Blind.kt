@@ -107,7 +107,6 @@ fun BlindContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Top purple area with text
         Box(
             modifier = Modifier
                 .height(60.dp)
@@ -124,8 +123,6 @@ fun BlindContent(
                 )
             )
         }
-
-        // Additional purple area with button
         Box(
             modifier = Modifier
                 .height(50.dp)
@@ -145,7 +142,6 @@ fun BlindContent(
             }
         }
 
-        // Scrollable content area with centered buttons
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -159,7 +155,7 @@ fun BlindContent(
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF9e7cfe)), // Apply background color after clip
+                    .background(Color(0xFF9e7cfe)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
@@ -188,20 +184,19 @@ fun BlindContent(
                     }
                 }
             }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF9e7cfe)), // Apply background color after clip
+                    .background(Color(0xFF9e7cfe)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick3,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -223,20 +218,19 @@ fun BlindContent(
                     }
                 }
             }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF9e7cfe)), // Apply background color after clip
+                    .background(Color(0xFF9e7cfe)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClick7,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -258,20 +252,19 @@ fun BlindContent(
                     }
                 }
             }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
                     .height(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF9e7cfe)), // Apply background color after clip
+                    .background(Color(0xFF9e7cfe)),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
                     onClick = onButtonClickSetting,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp), // Clip button to match box
+                        .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                 ) {
                     Column(
@@ -294,8 +287,6 @@ fun BlindContent(
                 }
             }
         }
-
-        // Bottom purple area
         Box(
             modifier = Modifier
                 .height(50.dp)

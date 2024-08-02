@@ -71,7 +71,6 @@ object Route {
 
             val jsonString =
                 if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
-                    // Decompress gzip data
                     responseBody.source().use { source ->
                         GzipSource(source).buffer().use { gzipBuffer ->
                             gzipBuffer.readUtf8()

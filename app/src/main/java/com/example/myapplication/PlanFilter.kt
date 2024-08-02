@@ -243,7 +243,6 @@ fun PlanFilterContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Fixed top section
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -407,7 +406,6 @@ fun PlanFilterContent(
                 }
             }
 
-            // Scrollable bottom section
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

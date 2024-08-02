@@ -84,7 +84,7 @@ object Route_schedule {
             for (route in jsonArray) {
                 val subRouteName = route["SubRouteName"]["Zh_tw"].asText()
                 if (subRouteName != Route_depdes.subRouteName) {
-                    continue // Skip this route if SubRouteName does not match
+                    continue
                 }
 
                 val routeName = route["RouteName"]["Zh_tw"].asText()

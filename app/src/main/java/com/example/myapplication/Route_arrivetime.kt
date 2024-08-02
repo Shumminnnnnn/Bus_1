@@ -28,7 +28,6 @@ object Route_arrivetime {
         val tokenElem: JsonNode = objectMapper.readTree(tokenInfo)
         val accessToken: String = tokenElem.get("access_token").asText()
 
-        // Call with correct parameters
         val routeDepDesInfo = withContext(Dispatchers.IO) { getRouteDepDesInfo(accessToken, subRouteName) }
         val arrivalTimeInfoDirection0 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 0) }
         val arrivalTimeInfoDirection1 = withContext(Dispatchers.IO) { getArrivalTimeInfo(accessToken, subRouteName, 1) }
@@ -37,7 +36,6 @@ object Route_arrivetime {
     }
 
     private fun getArrivalTimeInfo(accessToken: String, subRouteName: String, directionFilter: Int): String {
-        // Update URL to use subRouteName
         val tdxUrl = "https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/City/Taoyuan/$subRouteName?%24format=JSON"
 
         return getJsonString(tdxUrl, accessToken) { jsonString ->
@@ -52,7 +50,7 @@ object Route_arrivetime {
             val stopInfos = mutableListOf<Pair<Int, String>>()
 
             for (node in jsonNodes) {
-                // Check if RouteName.Zh_tw matches subRouteName
+
                 val routeName = node["RouteName"]["Zh_tw"].asText()
                 if (routeName != subRouteName) continue
 
@@ -157,7 +155,7 @@ object Route_arrivetime {
             val responseBody = response.body ?: throw IOException("Empty response body")
 
             val jsonString = if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
-                // Decompress gzip data
+
                 responseBody.source().use { source ->
                     GzipSource(source).buffer().use { gzipBuffer ->
                         gzipBuffer.readUtf8()
