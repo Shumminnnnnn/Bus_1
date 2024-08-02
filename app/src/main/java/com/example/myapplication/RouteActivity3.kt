@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -110,12 +111,16 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val parts = routeResult.split("<<DIVIDER>>")
-                parts.forEachIndexed { index, part ->
+                val weekdayParts = mutableMapOf<String, String>()
+                val holidayParts = mutableMapOf<String, String>()
+
+                for (part in parts) {
                     val lines = part.split("\n")
                     val weekdayLines = mutableListOf<String>()
                     val holidayLines = mutableListOf<String>()
                     var isWeekday = false
                     var isHoliday = false
+                    var directionLabel = ""
 
                     for (line in lines) {
                         when {
@@ -127,6 +132,12 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                                 isWeekday = false
                                 isHoliday = true
                             }
+                            line.contains("方向: 去程") -> {
+                                directionLabel = "去程"
+                            }
+                            line.contains("方向: 返程") -> {
+                                directionLabel = "返程"
+                            }
                             else -> {
                                 if (isWeekday) {
                                     weekdayLines.add(line)
@@ -137,66 +148,120 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                         }
                     }
 
-                    if (holidayLines.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color(0xFFbaa2ff))
-                                .padding(vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "假日時刻表",
-                                style = TextStyle(
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            )
-                        }
-                        holidayLines.forEach { line ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = line)
-                            }
-                        }
-                    }
-
                     if (weekdayLines.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color(0xFFbaa2ff))
-                                .padding(vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "平日時刻表",
-                                style = TextStyle(
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
+                        weekdayParts[directionLabel] = weekdayLines.joinToString("\n")
+                    }
+
+                    if (holidayLines.isNotEmpty()) {
+                        holidayParts[directionLabel] = holidayLines.joinToString("\n")
+                    }
+                }
+
+                if (holidayParts.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFbaa2ff))
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "假日時刻表",
+                            style = TextStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
                             )
-                        }
-                        weekdayLines.forEach { line ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                                contentAlignment = Alignment.Center
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    ) {
+                        holidayParts.forEach { (direction, part) ->
+                            Column(
+                                modifier = Modifier.weight(1f).padding(8.dp)
                             ) {
-                                Text(text = line)
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Color(0xFFd6c9fc))
+                                        .padding(vertical = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = direction,
+                                        style = TextStyle(
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            color = Color.White
+                                        )
+                                    )
+                                }
+                                Text(
+                                    text = part,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
+                }
 
-                    if (index < parts.size - 1) {
-                        Divider(modifier = Modifier.padding(vertical = 5.dp))
+                if (weekdayParts.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFbaa2ff))
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "平日時刻表",
+                            style = TextStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    ) {
+                        weekdayParts.forEach { (direction, part) ->
+                            Column(
+                                modifier = Modifier.weight(1f).padding(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Color(0xFFd6c9fc))
+                                        .padding(vertical = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = direction,
+                                        style = TextStyle(
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            color = Color.White
+                                        )
+                                    )
+                                }
+                                Text(
+                                    text = part,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
                     }
                 }
             }

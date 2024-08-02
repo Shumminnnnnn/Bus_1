@@ -44,7 +44,6 @@ class StopFilter : ComponentActivity() {
                 ) {
                     val stopResults = remember { mutableStateOf<List<StopInfo>?>(null) }
                     var inputText by remember { mutableStateOf(TextFieldValue("")) }
-
                     fun fetchStopData(stopNumber: String) {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {

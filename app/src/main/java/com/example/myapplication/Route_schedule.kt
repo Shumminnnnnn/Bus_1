@@ -48,24 +48,22 @@ object Route_schedule {
 
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            return response.body?.string() ?: throw IOException("Empty response body")
+            return response.body?.string() ?: throw IOException("Response body is null")
         }
     }
 
     @Throws(IOException::class)
     private fun getJsonString(url: String, accessToken: String): String {
         val client = OkHttpClient()
-
         val request = Request.Builder()
             .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .addHeader("Accept-Encoding", "gzip")
+            .addHeader("authorization", "Bearer $accessToken")
             .build()
 
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-            val responseBody = response.body ?: throw IOException("Empty response body")
+            val responseBody = response.body ?: return ("Empty response body")
 
             val jsonString = if ("gzip".equals(response.header("Content-Encoding"), ignoreCase = true)) {
                 responseBody.source().use { source ->

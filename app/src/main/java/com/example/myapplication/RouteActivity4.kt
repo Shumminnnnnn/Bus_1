@@ -138,7 +138,8 @@ fun PurpleHeader(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                         contentDescription = "Back",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                             .offset(x = (-10).dp)
                     )
                 }
@@ -149,7 +150,8 @@ fun PurpleHeader(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     ),
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
                         .offset(x = (-10).dp)
                 )
             }
@@ -171,91 +173,110 @@ fun ScrollableContent5(
     currentDirection: Int,
     onButtonClick: (Int) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        if (routeInfo != null) {
-            val arrivalTimeInfo = if (currentDirection == 0) routeInfo.arrivalTimeInfoDirection0 else routeInfo.arrivalTimeInfoDirection1
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val (directionText, buttonText) = if (currentDirection == 0) {
-                    val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
-                    val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
-                    "往 $destinationStopNameZh" to "往 $departureStopNameZh"
-                } else {
-                    val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
-                    val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
-                    "往 $departureStopNameZh" to "往 $destinationStopNameZh"
-                }
-
-                Text(text = directionText)
-                Button(
-                    onClick = { onButtonClick(if (currentDirection == 0) 1 else 0) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe))
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 45.dp)  // Add bottom padding to avoid overlap with the fixed bottom bar
+        ) {
+            if (routeInfo != null) {
+                val arrivalTimeInfo = if (currentDirection == 0) routeInfo.arrivalTimeInfoDirection0 else routeInfo.arrivalTimeInfoDirection1
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .background(Color(0xFFbaa2ff)),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = buttonText)
-                }
-            }
+                    val (directionText, buttonText) = if (currentDirection == 0) {
+                        val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
+                        val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
+                        "往 $destinationStopNameZh" to "往 $departureStopNameZh"
+                    } else {
+                        val departureStopNameZh = routeInfo.routeDepDesInfo.split("\n")[0].split(":")[1].trim()
+                        val destinationStopNameZh = routeInfo.routeDepDesInfo.split("\n")[1].split(":")[1].trim()
+                        "往 $departureStopNameZh" to "往 $destinationStopNameZh"
+                    }
 
-            routeInfo.arrivalTimeInfoDirection0.split("\n").forEach { info ->
-                if (info.contains("站名")) {
                     Text(
-                        text = info.split(":")[1].trim(),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-            ArrivalTimeInfoText(arrivalTimeInfo)
-        } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
+                        text = directionText,
                         modifier = Modifier
-                            .size(89.dp)
-                            .offset(y = (30).dp)
-                            .offset(x = (60).dp)
-                            .background(Color(0xFF9e7cfe), shape = CircleShape)
+                            .padding(start = 16.dp)
+                            .weight(1f),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = "Logo",
-                        modifier = Modifier.size(250.dp)
-                            .offset(y = (80).dp)
-                            .offset(x = (60).dp)
-                    )
+                    Button(
+                        onClick = { onButtonClick(if (currentDirection == 0) 1 else 0) },
+                        modifier = Modifier
+                            .padding(end = 2.dp)
+                            .height(48.dp)
+                            .width(160.dp)
+                            .offset(x= (-10).dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFbaa2ff))
+                    ) {
+                        Text(text = buttonText, color = Color.White,fontSize = 18.sp)
+                    }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+
+                routeInfo.arrivalTimeInfoDirection0.split("\n").forEach { info ->
+                    if (info.contains("站名")) {
+                        Text(
+                            text = info.split(":")[1].trim(),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+                ArrivalTimeInfoText(arrivalTimeInfo)
+            } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "載入公車路線動態中...",
-                        style = androidx.compose.ui.text.TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                        ),
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .offset(y = (-45).dp)
-                            .offset(x = (65).dp)
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(89.dp)
+                                .offset(y = 30.dp, x = 60.dp)
+                                .background(Color(0xFF9e7cfe), shape = CircleShape)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.logo),
+                            contentDescription = "Logo",
+                            modifier = Modifier
+                                .size(250.dp)
+                                .offset(y = 80.dp, x = 60.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "載入公車路線動態中...",
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                            ),
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .offset(y = (-45).dp, x = 65.dp)
+                        )
+                    }
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp)
+                .background(Color(0xFF9e7cfe))
+                .align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -313,7 +334,6 @@ fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
     }
 }
 
-
 @Composable
 fun CustomButton(onClick: () -> Unit, icon: Painter, offsetX: Dp) {
     Button(
@@ -326,6 +346,6 @@ fun CustomButton(onClick: () -> Unit, icon: Painter, offsetX: Dp) {
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe)),
         contentPadding = PaddingValues(0.dp)
     ) {
-        Icon(painter = icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.White) // 确保图标大小适中且颜色对比度足够
+        Icon(painter = icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.White)
     }
 }

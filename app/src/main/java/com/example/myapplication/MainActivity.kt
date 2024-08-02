@@ -139,7 +139,7 @@ fun MainScreen(
                 modifier = Modifier
                     .padding(start = 16.dp)
                     .height(38.dp)
-                    .width(110.dp)
+                    .width(120.dp)
             ) {
                 Text(text = "最新消息",
                     style = androidx.compose.ui.text.TextStyle(
