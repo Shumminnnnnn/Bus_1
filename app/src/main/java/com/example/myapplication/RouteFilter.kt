@@ -80,7 +80,7 @@ class RouteFilter : ComponentActivity() {
                                             modifier = Modifier
                                                 .size(89.dp)
                                                 .offset(y = (10).dp)
-                                                .offset(x = (60).dp)
+                                                .offset(x = (70).dp)
                                                 .background(Color(0xFF9e7cfe), shape = CircleShape)
                                         )
                                         Image(
@@ -88,7 +88,7 @@ class RouteFilter : ComponentActivity() {
                                             contentDescription = "Logo",
                                             modifier = Modifier.size(250.dp)
                                                 .offset(y = (60).dp)
-                                                .offset(x = (60).dp)
+                                                .offset(x = (70).dp)
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -101,7 +101,7 @@ class RouteFilter : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(10.dp)
                                             .offset(y = (-80).dp)
-                                            .offset(x = (50).dp)
+                                            .offset(x = (70).dp)
                                     )
                                     Text(
                                         text = "請輸入公車路線編號!",
@@ -111,7 +111,7 @@ class RouteFilter : ComponentActivity() {
                                         ),
                                         modifier = Modifier
                                             .offset(y = (-80).dp)
-                                            .offset(x = (50).dp)
+                                            .offset(x = (70).dp)
                                     )
                                 }
                             } else {
@@ -239,8 +239,8 @@ class RouteFilter : ComponentActivity() {
                                         onClick = { finish() },
                                         modifier = Modifier
                                             .background(Color(0xFF9e7cfe))
-                                            .offset(x = (-110).dp)
-                                            .offset(y = 2.dp)
+                                            .offset(x = (-120).dp)
+                                            .offset(y = 1.dp)
 
                                     ) {
                                         Icon(

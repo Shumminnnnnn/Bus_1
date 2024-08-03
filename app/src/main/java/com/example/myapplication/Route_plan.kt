@@ -181,7 +181,8 @@ object Route_plan {
                             sb.append("${departurePlace.get("name").asText()} > ")
                         }
                         if (arrivalPlace.get("type").asText() == "station") {
-                            sb.append("${arrivalPlace.get("name").asText()}\n")
+                            sb.append("${arrivalPlace.get("name").asText()}\n[MINUS_ICON]\n")
+
                         }
                     }
                 }
