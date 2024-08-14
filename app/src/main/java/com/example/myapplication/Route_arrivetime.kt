@@ -18,8 +18,8 @@ data class RouteInfo(val routeDepDesInfo: String, val arrivalTimeInfoDirection0:
 object Route_arrivetime {
     suspend fun main(subRouteName: String): RouteInfo {
         val tokenUrl = "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"
-        val clientId = "s11026310-7c639d60-e149-4847" // clientId
-        val clientSecret = "a1e0f98b-ff0c-44bb-80b7-cb9c6ebad7e6" // clientSecret
+        val clientId = "sherrysweet28605520-0d7e0818-4151-4795" // clientId
+        val clientSecret = "797fef62-dd98-4e6f-9af4-7e116f979896" // clientSecret
 
         val objectMapper = ObjectMapper()
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -81,8 +81,8 @@ object Route_arrivetime {
                 val stopDisplay = when (stopStatus) {
                     0 -> {
                         when (estimateTime) {
-                            in 0..80 -> "進站中 $stopName"
-                            in 81..240 -> "即將進站 $stopName"
+                            in 0..60 -> "進站中 $stopName"
+                            in 61..200 -> "即將進站 $stopName"
                             else -> "${estimateTime / 60}分 $stopName"
                         }
                     }

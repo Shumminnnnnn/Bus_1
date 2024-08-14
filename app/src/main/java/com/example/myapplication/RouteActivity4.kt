@@ -53,7 +53,7 @@ class RouteActivity4 : ComponentActivity() {
             while (isActive) {
                 delay(15000) // 每15秒更新一次
                 fetchDataAndUpdate(routeInfo, subRouteName, isLoading)
-                Toast.makeText(this@RouteActivity4, "已更新!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@RouteActivity4, "到站時間已更新!", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -296,7 +296,6 @@ fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
                 else -> Color.LightGray
             }
             val textColor = Color.Black
-
             val infoParts = info.split(" ", limit = 2)
             val timeInfo = infoParts[0]
             val stopName = if (infoParts.size > 1) infoParts[1] else ""

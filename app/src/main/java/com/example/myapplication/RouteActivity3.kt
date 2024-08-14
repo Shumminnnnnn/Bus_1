@@ -170,7 +170,7 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                         Text(
                             text = "假日時刻表",
                             style = TextStyle(
-                                fontSize = 22.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -225,7 +225,7 @@ fun RouteScheduleScreen(routeResult: String, onBackClick: () -> Unit) {
                         Text(
                             text = "平日時刻表",
                             style = TextStyle(
-                                fontSize = 22.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
