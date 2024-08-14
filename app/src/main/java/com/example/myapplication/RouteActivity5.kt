@@ -147,6 +147,7 @@ fun ScrollableContent6(
             ) {
                 Button(
                     onClick = onButtonClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9e7cfe)),
                     modifier = Modifier.padding(top = 16.dp)
                         .offset(y = (-5).dp)
                 ) {
