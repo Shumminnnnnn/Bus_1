@@ -17,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -46,14 +47,24 @@ class RouteActivity4 : ComponentActivity() {
         val isLoading = remember { mutableStateOf(true) }
         val currentDirection = remember { mutableStateOf(0) }
 
+        val countdownTime = remember { mutableStateOf(20) }
+
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(true) {
             fetchDataAndUpdate(routeInfo, subRouteName, isLoading)
             while (isActive) {
-                delay(15000) // 每15秒更新一次
+                delay(20000)
                 fetchDataAndUpdate(routeInfo, subRouteName, isLoading)
+                countdownTime.value = 20
                 Toast.makeText(this@RouteActivity4, "到站時間已更新!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        LaunchedEffect(countdownTime.value) {
+            if (countdownTime.value > 0) {
+                delay(1000L) // 每1秒倒數
+                countdownTime.value -= 1
             }
         }
 
@@ -84,8 +95,10 @@ class RouteActivity4 : ComponentActivity() {
                 ScrollableContent5(
                     routeInfo = routeInfo.value,
                     currentDirection = currentDirection.value,
-                    onButtonClick = { newDirection -> currentDirection.value = newDirection }
+                    onButtonClick = { newDirection -> currentDirection.value = newDirection },
+                    countdownTime = countdownTime.value // Pass countdownTime to ScrollableContent5
                 )
+
             }
         }
     }
@@ -171,14 +184,15 @@ fun PurpleHeader(
 fun ScrollableContent5(
     routeInfo: RouteInfo?,
     currentDirection: Int,
-    onButtonClick: (Int) -> Unit
+    onButtonClick: (Int) -> Unit,
+    countdownTime: Int // Add countdownTime as a parameter
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(65.dp)
                     .background(Color(0xFFbaa2ff)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -192,25 +206,41 @@ fun ScrollableContent5(
                     "往 $departureStopNameZh" to "往 $destinationStopNameZh"
                 }
 
-                Text(
-                    text = directionText,
+                Column(
                     modifier = Modifier
+                        .weight(1f)
                         .padding(start = 16.dp)
-                        .weight(1f),
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+                ) {
+                    Text(
+                        text = directionText,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .width(45.dp)
+                            .height(5.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.White)
+
+                    )
+                }
+
                 Button(
                     onClick = { onButtonClick(if (currentDirection == 0) 1 else 0) },
                     modifier = Modifier
                         .padding(end = 2.dp)
                         .height(48.dp)
-                        .width(160.dp)
+                        .width(180.dp)
                         .offset(x= (-10).dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFbaa2ff))
                 ) {
-                    Text(text = buttonText, color = Color.White,fontSize = 18.sp)
+                    Text(text = buttonText, color = Color.White, fontSize = 18.sp)
                 }
             }
 
@@ -273,13 +303,23 @@ fun ScrollableContent5(
                         }
                     }
                 }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(45.dp)
                         .background(Color(0xFF9e7cfe))
                         .align(Alignment.BottomCenter)
-                )
+                ) {
+                    Text(
+                        text = "$countdownTime 秒後更新",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = 16.dp)
+                    )
+                }
             }
         }
     }
@@ -293,6 +333,7 @@ fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
             val color = when {
                 info.contains("進站中") || info.contains("即將進站") -> Color(0xFFff4b4b)
                 info.contains("分") -> Color(0xFFd6c9fc)
+                info.contains("末班駛離") -> Color.LightGray
                 else -> Color.LightGray
             }
             val textColor = Color.Black
