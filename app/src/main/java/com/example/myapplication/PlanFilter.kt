@@ -126,7 +126,7 @@ class PlanFilter : ComponentActivity() {
                                     if (startLocation.isEmpty() || endLocation.isEmpty()) {
                                         Toast.makeText(this, "請選擇起點或終點！", Toast.LENGTH_SHORT).show()
                                     } else {
-                                        tdxResult.value = "載入路線規畫結果中..."
+                                        tdxResult.value = "載入路線規劃結果中..."
                                         coroutineScope.launch {
                                             fetchTdxData(
                                                 startLat,
@@ -440,7 +440,7 @@ fun PlanFilterContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "載入路線規畫結果中...",
+                                text = "載入路線規劃結果中...",
                                 style = androidx.compose.ui.text.TextStyle(
                                     fontSize = 18.sp,
                                     color = Color.Black
@@ -602,8 +602,9 @@ fun AnnotatedTdxResult(tdxResult: String) {
             )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.user),
+                painter = painterResource(id = R.drawable.baseline_directions_walk_24),
                 contentDescription = "User Icon",
+                colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                 modifier = Modifier.size(22.dp)
             )
         },

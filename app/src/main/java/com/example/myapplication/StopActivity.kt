@@ -65,12 +65,11 @@ class StopActivity : ComponentActivity() {
                             startActivity(intent)
                         },
                         onQueryClick = {
-                            if (currentLocation.value == "所在位置:" || currentLocation.value.isBlank()) {
-                                Toast.makeText(this@StopActivity, "請選擇所在位置!", Toast.LENGTH_SHORT).show()
-                            } else {
+//                            if (currentLocation.value == "所在位置:" || currentLocation.value.isBlank()) {
+//                                Toast.makeText(this@StopActivity, "請選擇所在位置!", Toast.LENGTH_SHORT).show()
+//                            } else {
                                 showRouteResult.value = true
-                            }
-                        },
+                            },
                         onCurrentLocationClick = {
                             val intent = Intent(this@StopActivity, MapActivity::class.java)
                             startActivity(intent)
