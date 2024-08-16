@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -122,18 +123,24 @@ class PlanFilter : ComponentActivity() {
                                     )
                                 },
                                 onQueryButtonClick = {
-                                    coroutineScope.launch {
-                                        fetchTdxData(
-                                            startLat,
-                                            startLong,
-                                            endLat,
-                                            endLong,
-                                            currentTime,
-                                            tdxResult,
-                                            isTimeSelected
-                                        )
+                                    if (startLocation.isEmpty() || endLocation.isEmpty()) {
+                                        Toast.makeText(this, "請選擇起點或終點！", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        tdxResult.value = "載入路線規畫結果中..."
+                                        coroutineScope.launch {
+                                            fetchTdxData(
+                                                startLat,
+                                                startLong,
+                                                endLat,
+                                                endLong,
+                                                currentTime,
+                                                tdxResult,
+                                                isTimeSelected
+                                            )
+                                        }
                                     }
                                 }
+
                             )
                             { onBackClick() }
                         }
@@ -184,7 +191,7 @@ class PlanFilter : ComponentActivity() {
             val (date, time) = parseCurrentTime(currentTime, isTimeSelected)
             Route_plan.updateFormattedDate(date)
             Route_plan.updateStaticTime(time)
-            Route_plan.setLocations(startLat, startLong, endLat, endLong, endLocation) // 传递 endLocation
+            Route_plan.setLocations(startLat, startLong, endLat, endLong, endLocation)
             val tdxData = Route_plan.main()
             withContext(Dispatchers.Main) {
                 tdxResult.value = tdxData
@@ -202,7 +209,6 @@ class PlanFilter : ComponentActivity() {
         var time = parts[1].replace(":", "%3A")
 
         if (!isTimeSelected) {
-            // Add 3 minutes to the current time
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
             val calendar = Calendar.getInstance()
             calendar.time = sdf.parse(currentTime)!!
@@ -284,7 +290,7 @@ fun PlanFilterContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.disc),
+                                    painter = painterResource(id = R.drawable.baseline_adjust_24),
                                     contentDescription = "Disc Icon",
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -323,7 +329,7 @@ fun PlanFilterContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.map_pin),
+                                    painter = painterResource(id = R.drawable.baseline_location_pin_24),
                                     contentDescription = "Map Pin Icon",
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -365,10 +371,12 @@ fun PlanFilterContent(
                                 painter = painterResource(id = R.drawable.search),
                                 contentDescription = "Search",
                                 modifier = Modifier
-                                    .size(35.dp)
+                                    .size(30.dp)
                                     .clickable {
-                                        isLoading = true
-                                        showTdxResult = false
+                                        if (startLocation.isNotEmpty() && endLocation.isNotEmpty()) {
+                                            isLoading = true
+                                            showTdxResult = false
+                                        }
                                         onQueryButtonClick()
                                     }
                             )
@@ -397,11 +405,20 @@ fun PlanFilterContent(
                                 .offset(x = (-8).dp)
                         )
                         Text(
-                            text = "出發時間: $currentTime",
+                            text = buildAnnotatedString {
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("出發時間 : ")
+                                }
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Normal)) {
+                                    append(currentTime)
+                                }
+                            },
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.White,
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
+
+
                     }
                 }
             }
@@ -563,7 +580,7 @@ fun AnnotatedTdxResult(tdxResult: String) {
                         withStyle(style = SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
                             append(line)
                         }
-                    } else if (line.startsWith("車資:")) {
+                    } else if (line.startsWith("車資:")|| line.contains("方案")) {
                         withStyle(style = SpanStyle(color = Color.Gray)) {
                             append(line)
                         }
@@ -624,4 +641,5 @@ fun AnnotatedTdxResult(tdxResult: String) {
         inlineContent = inlineContent,
         modifier = Modifier.padding(8.dp)
     )
+
 }

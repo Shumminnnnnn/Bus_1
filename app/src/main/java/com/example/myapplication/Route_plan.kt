@@ -61,7 +61,7 @@ object Route_plan {
 
             withContext(Dispatchers.IO) { getJsonString(tdxUrl, accessToken) }
         } catch (e: Exception) {
-            "Error: ${e.message}"
+            "操作頻繁，請稍後再試!"
         }
     }
 
@@ -140,7 +140,7 @@ object Route_plan {
             val endTime = route.get("end_time").asText().split("T").getOrNull(1)?.substring(0, 5) ?: "N/A"
             val travelTime = route.get("travel_time").asInt() / 60
             val totalPrice = route.get("total_price").asText()
-
+            sb.append("方案\n")
             sb.append("$startTime - $endTime  ")
             sb.append("($travelTime 分鐘)\n")
             sb.append("車資: $totalPrice\n")
@@ -176,12 +176,11 @@ object Route_plan {
                         sb.append("($duration 分鐘)\n")
                         val departurePlace = section.path("departure").path("place")
                         val arrivalPlace = section.path("arrival").path("place")
-                        sb.append("起點站 > 終點站: ")
                         if (departurePlace.get("type").asText() == "station") {
-                            sb.append("${departurePlace.get("name").asText()} > ")
+                            sb.append("${departurePlace.get("name").asText()}(起點站) > ")
                         }
                         if (arrivalPlace.get("type").asText() == "station") {
-                            sb.append("${arrivalPlace.get("name").asText()}\n[MINUS_ICON]\n")
+                            sb.append("${arrivalPlace.get("name").asText()}(終點站)\n[MINUS_ICON]\n")
 
                         }
                     }

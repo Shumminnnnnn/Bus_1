@@ -168,7 +168,7 @@ class EndFilter : ComponentActivity() {
                                                         }
                                                     ) {
                                                         Image(
-                                                            painter = painterResource(id = R.drawable.map_pin),
+                                                            painter = painterResource(id = R.drawable.baseline_location_pin_24),
                                                             contentDescription = null,
                                                             colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
                                                             modifier = Modifier
@@ -183,11 +183,13 @@ class EndFilter : ComponentActivity() {
                                                     }
                                                     if (index != resultList.size - 1) {
                                                         Divider(
-                                                            color = Color.Gray,
+                                                            color = Color.LightGray,
                                                             thickness = 1.dp,
                                                             modifier = Modifier
                                                                 .padding(vertical = 8.dp)
-                                                                .width(300.dp)
+                                                                .padding(start = 5.dp)
+                                                                .padding(end = 8.dp)
+                                                                .fillMaxWidth()
                                                         )
                                                     }
                                                 }

@@ -96,7 +96,7 @@ class RouteActivity4 : ComponentActivity() {
                     routeInfo = routeInfo.value,
                     currentDirection = currentDirection.value,
                     onButtonClick = { newDirection -> currentDirection.value = newDirection },
-                    countdownTime = countdownTime.value // Pass countdownTime to ScrollableContent5
+                    countdownTime = countdownTime.value
                 )
 
             }
@@ -172,8 +172,8 @@ fun PurpleHeader(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(end = 16.dp)
             ) {
-                CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.baseline_approval_24), offsetX = 70.dp)
-                CustomButton(onClick = onNavigate2, icon = painterResource(id = R.drawable.money), offsetX = 40.dp)
+                CustomButton(onClick = onNavigate1, icon = painterResource(id = R.drawable.baseline_map_24), offsetX = 70.dp)
+                CustomButton(onClick = onNavigate2, icon = painterResource(id = R.drawable.baseline_attach_money_24), offsetX = 40.dp)
                 CustomButton(onClick = onNavigate3, icon = painterResource(id = R.drawable.baseline_info_24), offsetX = 10.dp)
             }
         }
@@ -185,7 +185,7 @@ fun ScrollableContent5(
     routeInfo: RouteInfo?,
     currentDirection: Int,
     onButtonClick: (Int) -> Unit,
-    countdownTime: Int // Add countdownTime as a parameter
+    countdownTime: Int
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -329,7 +329,8 @@ fun ScrollableContent5(
 @Composable
 fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
     Column {
-        arrivalTimeInfo.split("\n").forEach { info ->
+        val infoList = arrivalTimeInfo.split("\n")
+        infoList.forEachIndexed { index, info ->
             val color = when {
                 info.contains("進站中") || info.contains("即將進站") -> Color(0xFFff4b4b)
                 info.contains("分") -> Color(0xFFd6c9fc)
@@ -348,32 +349,44 @@ fun ArrivalTimeInfoText(arrivalTimeInfo: String) {
                         .padding(4.dp)
                         .background(Color.Transparent)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(80.dp)
-                                .height(40.dp)
-                                .background(color, shape = RoundedCornerShape(20.dp))
-                                .padding(8.dp)
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(8.dp)
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .height(40.dp)
+                                    .background(color, shape = RoundedCornerShape(20.dp))
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = timeInfo,
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
                             Text(
-                                text = timeInfo,
-                                color = Color.White,
-                                fontSize = 14.sp,
-                                modifier = Modifier.align(Alignment.Center)
+                                text = stopName,
+                                color = textColor,
+                                fontSize = 16.sp
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = stopName,
-                            color = textColor,
-                            fontSize = 16.sp
-                        )
+                        if (index < infoList.size - 2) {
+                            Divider(
+                                color = Color.LightGray,
+                                thickness = 1.dp,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }

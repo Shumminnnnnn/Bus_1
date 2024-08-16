@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -51,7 +52,7 @@ class StopActivity : ComponentActivity() {
                             val routeResultJson = ArroundStop.fetchStopData(latitude, longitude)
                             routeResult.value = routeResultJson
                         } catch (e: Exception) {
-                            routeResult.value = "Error fetching route data: ${e.message}"
+                            routeResult.value = "操作頻繁，請稍後再試!"
                         }
                     }
 
@@ -64,7 +65,11 @@ class StopActivity : ComponentActivity() {
                             startActivity(intent)
                         },
                         onQueryClick = {
-                            showRouteResult.value = true
+                            if (currentLocation.value == "所在位置:" || currentLocation.value.isBlank()) {
+                                Toast.makeText(this@StopActivity, "請選擇所在位置!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                showRouteResult.value = true
+                            }
                         },
                         onCurrentLocationClick = {
                             val intent = Intent(this@StopActivity, MapActivity::class.java)
@@ -193,7 +198,7 @@ fun ScrollableContent7(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Column(
                 modifier = Modifier
@@ -204,7 +209,18 @@ fun ScrollableContent7(
                 if (showRouteResult) {
                     if (routeResult == "載入中...") {
                         Text(text = routeResult, modifier = Modifier.padding(10.dp))
-                    } else {
+                    }
+                    else if(routeResult == "操作頻繁，請稍後再試!"){
+                            Text(
+                                text = routeResult,
+                                style = androidx.compose.ui.text.TextStyle(
+                                    fontSize = 16.sp,
+                                    color = Color.Black
+                                ),
+                                modifier = Modifier.padding(10.dp)
+                            )
+                    }
+                    else {
                         val routeItems = routeResult.split("\n\n")
                         routeItems.forEachIndexed { index, routeItem ->
                             if (routeItem.isNotEmpty()) {
@@ -217,7 +233,8 @@ fun ScrollableContent7(
 
                                 if (stationName.contains("500公尺內無公車站牌")) {
                                     Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.padding(8.dp)
                                     ) {
                                         Box(
                                             contentAlignment = Alignment.Center
@@ -256,38 +273,45 @@ fun ScrollableContent7(
                                     }
                                 } else {
                                     val boxModifier = Modifier
-                                        .fillMaxWidth(0.95f)
-                                        .padding(horizontal = 8.dp)
-
+                                        .fillMaxWidth()
                                     Box(
                                         modifier = boxModifier
                                             .fillMaxWidth()
-                                            .padding(15.dp),
+                                            .padding(horizontal = 10.dp),
                                         contentAlignment = Alignment.CenterStart
                                     ) {
                                         Column(
                                             verticalArrangement = Arrangement.Center,
                                         ) {
 
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier
+                                                    .height(40.dp)
+                                                    .fillMaxWidth()
+                                                    .background(Color(0xFFbaa2ff))
+                                            ) {
+                                                Spacer(modifier = Modifier.width(8.dp))
                                                 Image(
-                                                    painter = painterResource(id = R.drawable.baseline_location_on_24),
+                                                    painter = painterResource(id = R.drawable.baseline_location_pin_24),
                                                     contentDescription = null,
-                                                    colorFilter = ColorFilter.tint(Color(0xFF9e7cfe)),
+                                                    colorFilter = ColorFilter.tint(Color.White),
                                                     modifier = Modifier.size(24.dp)
                                                 )
-                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Spacer(modifier = Modifier.width(8.dp))
                                                 Text(
                                                     text = stationName,
                                                     style = androidx.compose.ui.text.TextStyle(
-                                                        fontSize = 16.sp,
-                                                        color = Color.Black,
+                                                        fontSize = 18.sp,
+                                                        color = Color.White,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                 )
                                             }
+
                                             routes.forEach { line ->
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Spacer(modifier = Modifier.width(8.dp))
                                                     Image(
                                                         painter = painterResource(id = R.drawable.logo),
                                                         contentDescription = null,
@@ -310,19 +334,6 @@ fun ScrollableContent7(
                                                     }
                                                 }
                                             }
-                                        }
-                                    }
-                                    if (index != routeItems.size - 2) {
-                                        Box(
-                                            modifier = Modifier
-                                                .offset(x = 0.dp, y = (-15).dp)
-                                        ){
-                                            Divider(
-                                                color = Color(0xFF9e7cfe),
-                                                thickness = 2.dp,
-                                                modifier = Modifier.padding(horizontal = 5.dp)
-                                                    .fillMaxWidth(1f)
-                                            )
                                         }
                                     }
                                 }

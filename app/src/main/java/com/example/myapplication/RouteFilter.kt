@@ -119,7 +119,6 @@ class RouteFilter : ComponentActivity() {
                                 routeItems.forEachIndexed { index, routeItem ->
                                     if (routeItem.size == 2) {
                                         val (subRouteName, headsign) = routeItem
-
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -153,12 +152,12 @@ class RouteFilter : ComponentActivity() {
                                                         )
                                                 )
                                                 Image(
-                                                    painter = painterResource(id = R.drawable.logo),
+                                                    painter = painterResource(id = R.drawable.baseline_directions_bus_24),
                                                     contentDescription = "Logo",
                                                     modifier = Modifier
-                                                        .size(90.dp)
-                                                        .offset(y = (-81).dp)
-                                                        .offset(x = 0.dp)
+                                                        .size(24.dp)
+//                                                        .offset(y = (-81).dp)
+//                                                        .offset(x = 0.dp)
                                                 )
                                             }
                                             Column(
@@ -178,7 +177,14 @@ class RouteFilter : ComponentActivity() {
                                         }
 
                                         if (index < routeItems.size - 1) {
-                                            Divider(color = Color.LightGray, thickness = 1.dp)
+                                            Divider(
+                                                color = Color.LightGray,
+                                                thickness = 1.dp,
+                                                modifier = Modifier
+                                                    .padding(start = 8.dp)
+                                                    .padding(end = 8.dp)
+                                                    .fillMaxWidth()
+                                            )
                                         }
                                     }
                                 }
